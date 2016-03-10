@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script>
+function textAreaAdjust(o) {
+    o.style.height = "1px";
+    o.style.height = (25+o.scrollHeight)+"px";
+}
+</script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
+          rel="stylesheet">
+   <style type="text/css">
+	textarea {
+   	font-size: 16pt;
+   	font-family: Arial;
+	}
+    </style> 
+  <script type=text/javascript>
+    $(function() {
+      $('a#calculate').bind('click', function() {
+        $.getJSON('/_add_numbers', {
+          a: $('textarea[name="a"]').val(),
+          b: $('input[name="b"]').val()
+        }, function(data) {
+          $("#result").text(data.result);
+        });
+        return false;
+      });
+    });
+  </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h3 class="text-muted">Emojify with JSON</h3>
+      </div>
+      <hr/>
+      <div>
+      <p>
+     <textarea name="a" rows="3" cols="30"> </textarea>
+     <a class="btn btn-lg btn-success" "javascript:void();" id="calculate" role="button">Emojify</a>
+      <p>
+      <textarea id="result" rows="25" cols="100"></textarea>
+      <p><a href="javascript:void();" id="calculate">calculate server side</a>
+      </form>
+      </div>
+    </div>
+  </body>
+</html>
