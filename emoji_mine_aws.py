@@ -129,10 +129,10 @@ def mine_for_emojis(tweet=data):
 		print('twitter hungup ... reconecting in 10 seconds')
 		time.sleep(10)
 		#mine_for_emojis() #if disconnected then reconnect
-
+		
 if __name__ == "__main__":
 	auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-    auth.set_access_token(OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
-    api = tweepy.API(auth)
-    myStream = tweepy.Stream(auth = api.auth,StdOutListener())
-    myStream.sample()
+	auth.set_access_token(OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+	api = tweepy.API(auth)
+	myStream = tweepy.Stream(auth = api.auth,StdOutListener())
+	myStream.sample()
