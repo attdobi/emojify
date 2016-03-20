@@ -1,5 +1,6 @@
 import json
 import tweepy
+from tweepy.streaming import StreamListener
 #from twitter import Twitter, OAuth, TwitterHTTPError, TwitterStream, auth
 import pandas as pd
 import re, collections
