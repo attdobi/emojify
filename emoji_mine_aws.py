@@ -88,12 +88,40 @@ class StdOutListener(StreamListener):
     """ A listener handles tweets that are received from the stream.
     This is a basic listener that just prints received tweets to stdout.
     """
+    '''
+    def on_data(self, data):
+        if  'in_reply_to_status' in data:
+            self.on_status(data)
+        elif 'delete' in data:
+            delete = json.loads(data)['delete']['status']
+            if self.on_delete(delete['id'], delete['user_id']) is False:
+                return False
+        elif 'limit' in data:
+            if self.on_limit(json.loads(data)['limit']['track']) is False:
+                return False
+        elif 'warning' in data:
+            warning = json.loads(data)['warnings']
+            print warning['message']
+            return false
+    '''
+    #Action is here, mine_for_emojis
     def on_status(self, status):
         mine_for_emojis(status)
         return True
-
+    #error handling
+    def on_delete(self, status_id, user_id):
+        #print( str(status_id) + "\n")
+        return
+    def on_limit(self, track):
+        #print(track + "\n")
+        return
     def on_error(self, status):
-        print(status)
+        return False
+    def on_timeout(self):
+        print("Timeout, sleeping for 60 seconds...\n")
+        time.sleep(60)
+        return 
+        
     
 def mine_for_emojis(tweet):
     emjText=[(emcode, len(re.findall(emcode,tweet.text))) for emcode in emj_codes\
