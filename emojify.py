@@ -1,3 +1,6 @@
+#import os
+#base_dir=os.path.expanduser('~')
+
 from flask import Flask, render_template, request, request, jsonify
 application = Flask(__name__)
 
@@ -14,7 +17,8 @@ def add_numbers():
     return jsonify(result=str(a)+TS)
 
 def emojify():
-    TS = file("/home/ubuntu/emojify/lyrics/TS.txt").read()
+    #TS = file("/home/ubuntu/emojify/lyrics/TS.txt").read()
+    TS = file("lyrics/TS.txt").read()
     return TS
 
 if __name__ == "__main__":
