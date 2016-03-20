@@ -87,9 +87,6 @@ def tweet_stream():
     myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
     myStream.Sample()
     return myStream
-
-
-myStream.filter(track=[u'\U0001f4af'])
     
 def mine_for_emojis(iterator=tweet_stream()):
 	tweet_count = 1e6 #about 3 days of tweets, turn off automatically
