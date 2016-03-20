@@ -13,6 +13,7 @@ import os
 base_dir=os.path.expanduser('~')
 
 import datetime
+import time
 from pymongo import MongoClient
 #setup mongo DB
 client = MongoClient()
@@ -123,6 +124,8 @@ def mine_for_emojis(iterator=tweet_stream()):
 			if tweet_count <= 0:
 				break
 		else:
+			print('twitter hungup ... reconecting in 10 seconds')
+			time.sleep(10)
 			mine_for_emojis() #if disconnected then reconnect
 
 if __name__ == "__main__":
