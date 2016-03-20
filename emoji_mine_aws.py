@@ -85,6 +85,7 @@ def count_words(text):
 def tweet_stream():
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+    api = tweepy.API(auth)
     myStream = tweepy.Stream(auth = api.auth)
     myStream.Sample()
     return myStream
