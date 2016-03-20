@@ -83,8 +83,9 @@ def count_words(text):
     return max(S, key=S.get), S[max(S, key=S.get)]
     
 def tweet_stream():
-    myStreamListener = MyStreamListener()
-    myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
+    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+    auth.set_access_token(OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+    myStream = tweepy.Stream(auth = api.auth)
     myStream.Sample()
     return myStream
     
