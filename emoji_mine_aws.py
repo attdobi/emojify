@@ -88,14 +88,14 @@ class StdOutListener(StreamListener):
     """ A listener handles tweets that are received from the stream.
     This is a basic listener that just prints received tweets to stdout.
     """
-    def on_data(self, data):
-        mine_for_emojis(data)
+    def on_status(self, status):
+        mine_for_emojis(status)
         return True
 
     def on_error(self, status):
         print(status)
     
-def mine_for_emojis(tweet=data):
+def mine_for_emojis(tweet=status):
 	if ('text' in tweet.keys()):
 	
 		emjText=[(emcode, len(re.findall(emcode,tweet['text']))) for emcode in emj_codes\
