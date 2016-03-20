@@ -95,7 +95,7 @@ class StdOutListener(StreamListener):
     def on_error(self, status):
         print(status)
     
-def mine_for_emojis(tweet=status):
+def mine_for_emojis(tweet):
 	if ('text' in tweet.keys()):
 	
 		emjText=[(emcode, len(re.findall(emcode,tweet['text']))) for emcode in emj_codes\
