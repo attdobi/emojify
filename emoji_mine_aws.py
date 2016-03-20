@@ -131,8 +131,9 @@ def mine_for_emojis(tweet=data):
 		#mine_for_emojis() #if disconnected then reconnect
 		
 if __name__ == "__main__":
+	l=StdOutListener()
 	auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 	auth.set_access_token(OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
 	api = tweepy.API(auth)
-	myStream = tweepy.Stream(auth = api.auth,StdOutListener())
+	myStream = tweepy.Stream(auth = api.auth, listener=l)
 	myStream.sample()
