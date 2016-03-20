@@ -96,40 +96,33 @@ class StdOutListener(StreamListener):
         print(status)
     
 def mine_for_emojis(tweet):
-	if ('text' in tweet.keys()):
-	
-		emjText=[(emcode, len(re.findall(emcode,tweet['text']))) for emcode in emj_codes\
-						  if (len(re.findall(emcode,tweet['text'])) > 0)]
+    emjText=[(emcode, len(re.findall(emcode,tweet.text))) for emcode in emj_codes\
+                      if (len(re.findall(emcode,tweet.text)) > 0)]
 
-		if len(emjText) >0:
-			tweet_count -= 1
+    if len(emjText) >0:
 
-			emjCount=sum([item[1] for item in emjText])
-			emjTypes = len(emjText)
-			a=np.array(emjText)
-			mostFreqEmoji = a[np.argsort(a[:, 1])][-1][0]
-			mostFreqEmojiCount = int(a[np.argsort(a[:, 1])][-1][1])
-			mostFreqWord, mostFreqWordCount = count_words(tweet['text'])
-		
-			entry = {"date": datetime.datetime.utcnow(),\
-				"created_at": tweet['created_at'],\
-			"text": tweet['text'],\
-			"retweet_count": tweet['retweet_count'],\
-		 "favorite_count": tweet['favorite_count'],\
-		 "lang": tweet['lang'],\
-		 "goe": tweet['geo'],\
-		 "coordinates": tweet['coordinates'],\
-		 "emjText": emjText, "emjCount": emjCount, "emjTypes": emjTypes, "mostFreqEmoji": mostFreqEmoji,\
-		 "mostFreqEmojiCount": mostFreqEmojiCount, "mostFreqWord": mostFreqWord,\
-		 "mostFreqWordCount": mostFreqWordCount}
-	 
-			collection.insert_one(entry).inserted_id
-		 
-			print(tweet['text'])
-	else:
-		print('twitter hungup ... reconecting in 10 seconds')
-		time.sleep(10)
-		#mine_for_emojis() #if disconnected then reconnect
+        emjCount=sum([item[1] for item in emjText])
+        emjTypes = len(emjText)
+        a=np.array(emjText)
+        mostFreqEmoji = a[np.argsort(a[:, 1])][-1][0]
+        mostFreqEmojiCount = int(a[np.argsort(a[:, 1])][-1][1])
+        mostFreqWord, mostFreqWordCount = count_words(tweet.text)
+
+        entry = {"date": datetime.datetime.utcnow(),\
+            "created_at": tweet.created_at,\
+        "text": tweet.text,\
+        "retweet_count": tweet.retweet_count,\
+     "favorite_count": tweet.favorite_count,\
+     "lang": tweet.lang,\
+     "goe": tweet.geo,\
+     "coordinates": tweet.coordinates,\
+     "emjText": emjText, "emjCount": emjCount, "emjTypes": emjTypes, "mostFreqEmoji": mostFreqEmoji,\
+     "mostFreqEmojiCount": mostFreqEmojiCount, "mostFreqWord": mostFreqWord,\
+     "mostFreqWordCount": mostFreqWordCount}
+
+        collection.insert_one(entry).inserted_id
+
+        print(tweet.text)
 		
 if __name__ == "__main__":
 	l=StdOutListener()
