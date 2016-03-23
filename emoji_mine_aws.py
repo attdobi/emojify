@@ -20,10 +20,13 @@ from pymongo import MongoClient
 client = MongoClient()
 db = client.emoji_db
 collection = db.emoji_tweets
+emoji_usage = db.emoji_usage
 
 #read emoji codes:
 emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
-emj_codes=[code for code in emoji_key['Unicode'] if code!="Browser" if sum([c=="*" for c in code])==0]
+emj_codes_skin=[code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']) if ('FITZPATRICK' in name)]
+emj_codes=[code for code in emoji_key['Unicode'] if code!="Browser" \
+           if (code not in emj_codes_skin) if sum([c=="*" for c in code])==0]
 
 def get_keys(tweet):
     max_index=0
@@ -122,35 +125,76 @@ class StdOutListener(StreamListener):
         time.sleep(60)
         return 
         
+def write_emoji_usage(tweet,has_emoji):
+    entry = {"date": datetime.datetime.utcnow(),\
+             "created_at": tweet.created_at,\
+             "retweet_count": tweet.retweet_count,\
+             "favorite_count": tweet.favorite_count,\
+             "lang": tweet.lang,\
+             "goe": tweet.geo,\
+             "coordinates": tweet.coordinates,\
+             "has_emoji":has_emoji}
+    emoji_usage.insert_one(entry).inserted_id
+        
     
 def mine_for_emojis(tweet):
+    has_emoji=False
     emjText=[(emcode, len(re.findall(emcode,tweet.text))) for emcode in emj_codes\
                       if (len(re.findall(emcode,tweet.text)) > 0)]
-
+    
     if len(emjText) >0:
-
+        has_emoji=True
         emjCount=sum([item[1] for item in emjText])
         emjTypes = len(emjText)
         a=np.array(emjText)
         mostFreqEmoji = a[np.argsort(a[:, 1])][-1][0]
         mostFreqEmojiCount = int(a[np.argsort(a[:, 1])][-1][1])
         mostFreqWord, mostFreqWordCount = count_words(tweet.text)
-
+        newlineCount= tweet.text.count('\n')
+        surrounding_text = [(emcode, tweet.text[:tweet.text.index(emcode)].split()[-1:],\
+                tweet.text[tweet.text.index(emcode)+2:].split()[:1],\
+                tweet.text[:tweet.text.index(emcode)].split()[-5:],\
+                tweet.text[tweet.text.index(emcode)+2:].split()[:5]) for emcode in emj_codes\
+                  if (len(re.findall(emcode,tweet.text)) > 0)]
+        
+        prev_word = ''.join(tweet.text[:tweet.text.index(mostFreqEmoji)].split()[-1:])
+        #finding the next word is more tricky :)
+        try:
+            last_index=len(tweet.text)-(tweet.text[::-1].index(mostFreqEmoji[::-1]))-2
+        except ValueError:
+            last_index=len(tweet.text)
+        next_word = ''.join(tweet.text[last_index+2:].split()[:1])
+        
+        #skin tone information
+        emjText_skin=[(emcode, len(re.findall(emcode,tweet.text))) for emcode in emj_codes_skin\
+                      if (len(re.findall(emcode,tweet.text)) > 0)]
+        skinCount=sum([item[1] for item in emjText_skin])
+        skinTypes = len(emjText_skin)
+        if skinTypes==0:
+            mostFreqSkin, mostFreqSkinCount= 0,0
+        else:
+            b=np.array(emjText_skin)
+            mostFreqSkin = b[np.argsort(b[:, 1])][-1][0]
+            mostFreqSkinCount = int(b[np.argsort(b[:, 1])][-1][1])
+ 
         entry = {"date": datetime.datetime.utcnow(),\
             "created_at": tweet.created_at,\
-        "text": tweet.text,\
-        "retweet_count": tweet.retweet_count,\
-     "favorite_count": tweet.favorite_count,\
-     "lang": tweet.lang,\
-     "goe": tweet.geo,\
-     "coordinates": tweet.coordinates,\
-     "emjText": emjText, "emjCount": emjCount, "emjTypes": emjTypes, "mostFreqEmoji": mostFreqEmoji,\
-     "mostFreqEmojiCount": mostFreqEmojiCount, "mostFreqWord": mostFreqWord,\
-     "mostFreqWordCount": mostFreqWordCount}
-
+           "text": tweet.text,\
+           "retweet_count": tweet.retweet_count,\
+           "favorite_count": tweet.favorite_count,\
+           "lang": tweet.lang,\
+           "goe": tweet.geo,\
+           "coordinates": tweet.coordinates,\
+           "emjText": emjText, "emjCount": emjCount, "emjTypes": emjTypes, "mostFreqEmoji": mostFreqEmoji,\
+           "mostFreqEmojiCount": mostFreqEmojiCount, "prev_word": prev_word, "next_word": next_word,\
+           "mostFreqWord": mostFreqWord, "mostFreqWordCount": mostFreqWordCount,\
+           "surrounding_text": surrounding_text,\
+           "emjText_skin": emjText_skin, "skinCount": skinCount, "skinTypes": skinTypes, "mostFreqSkin": mostFreqSkin,\
+           "mostFreqSkinCount": mostFreqSkinCount, "newlineCount":newlineCount}
+           
         collection.insert_one(entry).inserted_id
-
         print(tweet.text)
+    write_emoji_usage(tweet,has_emoji)
 		
 if __name__ == "__main__":
 	l=StdOutListener()
