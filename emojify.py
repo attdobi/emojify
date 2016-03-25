@@ -18,9 +18,9 @@ def add_numbers():
     #TS=emojify()
     #print(TS)
     #return jsonify(result=str(a)+TS)
-    a = request.args.get('a', 0, type=int)
+    a = request.args.get('a', type=str)
     b = request.args.get('b', 0, type=int)
-    return jsonify(result=a + b)
+    return jsonify(result=a)
 
 @application.route("/db")
 def print_data():
