@@ -14,7 +14,7 @@ def index():
 
 @application.route('/_add_numbers')
 def add_numbers():
-    a = request.args.get('a', type=str)
+    a = request.args.get('a', 0,type=str)
     TS=emojify()
     print(TS)
     return jsonify(result=str(a)+TS)
