@@ -23,10 +23,16 @@ def add_numbers():
 
 @application.route("/db")
 def print_data():
-    word = request.args.get('word')
-    xdata, ydata = filter_emoji_freq(word=word.lower())
-    #return JSenocde
-    return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
+	word = request.args.get('word')
+	freq_filter = request.args.get('freq_filter')
+	face_filter = request.args.get('face_filter')
+	if freq_filter=='on':
+		xdata, ydata = filter_emoji_freq(word=word.lower(),face_filter=face_filter)
+	else:
+		xdata, ydata = filter_emoji(word=word.lower(),face_filter=face_filter)
+	#return JSenocde
+	return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
+
 
 @application.route("/word/<word>")
 def search(word):
