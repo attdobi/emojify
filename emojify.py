@@ -30,6 +30,7 @@ def print_data():
 def search(word):
     print(word.title().lower())
     xdata, ydata = filter_emoji(word=word.title().lower())
+    print(xdata)
     #return '<br>'.join(str(row) for row in zip(xdata, ydata ))
     return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
     
