@@ -1,10 +1,9 @@
 #import os
 #base_dir=os.path.expanduser('~')
-
-from flask import Flask, render_template, request, request, jsonify
 import numpy as np
 from query_mongo import *
 
+from flask import Flask, render_template, request, jsonify
 application = Flask(__name__)
 
 @application.route("/")
