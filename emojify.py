@@ -20,7 +20,7 @@ def add_numbers():
     #return jsonify(result=str(a)+TS)
     a = request.args.get('a', type=str)
     b = request.args.get('b', 0, type=int)
-    return jsonify(result=a)
+    return jsonify(result=str(a))
 
 @application.route("/db")
 def print_data():
