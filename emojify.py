@@ -23,17 +23,17 @@ def add_numbers():
 
 @application.route("/db")
 def print_data():
-	word = request.args.get('word')
-	xdata, ydata = filter_emoji_freq(word=word.lower())
-	#return JSenocde
-	return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
+    word = request.args.get('word')
+    xdata, ydata = filter_emoji_freq(word=word.lower())
+    #return JSenocde
+    return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
 
 @application.route("/word/<word>")
 def search(word):
     print(word.title().lower())
     xdata, ydata = filter_emoji(word=word.title().lower())
-    return '<br>'.join(str(row) for row in zip(xdata, ydata ))
-    #return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
+    #return '<br>'.join(str(row) for row in zip(xdata, ydata ))
+    return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
 
 def emojify():
     #TS = open("/home/ubuntu/emojify/lyrics/TS.txt").read()

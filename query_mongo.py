@@ -2,8 +2,6 @@ import datetime
 from pymongo import MongoClient
 import pandas as pd
 import numpy
-import scipy
-import matplotlib as mpl
 import collections
 
 client = MongoClient()
