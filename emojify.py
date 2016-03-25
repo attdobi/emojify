@@ -14,11 +14,12 @@ def index():
 
 @application.route('/_add_numbers')
 def add_numbers():
-    a = request.args.get('a', 0,type=str)
+    #a = request.args.get('a', 0,type=str)
     TS=emojify()
     print(TS)
     return jsonify(result=str(a)+TS)
-    
+
+'''    
 @application.route("/db/")
 def print_data():
 	word = request.args.get('word')
@@ -32,7 +33,8 @@ def search(word):
     xdata, ydata = filter_emoji(word=word.title().lower())
     return '<br>'.join(str(row) for row in zip(xdata, ydata ))
     #return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
-    
+'''   
+
 def emojify():
     TS = file("/home/ubuntu/emojify/lyrics/TS.txt").read()
     #TS = file("lyrics/TS.txt").read()
