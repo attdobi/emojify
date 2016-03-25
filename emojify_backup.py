@@ -2,22 +2,12 @@
 #base_dir=os.path.expanduser('~')
 
 from flask import Flask, render_template, request, request, jsonify
-import numpy as np
-from query_mongo import *
-
 application = Flask(__name__)
 
 @application.route("/")
 def index():
     return render_template("index.html")
-#    #return "<h1 style='color:blue'>Hello There!</h1>"
-
-@application.route("/db/")
-def print_data():
-	word = request.args.get('word')
-	xdata, ydata = filter_emoji_freq(word=word.lower())
-	#return JSenocde
-	return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
+    #return "<h1 style='color:blue'>Hello There!</h1>"
 
 @application.route('/_add_numbers')
 def add_numbers():
@@ -25,14 +15,7 @@ def add_numbers():
     b = request.args.get('b', 0, type=int)
     TS=emojify()
     return jsonify(result=str(a)+TS)
-    
-@application.route("/word/<word>")
-def search(word):
-    print(word.title().lower())
-    xdata, ydata = filter_emoji(word=word.title().lower())
-    return '<br>'.join(str(row) for row in zip(xdata, ydata ))
-    
-    
+
 def emojify():
     #TS = file("/home/ubuntu/emojify/lyrics/TS.txt").read()
     TS = file("lyrics/TS.txt").read()
