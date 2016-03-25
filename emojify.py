@@ -13,13 +13,13 @@ def index():
 
 @application.route("/_add_numbers")
 def add_numbers():
-    #a = request.args.get('a', 0,type=str)
-    #TS=emojify()
+    a = request.args.get('a', 0,type=str)
+    TS=emojify()
     #print(TS)
-    #return jsonify(result=str(a)+TS)
-    a = request.args.get('a', type=str)
+    return jsonify(result=str(a)+TS)
+    #a = request.args.get('a', type=str)
     #b = request.args.get('b', 0, type=int)
-    return jsonify(result=str(a))
+    #return jsonify(result=str(a))
 
 @application.route("/db")
 def print_data():
