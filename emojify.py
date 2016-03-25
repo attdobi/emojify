@@ -34,8 +34,8 @@ def search(word):
     #return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
     
 def emojify():
-    #TS = file("/home/ubuntu/emojify/lyrics/TS.txt").read()
-    TS = file("lyrics/TS.txt").read()
+    TS = file("/home/ubuntu/emojify/lyrics/TS.txt").read()
+    #TS = file("lyrics/TS.txt").read()
     return TS
 
 if __name__ == "__main__":
