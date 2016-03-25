@@ -10,11 +10,12 @@
     font-family: Arial;
     }
     </style> 
-  <script type=text/javascript>
+ <script type=text/javascript>
     $(function() {
       $('a#calculate').bind('click', function() {
         $.getJSON('/_add_numbers', {
-          a: $('textarea[name="a"]').val(),
+          a: $('input[name="a"]').val(),
+          b: $('input[name="b"]').val()
         }, function(data) {
           $("#result").text(data.result);
         });
@@ -32,7 +33,7 @@
       <div>
       <p>
      <textarea name="a" rows="3" cols="30"> </textarea>
-     <a class="btn btn-lg btn-success" "javascript:void();" id="calculate" role="button">Emojify</a>
+     <a class="btn btn-lg btn-success" href="javascript:void();" id="calculate" role="button">Emojify</a>
       <p>
       <textarea id="result" rows="25" cols="100"></textarea>
       </form>
