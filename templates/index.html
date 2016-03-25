@@ -41,6 +41,22 @@
        value = "Dog"
       onkeypress="if (event.keyCode==13){make_graph()};"
       />
+      <label for="freq_select"
+          style="display: inline-block; width: 140px; text-align: right">
+        Frequency Filter =
+      </label>
+      <select id="freq_filter" onchange="update_url()">
+        <option value="off">All in Tweet</option>
+        <option value="on">Most Frequent in Tweet</option>
+      </select>
+      <label for="face_select"
+          style="display: inline-block; width: 140px; text-align: right">
+        Face Filter =
+      </label>
+      <select id="face_filter" onchange="update_url()">
+        <option value="off">Include Faces</option>
+        <option value="on">Remove Faces</option>
+      </select>
      </p>
     <div id="piechart"><svg style="width:600px;height:600px;"></svg></div>
     <script>
@@ -49,12 +65,16 @@
 // Update graph in response to inputs 
 //this updates continuously as text is entered
 //d3.select("#word").on("input", make_graph);
+ d3.select("#freq_filter").on("input", make_graph);
+ d3.select("#face_filter").on("input", make_graph);
 
 // Return url to recieve csv data with query filled in from input fields
 function update_url() {
-  return URL_BASE +"?word=" + document.getElementById("word").value;
+  return URL_BASE +"?word=" + document.getElementById("word").value +
+  			"&freq_filter=" + document.getElementById("freq_filter").value + 
+  			"&face_filter=" + document.getElementById("face_filter").value;
 }
-    
+   
 function make_graph() {
   url = update_url()
   
