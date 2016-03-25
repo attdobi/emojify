@@ -19,8 +19,7 @@ def add_numbers():
     print(TS)
     return jsonify(result=str(a)+TS)
 
-'''    
-@application.route("/db/")
+@application.route("/db")
 def print_data():
 	word = request.args.get('word')
 	xdata, ydata = filter_emoji_freq(word=word.lower())
@@ -33,7 +32,6 @@ def search(word):
     xdata, ydata = filter_emoji(word=word.title().lower())
     return '<br>'.join(str(row) for row in zip(xdata, ydata ))
     #return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
-'''   
 
 def emojify():
     TS = file("/home/ubuntu/emojify/lyrics/TS.txt").read()
