@@ -9,13 +9,12 @@ application = Flask(__name__)
 
 @application.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index_TS.html")
 #    #return "<h1 style='color:blue'>Hello There!</h1>"
 
 @application.route('/_add_numbers')
 def add_numbers():
     a = request.args.get('a', type=str)
-    b = request.args.get('b', 0, type=int)
     TS=emojify()
     print(TS)
     return jsonify(result=str(a)+TS)
@@ -35,8 +34,8 @@ def search(word):
     #return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
     
 def emojify():
-    TS = file("/home/ubuntu/emojify/lyrics/TS.txt").read()
-    #TS = file("lyrics/TS.txt").read()
+    #TS = file("/home/ubuntu/emojify/lyrics/TS.txt").read()
+    TS = file("lyrics/TS.txt").read()
     return TS
 
 if __name__ == "__main__":
