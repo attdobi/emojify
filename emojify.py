@@ -12,12 +12,15 @@ def index():
     return render_template("index_TS.html")
 #    #return "<h1 style='color:blue'>Hello There!</h1>"
 
-@application.route('/_add_numbers')
+@application.route("/_add_numbers")
 def add_numbers():
     #a = request.args.get('a', 0,type=str)
-    TS=emojify()
-    print(TS)
-    return jsonify(result=str(a)+TS)
+    #TS=emojify()
+    #print(TS)
+    #return jsonify(result=str(a)+TS)
+    a = request.args.get('a', 0, type=int)
+    b = request.args.get('b', 0, type=int)
+    return jsonify(result=a + b)
 
 @application.route("/db")
 def print_data():
