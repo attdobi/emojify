@@ -136,6 +136,9 @@ function make_graph() {
             d3.selectAll(".nv-legendWrap")
             .style({"font-size": "20px"});
             
+                        d3.select("#usg").transition().duration(2000).attr("style", function () {
+    return "-webkit-transform: perspective(800) scale(1) scale3d(1, 1, 2) rotate3d(1, 0, 0, 55deg) translate3d(0px, 198px, 0px);";
+});         
             
         });
     });
