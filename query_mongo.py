@@ -24,8 +24,9 @@ def filter_emoji(emj_codes_face,emj_codes_skin,word='dog',face_filter='off'):
 				if val[0] not in (emj_codes_face + emj_codes_skin):
 					S[val[0]]+=val[1]
 		else:
-			if val[0] not in  emj_codes_skin:
-				S[val[0]]+=val[1]
+			for val in tweet['emjText']:
+				if val[0] not in  emj_codes_skin:
+					S[val[0]]+=val[1]
 	df=pd.DataFrame([ (key,value) for key,value in S.items()], columns=('emoji','freq'))
 	xdata = df.sort_values('freq',ascending=0)['emoji'].values[:15] #top 15 frequency
 	ydata = df.sort_values('freq',ascending=0)['freq'].values[:15] #top 15 frequency
@@ -44,7 +45,7 @@ def filter_emoji_freq(emj_codes_face,emj_codes_skin,word='dog',face_filter='off'
 			if tweet['mostFreqEmoji'] not in (emj_codes_face + emj_codes_skin):
 				Sf[tweet['mostFreqEmoji']]+=tweet['mostFreqEmojiCount']
 		else:
-			if tweet['mostFreqEmoji'] not in  emj_codes_skin:
+			if tweet['mostFreqEmoji'] not in emj_codes_skin:
 				Sf[tweet['mostFreqEmoji']]+=tweet['mostFreqEmojiCount']
 	df=pd.DataFrame([ (key,value) for key,value in Sf.items()], columns=('emoji','freq'))
 	xdata = df.sort_values('freq',ascending=0)['emoji'].values[:15] #top 15 frequency

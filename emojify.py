@@ -11,7 +11,6 @@ emj_codes_skin=[code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']
 noise_index=range(69)
 emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in noise_index]
 
-
 application = Flask(__name__)
 
 @application.route("/")
@@ -35,9 +34,9 @@ def print_data():
 	freq_filter = request.args.get('freq_filter')
 	face_filter = request.args.get('face_filter')
 	if freq_filter=='on':
-		xdata, ydata = filter_emoji_freq(word=word.lower(),face_filter=face_filter,emj_codes_face=emj_codes_face)
+		xdata, ydata = filter_emoji_freq(word=word.lower(),face_filter=face_filter,emj_codes_face=emj_codes_face, emj_codes_skin=emj_codes_skin)
 	else:
-		xdata, ydata = filter_emoji(word=word.lower(),face_filter=face_filter,emj_codes_face=emj_codes_face)
+		xdata, ydata = filter_emoji(word=word.lower(),face_filter=face_filter,emj_codes_face=emj_codes_face,emj_codes_skin=emj_codes_skin)
 	#return JSenocde
 	return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
 
