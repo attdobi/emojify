@@ -13,11 +13,11 @@ body {
 }
 
 .tick {
-  width: 2px
+  width: 5px
 }
 
 .axis {
-  font: 20px sans-serif;
+  font: 50px sans-serif;
   font-weight: bold;
 }
 
@@ -28,3 +28,4 @@ body {
   stroke-width: 2;
   shape-rendering: crispEdges;
 }
+
