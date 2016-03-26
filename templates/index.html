@@ -38,7 +38,7 @@
     });
   </script>
   </head>
-  <body>
+  <body style="-webkit-text-size-adjust:none">
     <div class="container">
       <div class="header">
         <h3 class="text-muted">Themoji (the emoji thesaurus) 🦄</h3>
@@ -135,10 +135,6 @@ function make_graph() {
             //select legend
             d3.selectAll(".nv-legendWrap")
             .style({"font-size": "20px"});
-            
-                        d3.select("#usg").transition().duration(2000).attr("style", function () {
-    return "-webkit-transform: perspective(800) scale(1) scale3d(1, 1, 2) rotate3d(1, 0, 0, 55deg) translate3d(0px, 198px, 0px);";
-});         
             
         });
     });
