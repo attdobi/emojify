@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+  <title> The Emoji Thesaurus </title>
   <meta charset="utf-8" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.css" rel="stylesheet" />
+    <!<link href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.css" rel="stylesheet" />>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
@@ -31,31 +32,31 @@
   <body>
     <div class="container">
       <div class="header">
-        <h3 class="text-muted">Emoji Miner</h3>
+        <h3 class="text-muted">Themoji (the emoji thesaurus)</h3>
       </div>
       <hr/>
       <p>
     Enter word or phrase:
     <input type = "text"
        id = "word"
-       value = "Dog"
+       value = "Spring"
       onkeypress="if (event.keyCode==13){make_graph()};"
       />
-      <label for="freq_select"
-          style="display: inline-block; width: 140px; text-align: right">
-        Frequency Filter =
-      </label>
-      <select id="freq_filter" onchange="update_url()">
-        <option value="off">All in Tweet</option>
-        <option value="on">Most Frequent in Tweet</option>
-      </select>
-      <label for="face_select"
+    <label for="face_select"
           style="display: inline-block; width: 140px; text-align: right">
         Face Filter =
       </label>
       <select id="face_filter" onchange="update_url()">
         <option value="off">Include Faces</option>
         <option value="on">Remove Faces</option>
+      </select>
+    <label for="freq_select"
+          style="display: inline-block; width: 140px; text-align: right">
+        Frequency Filter =
+      </label>
+      <select id="freq_filter" onchange="update_url()">
+        <option value="off">All in Tweet</option>
+        <option value="on">Most Frequent in Tweet</option>
       </select>
      </p>
     <div id="piechart"><svg style="width:600px;height:600px;"></svg></div>

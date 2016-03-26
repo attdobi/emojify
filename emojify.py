@@ -7,6 +7,7 @@ from query_mongo import *
 
 #load emoji keys for cuts, only need to do once
 emoji_key = pd.read_excel('data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
+emj_codes_skin=[code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']) if ('FITZPATRICK' in name)]
 noise_index=range(69)
 emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in noise_index]
 
