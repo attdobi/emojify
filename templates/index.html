@@ -15,6 +15,9 @@
     font-size: 16pt;
     font-family: Arial;
     }
+    .nv-label text{
+    font-size:50px;
+    }
     </style> 
   <script type=text/javascript>
     $(function() {
@@ -119,15 +122,14 @@ function make_graph() {
         
             //increase fontsize
             d3.selectAll(".nv-label text")
-            .attr("text-anchor", "middle")
-            .style({"font-size": "50px"});
+            .attr("text-anchor", "middle");
+            //.style({"font-size": "50px"});
             //.attr('transform', 'scale(1.5) translate(-5,0)');
             
             //select legend
             d3.selectAll(".nv-legendWrap")
-            .style({"font-size": "50px"});
+            .style({"font-size": "20px"});
             
-            d3.selectAll(".nv-label text").style("font-size","50px")
             
         });
     });
