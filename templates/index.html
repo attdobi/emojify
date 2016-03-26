@@ -12,6 +12,9 @@
           rel="stylesheet">
    <style type="text/css">
     html {-webkit-text-size-adjust:100%}
+       #chart svg {
+  font-size: 50px;
+   }
     textarea {
     font-size: 16pt;
     font-family: Arial;
@@ -42,7 +45,7 @@
     });
   </script>
   </head>
-  <body -webkit-text-size-adjust: 100%;>
+  <body>
     <div class="container">
       <div class="header">
         <h3 class="text-muted">Themoji (the emoji thesaurus) 🦄</h3>
@@ -72,7 +75,7 @@
         <option value="on">Most Frequent in Tweet</option>
       </select>
      </p>
-     <div id="piechart"><svg style="width:550px;height:550px;font: normal 50px Impact;"></svg></div>
+     <div id="piechart"><svg style="width:575px;height:575px;font: normal 50px Impact;"></svg></div>
     <script>
     
     var URL_BASE = "http://52.33.224.12/db";
@@ -128,6 +131,7 @@ function make_graph() {
             .transition().duration(500)
             .attr('width', 600)
             .attr('height', 600)
+            .style({"font-size": "50px"})
             .call(chart);
         
             //increase fontsize
@@ -146,7 +150,6 @@ function make_graph() {
 make_graph();
 </script>
       
-      
       <hr/>
       <div>
       <p>
@@ -155,5 +158,6 @@ make_graph();
       <p>
       <textarea id="result" rows="8" cols="60"></textarea>
       </form>
+      </div>
   </body>
 </html>
