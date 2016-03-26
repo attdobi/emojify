@@ -1,9 +1,10 @@
 import datetime
-from pymongo import MongoClient
 import pandas as pd
-import numpy
+import numpy as np
 import collections
 
+#connect to Mongo client
+from pymongo import MongoClient
 client = MongoClient()
 db = client.emoji_db
 tweets = db.emoji_tweets
@@ -18,7 +19,7 @@ noise_index=range(69)
 emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in noise_index]
 
 #Functions here:
-def filter_emoji(word='dog',face_filter='off'):
+def filter_emoji(emj_codes_face,word='dog',face_filter='off'):
 	if face_filter=='on':
 		face_filter=True
 	else:
@@ -39,7 +40,7 @@ def filter_emoji(word='dog',face_filter='off'):
 	ydata = df.sort_values('freq',ascending=0)['freq'].values[:15] #top 15 frequency
 	return xdata, ydata
 
-def filter_emoji_freq(word='dog',face_filter='off'):
+def filter_emoji_freq(emj_codes_face,word='dog',face_filter='off'):
 	if face_filter=='on':
 		face_filter=True
 	else:

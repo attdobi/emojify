@@ -1,9 +1,15 @@
 #import os
 #base_dir=os.path.expanduser('~')
+from flask import Flask, render_template, request, request, jsonify
 import numpy as np
+import pandas as pd
 from query_mongo import *
 
-from flask import Flask, render_template, request, jsonify
+#load emoji keys for cuts, only need to do once
+emoji_key = pd.read_excel('data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
+noise_index=range(69)
+emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in noise_index]
+
 application = Flask(__name__)
 
 @application.route("/")
@@ -27,9 +33,9 @@ def print_data():
 	freq_filter = request.args.get('freq_filter')
 	face_filter = request.args.get('face_filter')
 	if freq_filter=='on':
-		xdata, ydata = filter_emoji_freq(word=word.lower(),face_filter=face_filter)
+		xdata, ydata = filter_emoji_freq(word=word.lower(),face_filter=face_filter,,emj_codes_face=emj_codes_face)
 	else:
-		xdata, ydata = filter_emoji(word=word.lower(),face_filter=face_filter)
+		xdata, ydata = filter_emoji(word=word.lower(),face_filter=face_filter,,emj_codes_face=emj_codes_face)
 	#return JSenocde
 	return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
 
