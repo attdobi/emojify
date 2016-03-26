@@ -59,7 +59,7 @@
         <option value="on">Most Frequent in Tweet</option>
       </select>
      </p>
-    <div id="piechart"><svg style="width:600px;height:600px;"></svg></div>
+    <div id="piechart"><svg style="width:600px;height:600px;font: normal 50px Impact;"></svg></div>
     <script>
     
     var URL_BASE = "http://52.33.224.12/db";
@@ -120,13 +120,15 @@ function make_graph() {
             //increase fontsize
             d3.selectAll(".nv-label text")
             .attr("text-anchor", "middle")
-            .attr("font-size", "50px")
             .style({"font-size": "50px"});
             //.attr('transform', 'scale(1.5) translate(-5,0)');
             
             //select legend
             d3.selectAll(".nv-legendWrap")
             .style({"font-size": "50px"});
+            
+            d3.selectAll(".nv-label text").style("font-size","50px")
+            
         });
     });
 }
