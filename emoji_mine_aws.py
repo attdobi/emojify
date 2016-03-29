@@ -133,6 +133,8 @@ def write_emoji_usage(tweet,has_emoji):
              "lang": tweet.lang,\
              "goe": tweet.geo,\
              "coordinates": tweet.coordinates,\
+             "time_zone": tweet.user.time_zone,\
+             "name":tweet.user.name, "user_name":tweet.user.screen_name,\
              "has_emoji":has_emoji}
     emoji_usage.insert_one(entry).inserted_id
         
@@ -185,6 +187,8 @@ def mine_for_emojis(tweet):
            "lang": tweet.lang,\
            "goe": tweet.geo,\
            "coordinates": tweet.coordinates,\
+           "time_zone": tweet.user.time_zone,\
+           "name":tweet.user.name, "user_name":tweet.user.screen_name,\
            "emjText": emjText, "emjCount": emjCount, "emjTypes": emjTypes, "mostFreqEmoji": mostFreqEmoji,\
            "mostFreqEmojiCount": mostFreqEmojiCount, "prev_word": prev_word, "next_word": next_word,\
            "mostFreqWord": mostFreqWord, "mostFreqWordCount": mostFreqWordCount,\
