@@ -13,8 +13,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
    <style type="text/css">
      html {
-      -ms-text-size-adjust: 100%; /* 2 */
-      -webkit-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%; /* 2 */
     }
   #chart svg {
   font-size: 50px;
@@ -33,8 +33,8 @@
     -webkit-text-size-adjust:100%;
     }
     .nv-label text{
-    font-family: 'AppleColorEmoji';
     font-size: 50px;
+    -webkit-text-size-adjust:100%;
     }
     </style> 
   <script type=text/javascript>
@@ -141,8 +141,8 @@ function make_graph() {
         
             //increase fontsize
             d3.selectAll(".nv-label text")
-            .attr("text-anchor", "middle")
-            .style({"-webkit-transform": "scale(5)"});
+            .attr("text-anchor", "middle");
+            //.style({"-webkit-transform": "scale(5)"});
             //.style({"font-size": "50px"});
             //.attr('transform', 'scale(1.5) translate(-5,0)');
             
