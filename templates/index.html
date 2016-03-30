@@ -11,7 +11,6 @@
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
           rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <span style="-webkit-transform: scale(5); position: absolute;">&#x1f47f;</span>
    <style type="text/css">
      html {
   -webkit-text-size-adjust: 100%;
@@ -142,7 +141,8 @@ function make_graph() {
         
             //increase fontsize
             d3.selectAll(".nv-label text")
-            .attr("text-anchor", "middle");
+            .attr("text-anchor", "middle")
+            .style({"-webkit-transform": "scale(2)"});
             //.style({"font-size": "50px"});
             //.attr('transform', 'scale(1.5) translate(-5,0)');
             
