@@ -12,7 +12,7 @@
           rel="stylesheet">
    <style type="text/css">
     html {-webkit-text-size-adjust:100%}
-       #chart svg {
+  #chart svg {
   font-size: 50px;
    }
     textarea {
@@ -81,7 +81,7 @@
     var URL_BASE = "http://52.38.112.55/db";
 // Update graph in response to inputs 
 //this updates continuously as text is entered
-//d3.select("#word").on("input", make_graph);
+ //d3.select("#word").on("input", make_graph);
  d3.select("#freq_filter").on("input", make_graph);
  d3.select("#face_filter").on("input", make_graph);
 
@@ -136,7 +136,8 @@ function make_graph() {
         
             //increase fontsize
             d3.selectAll(".nv-label text")
-            .attr("text-anchor", "middle");
+            .attr("text-anchor", "middle")
+            .style=("-webkit-transform", "scale(5)");
             //.style({"font-size": "50px"});
             //.attr('transform', 'scale(1.5) translate(-5,0)');
             
