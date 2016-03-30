@@ -13,7 +13,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
    <style type="text/css">
      html {
-  -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%; /* 2 */
+      -webkit-text-size-adjust: 100%;
     }
   #chart svg {
   font-size: 50px;
@@ -136,13 +137,12 @@ function make_graph() {
             .attr('width', 600)
             .attr('height', 600)
             .style({"font-size": "50px"})
-            //.style=("-webkit-transform", "scale(5)")
             .call(chart);
         
             //increase fontsize
             d3.selectAll(".nv-label text")
-            .attr("text-anchor", "middle")
-            .style({"-webkit-transform": "scale(10)"});
+            .attr("text-anchor", "middle");
+            .style({"-webkit-transform": "scale(2)"});
             //.style({"font-size": "50px"});
             //.attr('transform', 'scale(1.5) translate(-5,0)');
             
