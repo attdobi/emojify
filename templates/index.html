@@ -131,13 +131,14 @@ function make_graph() {
             .transition().duration(500)
             .attr('width', 600)
             .attr('height', 600)
-            .style({"font-size": "50px"})
+            .style({"font-size": "50px"},{"-webkit-transform":"scale(5)"})
+            //.style=("-webkit-transform", "scale(5)")
             .call(chart);
         
             //increase fontsize
             d3.selectAll(".nv-label text")
             .attr("text-anchor", "middle")
-            .style=("-webkit-transform", "scale(5)");
+            .style=({"-webkit-transform":"scale(5)"});
             //.style({"font-size": "50px"});
             //.attr('transform', 'scale(1.5) translate(-5,0)');
             
