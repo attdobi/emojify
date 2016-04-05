@@ -25,6 +25,9 @@ def index():
 @application.route("/emojify")
 def emojify():
     return render_template("emojify.html")
+@application.route("/emoji_art")
+def emoji_art():
+    return render_template("emoji_art.html")
 
 @application.route('/_getArt')
 def getArt():
