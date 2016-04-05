@@ -37,12 +37,12 @@ def getArt():
 def add_numbers():
     a = request.args.get('a', 0,type=str)
     #TS=emojify
-    return jsonify(result=emojifyText(a,emoji_dict=emjDict))
+    return jsonify(result=emojifyText(a,emj_codes_face,emj_codes_skin,emoji_dict=emjDict))
     
 @application.route('/_song')
 def song():
     a = request.args.get('a', 0,type=str)
-    TS=emojifyLyrics(a,emoji_dict=emjDict)
+    TS=emojifyLyrics(a,emj_codes_face,emj_codes_skin,emoji_dict=emjDict)
     return jsonify(result=TS)
 
 @application.route("/db")

@@ -4,6 +4,7 @@ import numpy as np
 from nltk.stem.snowball import SnowballStemmer
 stemmer = SnowballStemmer('english')
 from string import punctuation
+from query_mongo import *
 
 import re, collections
 
@@ -37,7 +38,19 @@ def lookup(word,emoji_dict):
         return emoji_dict[word]
     except KeyError:
         return ""
-    
+
+def lookup_and_search(word,emj_codes_face,emj_codes_skin,emoji_dict,lyric):
+    if word in emoji_dict:
+        return emoji_dict[word]
+    elif lyric==False:
+        xdata,ydata=filter_emoji(emj_codes_face, emj_codes_skin, word=word,face_filter='on')
+        if len(xdata)==0:
+            return ""
+        else:
+            return xdata[0] #most frequent
+    else:
+        return ""
+        
 def buildDict():
 	emoji_key = pd.read_excel('data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
 	emoji_TS = pd.read_excel('data/emoji_TS.xlsx', encoding='utf-8', skiprows=1)
@@ -52,17 +65,17 @@ def buildDict():
 			emoji_dict[_u(stem_word)]=val
 	return emoji_dict
 	
-def emoji_fy(text,emoji_dict=buildDict()):
+def emoji_fy(text,emj_codes_face,emj_codes_skin,emoji_dict=buildDict(),lyric=False):
     text=_u(text) #ensure unicode encoding
     #print(emoji.emojize(''.join([lookup(word) for word in words(text)])))
     #print(''.join([lookup(word) for word in words(text)])+'\n'+text)
-    return text+'\n'+''.join([lookup(word,emoji_dict=emoji_dict) for word in words(text)])
+    return text+'\n'+''.join([lookup_and_search(word,emj_codes_face,emj_codes_skin,emoji_dict=emoji_dict,lyric=lyric) for word in words(text)])
     #return [lookup(word) for word in words(text)]
     
-def emojifyLyrics(a,emoji_dict=buildDict()):
+def emojifyLyrics(a,emj_codes_face,emj_codes_skin,emoji_dict=buildDict()):
 	song_list=dict({"Shake it Off (Taylor Swift)":"ShakeItOff_TS.txt","Boyz n The Hood (Eazy-E)":"Boyz-n-the-Hood.txt","Let it Snow (Frozen)":"Let-It_Go.txt","Lollipop (Lil Wayne)":"Lollipop-LW.txt"})
 	TS = file("data/lyrics/"+song_list[a]).read()
-	return('\n'.join([emoji_fy(line,emoji_dict) for line in TS.split('\n')]).encode('utf-8'))
+	return('\n'.join([emoji_fy(line,emj_codes_face,emj_codes_skin,emoji_dict,lyric=True) for line in TS.split('\n')]).encode('utf-8'))
 	
-def emojifyText(a,emoji_dict=buildDict()):
-	return('\n'.join([emoji_fy(line,emoji_dict) for line in a.split('\n')]).encode('utf-8'))
+def emojifyText(a,emj_codes_face,emj_codes_skin,emoji_dict=buildDict()):
+	return('\n'.join([emoji_fy(line,emj_codes_face,emj_codes_skin,emoji_dict) for line in a.split('\n')]).encode('utf-8'))
