@@ -1,7 +1,7 @@
 import datetime
 import pandas as pd
 import numpy as np
-import collections
+import collections, random
 
 #connect to Mongo client
 from pymongo import MongoClient
@@ -51,3 +51,10 @@ def filter_emoji_freq(emj_codes_face,emj_codes_skin,word='dog',face_filter='off'
 	xdata = df.sort_values('freq',ascending=0)['emoji'].values[:15] #top 15 frequency
 	ydata = df.sort_values('freq',ascending=0)['freq'].values[:15] #top 15 frequency
 	return xdata, ydata
+	
+def sample_art():
+	art=[]
+	for tweet in tweets.find({'emjCount': {"$gt": 30} ,'emjTypes': {"$gt": 0} } ):
+		art.append(tweet['text'])
+	random.shuffle(art)
+	return '\n\n'.join(art[:20])

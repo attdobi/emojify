@@ -25,6 +25,10 @@ def index():
 @application.route("/emojify")
 def emojify():
     return render_template("emojify.html")
+
+@application.route('/_getArt')
+def getArt():
+	return jsonify(result=sample_art())
     
 @application.route('/_add_numbers')
 def add_numbers():

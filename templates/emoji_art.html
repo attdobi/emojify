@@ -146,24 +146,15 @@ select {
 </style> 
   <script type=text/javascript>
     $(function() {
-      $('a#calculate').bind('click', function() {
-        $.getJSON('/_add_numbers', {
-          a: $('textarea[name="a"]').val()
-        }, function(data) {
-          $("#result").text(data.result);
-        });
-        return false;
-      });
-    $('#selection').click(function() {
-        $.getJSON('/_song', {
-          a: $('select[name="sel"]').val()
+      $('a#getArt').bind('click', function() {
+        $.getJSON('/_getArt', {
+          a: 1
         }, function(data) {
           $("#result").text(data.result);
         });
         return false;
       });
     });
-    
   </script>
   </head>
   <body>
@@ -174,23 +165,14 @@ select {
   <li><a href="/emojify">Emojify</a></li>
   <li><a href="/emoji_art">Emoji Art</a></li>
 </ul>
-        <h3 class="text-muted">Emojify 🦄</h3>
+        <h3 class="text-muted">Emoji Art 🦄🦄🦄</h3>
       </div>
       <hr/>
 <h6> 
-     <textarea name="a" rows="3" cols="30"> </textarea>
-     <a class="btn btn-lg btn-success" "javascript:void();" id="calculate" role="button">Emojify</a>
-<div id="mainselection">
-    <select name="sel" "javascript:void();" id="selection">
-    <option>Shake it Off (Taylor Swift)</option>
-    <option>Boyz n The Hood (Eazy-E)</option>
-    <option>Let it Snow (Frozen)</option>
-    <option>Lollipop (Lil Wayne)</option>
-    </select>
-</div>
+     <a class="btn btn-lg btn-success" "javascript:void();" id="getArt" role="button">Sample Art</a>
 </h6>
       <p>
-      <textarea id="result" rows="30" cols="60"></textarea>
+      <textarea id="result" rows="30" cols="70"></textarea>
       </form>
       </div>
   </body>
