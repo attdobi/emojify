@@ -4,12 +4,17 @@ from flask import Flask, render_template, request, request, jsonify
 import numpy as np
 import pandas as pd
 from query_mongo import *
+from emoji_lib import *
+
+#build emoji dictionary
+emjDict=buildDict()
+#print(emjDict.keys())
 
 #load emoji keys for cuts, only need to do once
 emoji_key = pd.read_excel('data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
 emj_codes_skin=[code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']) if ('FITZPATRICK' in name)]
-noise_index=range(69)
-emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in noise_index]
+face_index=range(69)
+emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
 
 application = Flask(__name__)
 
@@ -17,16 +22,21 @@ application = Flask(__name__)
 def index():
     return render_template("index.html")
 #    #return "<h1 style='color:blue'>Hello There!</h1>"
-
-@application.route("/_add_numbers")
+@application.route("/emojify")
+def emojify():
+    return render_template("emojify.html")
+    
+@application.route('/_add_numbers')
 def add_numbers():
-    a = request.args.get('a',type=str)
-    TS=emojify()
-    #print(TS)
-    return jsonify(result=str(a)+TS)
-    #a = request.args.get('a', type=str)
-    #b = request.args.get('b', 0, type=int)
-    #return jsonify(result=str(a))
+    a = request.args.get('a', 0,type=str)
+    #TS=emojify
+    return jsonify(result=emojifyText(a,emoji_dict=emjDict))
+    
+@application.route('/_song')
+def song():
+    a = request.args.get('a', 0,type=str)
+    TS=emojifyLyrics(a,emoji_dict=emjDict)
+    return jsonify(result=TS)
 
 @application.route("/db")
 def print_data():
@@ -40,17 +50,16 @@ def print_data():
 	#return JSenocde
 	return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
 
-
 @application.route("/word/<word>")
 def search(word):
     print(word.title().lower())
-    xdata, ydata = filter_emoji(word=word.title().lower())
-    #return '<br>'.join(str(row) for row in zip(xdata, ydata ))
-    return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
-
+    xdata, ydata = filter_emoji(emoji_key, word=word.title().lower())
+    return '<br>'.join(str(row) for row in zip(xdata, ydata ))
+    #return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
+    
 def emojify():
-    #TS = open("/home/ubuntu/emojify/lyrics/TS.txt").read()
-    TS = open("lyrics/TS.txt").read()
+    #TS = file("/home/ubuntu/emojify/lyrics/TS.txt").read()
+    TS = file("lyrics/TS.txt").read()
     return TS
 
 if __name__ == "__main__":
