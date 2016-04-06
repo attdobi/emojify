@@ -57,4 +57,4 @@ def sample_art():
 	for tweet in tweets.find({'emjCount': {"$gt": 30} ,'emjTypes': {"$gt": 0} } ):
 		art.append(tweet['text'])
 	random.shuffle(art)
-	return '\n\n'.join(art[:20])
+	return '\n\n'.join(art[:40])
