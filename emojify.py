@@ -3,18 +3,10 @@
 from flask import Flask, render_template, request, request, jsonify
 import numpy as np
 import pandas as pd
-from query_mongo import *
-from emoji_lib import *
+from emoji_class import *
 
-#build emoji dictionary
-emjDict=buildDict()
-#print(emjDict.keys())
-
-#load emoji keys for cuts, only need to do once
-emoji_key = pd.read_excel('data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
-emj_codes_skin=[code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']) if ('FITZPATRICK' in name)]
-face_index=range(69)
-emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
+#initialize emoji class
+Emoji=emoji_lib()
 
 application = Flask(__name__)
 
@@ -31,18 +23,18 @@ def emoji_art():
 
 @application.route('/_getArt')
 def getArt():
-	return jsonify(result=sample_art())
-    
+	return jsonify(result=Emoji.sample_art())
+
 @application.route('/_add_numbers')
 def add_numbers():
     a = request.args.get('a', 0,type=str)
     #TS=emojify
-    return jsonify(result=emojifyText(a,emj_codes_face,emj_codes_skin,emoji_dict=emjDict))
+    return jsonify(result=Emoji.emojifyText(a))
     
 @application.route('/_song')
 def song():
     a = request.args.get('a', 0,type=str)
-    TS=emojifyLyrics(a,emj_codes_face,emj_codes_skin,emoji_dict=emjDict)
+    TS=Emoji.emojifyLyrics(a)
     return jsonify(result=TS)
 
 @application.route("/db")
@@ -51,9 +43,9 @@ def print_data():
 	freq_filter = request.args.get('freq_filter')
 	face_filter = request.args.get('face_filter')
 	if freq_filter=='on':
-		xdata, ydata = filter_emoji_freq(word=word.lower(),face_filter=face_filter,emj_codes_face=emj_codes_face, emj_codes_skin=emj_codes_skin)
+		xdata, ydata = Emoji.filter_emoji_freq(word=word.lower(),face_filter=face_filter)
 	else:
-		xdata, ydata = filter_emoji(word=word.lower(),face_filter=face_filter,emj_codes_face=emj_codes_face,emj_codes_skin=emj_codes_skin)
+		xdata, ydata = Emoji.filter_emoji(word=word.lower(),face_filter=face_filter)
 	#return JSenocde
 	return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
 
