@@ -29,7 +29,7 @@ noise_index=range(69)
 emj_codes_noise=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in noise_index]
 
 #Not needed in Python 3
-#_u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
+_u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
 
 #read emoji codes:
 emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
@@ -106,6 +106,7 @@ def emoji_split_all(text):
             if (len(re.findall(emcode,line))) > 0:
                 line=line.replace(emcode,' '+emcode+' ')
         for skin in emj_codes_skin:
+            line=_u(line)
             line=line.replace(' '+skin,skin+' ') #put the skin codes back into place but add a space afterwards
         lines.append(' '.join(line.split()))
     return '\n'.join(lines)
@@ -115,10 +116,12 @@ def emoji_split(text):
     Remove double spaces. Keep \n'''
     lines=[]
     for line in text.split('\n'):
+        line=_u(line)
         for emcode in emj_codes:
             if (len(re.findall(emcode,line))) > 0:
                 line=line.replace(emcode,'^'+emcode+'^')
         for skin in emj_codes_skin:
+            line=_u(line)
             line=line.replace('^'+skin,skin+'^') #put the skin codes back into place but add a space afterwards
         line=line.replace('^^','')
         line=line.replace('^',' ')
@@ -132,6 +135,7 @@ def emoji_split_line(line):
         if (len(re.findall(emcode,line))) > 0:
             line=line.replace(emcode,' '+emcode+' ')
     for skin in emj_codes_skin:
+        line=_u(line)
         line=line.replace(' '+skin,skin+' ') #put the skin codes back into place but add a space afterwards
     return ' '.join(line.split())
 
