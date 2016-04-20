@@ -11,7 +11,7 @@ db = client.emoji_db
 tweets = db.emoji_tweets
 
 #connect to postgrSQL
-conn = psycopg2.connect("host=host=52.38.112.55 port=5432 dbname=emoji_db user=postgres password=darkmatter")
+conn = psycopg2.connect("host=52.38.112.55 port=5432 dbname=emoji_db user=postgres password=darkmatter")
 cur = conn.cursor()
     
 #set up parallel cores:, we will use 3
