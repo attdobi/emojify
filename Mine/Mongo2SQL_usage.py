@@ -320,7 +320,7 @@ def mine_tweets(tweet,Mongo=False):
 	#print(tweet.text)
 	if Mongo:
 		tweet_id,date,created_at,text,has_emoji,retweet_count,favorite_count,lang,geo,coordinates,\
-    time_zone,name,user_name = getMongoTweet(tweet)
+	time_zone,name,user_name = getMongoTweet(tweet)
 		dumpIntoSQL(date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
 		has_emoji_SQL(tweet_id, has_emoji)
 	else:
