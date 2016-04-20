@@ -5,6 +5,7 @@ from nltk.stem.snowball import SnowballStemmer
 from string import punctuation
 import re, collections, random, datetime
 from pymongo import MongoClient
+
 #mongo query limit is currently set to 1000
 
 # guarantee unicode string

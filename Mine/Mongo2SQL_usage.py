@@ -204,7 +204,7 @@ def getMongoTweet(tweet):
     except KeyError:
         user_name=''
     
-    return tweet_id,date,created_at,original_text,has_emoji,retweet_count,favorite_count,lang,geo,coordinates,\
+    return tweet_id,date,created_at,original_text,retweet_count,favorite_count,lang,geo,coordinates,\
     time_zone,name,user_name
     
 #class MineEmojis:    
@@ -312,7 +312,7 @@ def analyze_tweet_emojis(SQL_return,Mongo=False):
     emojistrCount,emojistrLen,emojistrTypes,emojistr_prev_word,emojistr_next_word,emojistr_prev_sentence,\
     emojistr_next_sentence,emojiPatternLabel,emojiPatternCount,emojiPatternLen,emojiPatternTypes)
     
-    if ~Mongo:
+    if not Mongo:
         has_emoji_SQL(tweet_id, has_emoji)
     
 #class MineEmojis:    
