@@ -5,6 +5,7 @@ from nltk.stem.snowball import SnowballStemmer
 from string import punctuation
 import re, collections, random, datetime
 from pymongo import MongoClient
+#mongo query limit is currently set to 1000
 
 # guarantee unicode string
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
@@ -32,7 +33,7 @@ class emoji_lib:
 		else:
 			face_filter=False
 		S= collections.defaultdict(lambda:0)
-		for tweet in self.tweets.find({'text':{"$regex": word}, 'emjTypes':{'$gt':0}, 'emjCount':{'$gt':0} } ): 
+		for tweet in self.tweets.find({'text':{"$regex": word}, 'emjTypes':{'$gt':0}, 'emjCount':{'$gt':0} } ).limit(1000): 
 			if face_filter:
 				for val in tweet['emjText']:
 					if val[0] not in (self.emj_codes_face + self.emj_codes_skin):
@@ -53,7 +54,7 @@ class emoji_lib:
 			face_filter=False
 			
 		Sf=collections.defaultdict(lambda:0)
-		for tweet in self.tweets.find({'text':{"$regex": word}, 'emjTypes':{'$gt':0}, 'emjCount':{'$gt':0} } ): 
+		for tweet in self.tweets.find({'text':{"$regex": word}, 'emjTypes':{'$gt':0}, 'emjCount':{'$gt':0} } ).limit(1000): 
 			#print(tweet['mostFreqEmoji']) #print the text
 			if face_filter:
 				if tweet['mostFreqEmoji'] not in (self.emj_codes_face + self.emj_codes_skin):
