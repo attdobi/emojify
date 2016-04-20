@@ -13,10 +13,10 @@ from pymongo import MongoClient
 #connect to Mongo
 client = MongoClient()
 db = client.emoji_db
-tweets = db.emoji_tweets
+tweets = db.emoji_usage #connect to emoji_usage db
 
 #connect to postgrSQL
-conn = psycopg2.connect("host=localhost port=5432 dbname=emoji_db user=postgres password=darkmatter")
+conn = psycopg2.connect("host=localhost dbname=emoji_db user=postgres password=darkmatter")
 cur = conn.cursor()
 
 #read emoji codes:
@@ -178,7 +178,14 @@ def getMongoTweet(tweet):
     tweet_id = 0
     date=tweet['date']
     created_at=tweet['created_at']
-    original_text=tweet['text']
+    try:
+        original_text=tweet['text']
+    except KeyError:
+        original_text=''
+    try:
+        has_emoji=tweet['has_emoji']
+    except KeyError:
+        has_emoji=False
     retweet_count=tweet['retweet_count']
     favorite_count=tweet['favorite_count']
     lang=tweet['lang']
@@ -197,7 +204,7 @@ def getMongoTweet(tweet):
     except KeyError:
         user_name=''
     
-    return tweet_id,date,created_at,original_text,retweet_count,favorite_count,lang,geo,coordinates,\
+    return tweet_id,date,created_at,original_text,has_emoji,retweet_count,favorite_count,lang,geo,coordinates,\
     time_zone,name,user_name
     
 #class MineEmojis:    
@@ -308,22 +315,28 @@ def analyze_tweet_emojis(SQL_return,Mongo=False):
         has_emoji_SQL(tweet_id, has_emoji)
     
 #class MineEmojis:    
-def mine_tweets(tweet):
-    #print(tweet.text)
-    has_emoji=True
-    #tweet data:
-    date= datetime.datetime.utcnow()
-    created_at = tweet.created_at
-    text = tweet.text
-    retweet_count = tweet.retweet_count
-    favorite_count = tweet.favorite_count
-    lang=checkNone(tweet.lang)
-    geo = checkNoneJSON(tweet.geo)
-    time_zone = checkNone(tweet.user.time_zone)
-    coordinates = checkNoneJSON(tweet.coordinates)
-    name = checkNone(tweet.user.name)
-    user_name = checkNone(tweet.user.screen_name)
-    dumpIntoSQL(date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
+def mine_tweets(tweet,Mongo=False):
+	#print(tweet.text)
+	if Mongo:
+		tweet_id,date,created_at,text,has_emoji,retweet_count,favorite_count,lang,geo,coordinates,\
+    time_zone,name,user_name = getMongoTweet(tweet)
+		dumpIntoSQL(date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
+		has_emoji_SQL(tweet_id, has_emoji)
+	else:
+		getMongoTweet(tweet)
+		#tweet data:
+		date= datetime.datetime.utcnow()
+		created_at = tweet.created_at
+		text = tweet.text
+		retweet_count = tweet.retweet_count
+		favorite_count = tweet.favorite_count
+		lang=checkNone(tweet.lang)
+		geo = checkNoneJSON(tweet.geo)
+		time_zone = checkNone(tweet.user.time_zone)
+		coordinates = checkNoneJSON(tweet.coordinates)
+		name = checkNone(tweet.user.name)
+		user_name = checkNone(tweet.user.screen_name)
+		dumpIntoSQL(date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
 
 def dumpIntoSQL(date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name):
     cur.execute("INSERT INTO tweet_dump (\
@@ -463,8 +476,8 @@ def insertIntoSQL(tweet_id, date,created_at,text,retweet_count,favorite_count,la
 if __name__ == "__main__":
 	try:
 		while True:
-			for tweet in tweets.find(no_cursor_timeout=True): #prevent cursor timeout
-				analyze_tweet_emojis(tweet,Mongo=True)
+			for tweet in tweets.find(no_cursor_timeout=True):
+				 mine_tweets(tweet,Mongo=True)
 	except KeyboardInterrupt:
 		pass
 
