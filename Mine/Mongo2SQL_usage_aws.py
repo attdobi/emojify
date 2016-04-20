@@ -476,6 +476,6 @@ def insertIntoSQL(tweet_id, date,created_at,text,retweet_count,favorite_count,la
     conn.commit() #submit change to db
     
 if __name__ == "__main__":
-	for tweet in tweets.find(no_cursor_timeout=True)[1867199:]:
+	for tweet in tweets.find(no_cursor_timeout=True)[2252863:]:
 		mine_tweets(tweet,Mongo=True)
 

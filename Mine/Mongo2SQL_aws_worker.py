@@ -29,7 +29,7 @@ else:
 #core numbers range from 0,1,2
 
 if __name__ == "__main__":
-	for ii,tweet in enumerate(tweets.find(no_cursor_timeout=True)[47369:]): #prevent cursor timeout
+	for ii,tweet in enumerate(tweets.find(no_cursor_timeout=True)): #prevent cursor timeout
 		if (ii%cores==core_number):
 			analyze_tweet_emojis(conn,cur,tweet,Mongo=True)
 
