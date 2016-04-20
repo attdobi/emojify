@@ -113,31 +113,38 @@ def checkNoneJSON(val):
 	return json.dumps(val) if val else '{}'
 
 def getMongoTweet(tweet):
-	#tweet data:
-	tweet_id = 0
-	date=tweet['date']
-	created_at=tweet['created_at']
-	original_text=tweet['text']
-	retweet_count=tweet['retweet_count']
-	favorite_count=tweet['favorite_count']
-	lang=tweet['lang']
-	geo=checkNoneJSON(tweet['goe'])
-	coordinates=checkNoneJSON(tweet['coordinates'])
-	try:
-		time_zone=tweet['time_zone']
-	except KeyError:
-		time_zone=''
-	try:
-		name=tweet['name']
-	except KeyError:
-		name=''
-	try:
-		user_name=tweet['user_name']
-	except KeyError:
-		user_name=''
-
-	return tweet_id,date,created_at,original_text,retweet_count,favorite_count,lang,geo,coordinates,\
-	time_zone,name,user_name
+    #tweet data:
+    tweet_id = 0
+    date=tweet['date']
+    created_at=tweet['created_at']
+    try:
+        original_text=tweet['text']
+    except KeyError:
+        original_text=''
+    try:
+        has_emoji=tweet['has_emoji']
+    except KeyError:
+        has_emoji=False
+    retweet_count=tweet['retweet_count']
+    favorite_count=tweet['favorite_count']
+    lang=tweet['lang']
+    geo=checkNoneJSON(tweet['goe'])
+    coordinates=checkNoneJSON(tweet['coordinates'])
+    try:
+        time_zone=tweet['time_zone']
+    except KeyError:
+        time_zone=''
+    try:
+        name=tweet['name']
+    except KeyError:
+        name=''
+    try:
+        user_name=tweet['user_name']
+    except KeyError:
+        user_name=''
+    
+    return tweet_id,date,created_at,original_text,has_emoji,retweet_count,favorite_count,lang,geo,coordinates,\
+    time_zone,name,user_name
 
 
 def analyze_tweet_emojis(conn,cur,SQL_return,Mongo=False):
@@ -251,7 +258,7 @@ def mine_tweets(conn,cur,tweet,Mongo=False):
 	#print(tweet.text)
 	if Mongo:
 		tweet_id,date,created_at,text,has_emoji,retweet_count,favorite_count,lang,geo,coordinates,\
-	time_zone,name,user_name = getMongoTweet(tweet)
+		time_zone,name,user_name = getMongoTweet(tweet)
 		dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
 		has_emoji_SQL(conn,cur,tweet_id, has_emoji)
 	else:
