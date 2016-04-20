@@ -152,8 +152,8 @@ def analyze_tweet_emojis(conn,cur,SQL_return,Mongo=False):
 	has_emoji=False
 
 	if Mongo:
-        tweet_id,date,created_at,original_text,has_emoji,retweet_count,favorite_count,lang,geo,coordinates,\
-    	time_zone,name,user_name = getMongoTweet(SQL_return)
+		tweet_id,date,created_at,original_text,has_emoji,retweet_count,favorite_count,lang,geo,coordinates,\
+		time_zone,name,user_name = getMongoTweet(SQL_return)
 	else:
 		tweet_id = SQL_return[0]
 		date=SQL_return[1]
