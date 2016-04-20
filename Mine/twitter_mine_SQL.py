@@ -424,14 +424,9 @@ class StdOutListener(StreamListener):
         print(status)
 		
 if __name__ == "__main__":
-	try:
-		while True:
-			l=StdOutListener()
-			auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-			auth.set_access_token(OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
-			api = tweepy.API(auth)
-			myStream = tweepy.Stream(auth = api.auth, listener=l)
-			myStream.sample()
-	except KeyboardInterrupt:
-		pass
-
+	l=StdOutListener()
+	auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+	auth.set_access_token(OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+	api = tweepy.API(auth)
+	myStream = tweepy.Stream(auth = api.auth, listener=l)
+	myStream.sample()

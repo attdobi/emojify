@@ -25,8 +25,8 @@ emj_codes_skin=[code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']
 emj_codes=[code for code in emoji_key['Unicode'] if code!="Browser" \
            if (code not in emj_codes_skin) if sum([c=="*" for c in code])==0]
 #remove common face emojis
-noise_index=range(69)
-emj_codes_noise=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in noise_index]
+face_index=range(69)
+emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
 
 #Not needed in Python 3
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
@@ -305,7 +305,7 @@ def analyze_tweet_emojis(SQL_return,Mongo=False):
             emojiSkinTypes=len(emojiSkinCount)
         
         insertIntoSQL(tweet_id, date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name,\
-    emojiLabel,emojiCount,emojiCountSum,emojiTypes,prev_word,next_word,prev_sentence,next_sentence,mostFreqWord,\
+    emojiLabel,emojiLabelFaceFilter,emojiCount,emojiCountSum,emojiTypes,prev_word,next_word,prev_sentence,next_sentence,mostFreqWord,\
     mostFreqWordCount,newlineCount,emojiSkinLabel,emojiSkinCount,emojiSkinCountSum,emojiSkinTypes,emojistrLabel,\
     emojistrCount,emojistrLen,emojistrTypes,emojistr_prev_word,emojistr_next_word,emojistr_prev_sentence,\
     emojistr_next_sentence,emojiPatternLabel,emojiPatternCount,emojiPatternLen,emojiPatternTypes)
@@ -382,7 +382,7 @@ def has_emoji_SQL(tweet_id, has_emoji):
     conn.commit() #submit change to db
     
 def insertIntoSQL(tweet_id, date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name,\
-    emojiLabel,emojiCount,emojiCountSum,emojiTypes,prev_word,next_word,prev_sentence,next_sentence,mostFreqWord,\
+    emojiLabel,emojiLabelFaceFilter,emojiCount,emojiCountSum,emojiTypes,prev_word,next_word,prev_sentence,next_sentence,mostFreqWord,\
     mostFreqWordCount,newlineCount,emojiSkinLabel,emojiSkinCount,emojiSkinCountSum,emojiSkinTypes,emojistrLabel,\
     emojistrCount,emojistrLen,emojistrTypes,emojistr_prev_word,emojistr_next_word,emojistr_prev_sentence,\
     emojistr_next_sentence,emojiPatternLabel,emojiPatternCount,emojiPatternLen,emojiPatternTypes):
@@ -400,6 +400,7 @@ def insertIntoSQL(tweet_id, date,created_at,text,retweet_count,favorite_count,la
     name,\
     user_name,\
     emojiLabel,\
+    emojiLabelFaceFilter,\
     emojiCount,\
     emojiCountSum,\
     emojiTypes,\
@@ -428,7 +429,7 @@ def insertIntoSQL(tweet_id, date,created_at,text,retweet_count,favorite_count,la
     emojiPatternTypes\
     )\
     VALUES (\
-    %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\
+    %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\
     )",(\
     tweet_id,\
     date,\
@@ -443,6 +444,7 @@ def insertIntoSQL(tweet_id, date,created_at,text,retweet_count,favorite_count,la
     name,\
     user_name,\
     list(emojiLabel),\
+    emojiLabelFaceFilter.tolist(),\
     list(emojiCount),\
     emojiCountSum,\
     emojiTypes,\
@@ -473,10 +475,6 @@ def insertIntoSQL(tweet_id, date,created_at,text,retweet_count,favorite_count,la
     conn.commit() #submit change to db
     
 if __name__ == "__main__":
-	try:
-		while True:
-			for tweet in tweets.find(no_cursor_timeout=True):
-				 mine_tweets(tweet,Mongo=True)
-	except KeyboardInterrupt:
-		pass
+	for tweet in tweets.find(no_cursor_timeout=True):
+		mine_tweets(tweet,Mongo=True)
 
