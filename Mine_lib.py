@@ -28,8 +28,8 @@ emj_codes_skin=[code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']
 emj_codes=[code for code in emoji_key['Unicode'] if code!="Browser" \
            if (code not in emj_codes_skin) if sum([c=="*" for c in code])==0]
 #remove common face emojis
-face_index=range(69)
-emj_codes_noise=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
+noise_index=range(69)
+emj_codes_noise=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in noise_index]
 
 
 def count_words(text):
@@ -278,7 +278,7 @@ def mine_tweets(conn,cur,tweet,Mongo=False):
 		coordinates = checkNoneJSON(tweet.coordinates)
 		name = checkNone(tweet.user.name)
 		user_name = checkNone(tweet.user.screen_name)
-		dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
+		dumpIntoSQL(conn,cur,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
 
 def dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name):
 	cur.execute("INSERT INTO tweet_dump (\
