@@ -6,12 +6,12 @@ sys.path.append(base_dir+'/emojify/Mine')
 from Mongo2SQL_lib import *
 
 #connect to Mongo
-client = MongoClient()
+client = MongoClient('172.31.22.77',27017)
 db = client.emoji_db
 tweets = db.emoji_tweets
 
 #connect to postgrSQL
-conn = psycopg2.connect("host=localhost port=5432 dbname=emoji_db user=postgres password=darkmatter")
+conn = psycopg2.connect("host=172.31.22.77 port=5432 dbname=emoji_db user=postgres password=darkmatter")
 cur = conn.cursor()
     
 #set up parallel cores:, we will use 3

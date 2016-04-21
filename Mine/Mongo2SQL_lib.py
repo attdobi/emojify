@@ -128,7 +128,10 @@ def getMongoTweet(tweet):
     retweet_count=tweet['retweet_count']
     favorite_count=tweet['favorite_count']
     lang=tweet['lang']
-    geo=checkNoneJSON(tweet['goe'])
+    try:
+        geo=checkNoneJSON(tweet['goe'])
+    except KeyError:
+        geo=checkNoneJSON(tweet['geo'])
     coordinates=checkNoneJSON(tweet['coordinates'])
     try:
         time_zone=tweet['time_zone']
