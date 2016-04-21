@@ -17,7 +17,7 @@ cur = conn.cursor()
 #set up parallel cores:, we will use 3
 if len(sys.argv) == 2:
 	core_number=int(sys.argv[1])-1
-	cores=3
+	cores=15
 	print('running on core {:d} of 3'.format(core_number))
 else:
 	#run on 1 core
@@ -29,7 +29,7 @@ else:
 #core numbers range from 0,1,2
     
 if __name__ == "__main__":
-	for ii,tweet in enumerate(tweets.find(no_cursor_timeout=True)[7522731:]):
+	for ii,tweet in enumerate(tweets.find(no_cursor_timeout=True)):
 		if (ii%cores==core_number):
 			mine_tweets(conn,cur,tweet,Mongo=True)
 
