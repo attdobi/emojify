@@ -31,5 +31,5 @@ else:
 if __name__ == "__main__":
 	for ii,tweet in enumerate(tweets.find(no_cursor_timeout=True)[5858586:]):
 		if (ii%cores==core_number):
-			mine_tweets(tweet,Mongo=True)
+			mine_tweets(conn,cur,tweet,Mongo=True)
 
