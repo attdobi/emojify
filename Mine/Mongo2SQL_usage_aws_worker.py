@@ -8,7 +8,7 @@ from Mongo2SQL_lib import *
 #connect to Mongo
 client = MongoClient('172.31.22.77',27017)
 db = client.emoji_db
-tweets = db.emoji_tweets
+tweets = db.emoji_usage #connect to emoji_usage db
 
 #connect to postgrSQL
 conn = psycopg2.connect("host=172.31.22.77 port=5432 dbname=emoji_db user=postgres password=darkmatter")
