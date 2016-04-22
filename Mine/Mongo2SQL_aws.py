@@ -17,8 +17,8 @@ cur = conn.cursor()
 #set up parallel cores:, we will use 3
 if len(sys.argv) == 2:
 	core_number=int(sys.argv[1])-1
-	cores=3
-	print('running on core {:d} of 3'.format(core_number))
+	cores=4
+	print('running on core {:d} of 4'.format(core_number))
 else:
 	#run on 1 core
 	print('running on one core')

@@ -18,7 +18,7 @@ cur = conn.cursor()
 if len(sys.argv) == 2:
 	core_number=int(sys.argv[1])-1
 	cores=15
-	print('running on core {:d} of 3'.format(core_number))
+	print('running on core {:d} of 15'.format(core_number))
 else:
 	#run on 1 core
 	print('running on one core')
