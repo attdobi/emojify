@@ -6,13 +6,13 @@ sys.path.append(base_dir+'/emojify/Mine')
 from Mongo2SQL_lib import *
 
 #connect to Mongo
-client = MongoClient('172.31.22.77',27017)
+client = MongoClient('52.38.112.55',27017)
 db = client.emoji_db
 tweets = db.emoji_tweets
 
 #connect to postgrSQL
-conn = psycopg2.connect("host=172.31.22.77 port=5432 dbname=emoji_db user=postgres password=darkmatter")
-cur = conn.cursor()
+conn = psycopg2.connect("host=52.38.112.55 port=5432 dbname=emoji_db user=postgres password=darkmatter")
+cur= conn.cursor()
     
 #set up parallel cores:, we will use 3
 if len(sys.argv) == 2:
@@ -25,13 +25,11 @@ else:
 	cores=1
 	core_number=0
 
-#run script parallelized on 3 cores
-#core numbers range from 0,1,2
+#run script parallelized on 5 cores
+#core numbers range from 0,1,2,3,4,5
 
 if __name__ == "__main__":
 	for ii,tweet in enumerate(tweets.find(no_cursor_timeout=True)): #prevent cursor timeout
 		if (ii%cores==core_number):
 			analyze_tweet_emojis(conn,cur,tweet,Mongo=True)
-
-
 
