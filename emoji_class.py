@@ -1,4 +1,4 @@
-from __future__ import division,unicode_literals
+from __future__ import division
 import pandas as pd
 import numpy as np
 from nltk.stem.snowball import SnowballStemmer
