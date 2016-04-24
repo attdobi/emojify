@@ -125,7 +125,7 @@ class emoji_lib:
 		return emjDict
 	
 	def emoji_fy(self,text,lyric=False):
-		text=text #ensure unicode encoding
+		#text=text #ensure unicode encoding
 		#print(emoji.emojize(''.join([lookup(word) for word in words(text)])))
 		#print(''.join([lookup(word) for word in words(text)])+'\n'+text)
 		return text+'\n'+''.join([self.lookup_and_search(word,lyric=lyric) for word in self.words(text)])
@@ -134,10 +134,10 @@ class emoji_lib:
 	def emojifyLyrics(self, a):
 		song_list=dict({"Shake it Off (Taylor Swift)":"ShakeItOff_TS.txt","Boyz n The Hood (Eazy-E)":"Boyz-n-the-Hood.txt","Let it Snow (Frozen)":"Let-It_Go.txt","Lollipop (Lil Wayne)":"Lollipop-LW.txt"})
 		try:
-			TS = file("data/lyrics/"+song_list[a]).read()
+			TS = _u(file("data/lyrics/"+song_list[a]).read())
 		except KeyError:
 			TS=['']
-		return('\n'.join([self.emoji_fy(line,lyric=True) for line in TS.split('\n')]).encode('utf-8'))
+		return('\n'.join([self.emoji_fy(line,lyric=True) for line in TS.split('\n')]))
 	
 	def emojifyText(self, a):
-		return('\n'.join([self.emoji_fy(line) for line in a.split('\n')]).encode('utf-8'))
+		return('\n'.join([self.emoji_fy(line) for line in a.split('\n')]))
