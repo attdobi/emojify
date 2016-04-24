@@ -159,7 +159,8 @@ li.dropdown {
 function update_url() {
   return URL_BASE +"?word=" + document.getElementById("word").value +
   			"&freq_filter=" + document.getElementById("freq_filter").value + 
-  			"&face_filter=" + document.getElementById("face_filter").value;
+  			"&face_filter=" + document.getElementById("face_filter").value +
+  			"&pattern_type=" + document.getElementById("pattern_type").value;
 }
    
 function make_graph() {
