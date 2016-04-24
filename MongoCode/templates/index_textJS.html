@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Input text with D3</title> <!-- adapted from http://javadude.wordpress.com/2012/05/17/d3-js-with-dynamic-data/ -->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.2/d3.js"></script>
+
+    <style>
+        body {font-family: monospace; line-height: 160%; font-size: 18px; }
+        ul {list-style: none; margin: 0; padding: 0;}
+        li {display: inline-block; min-width: 80px; padding: 10px; background-color: #eee; margin: 0;}
+        input {border: 1px dotted #ccc; background: white; font-family: monospace; padding: 10px 20px; font-size: 18px; margin: 20px 10px 20px 0; color: red;}
+        input:focus { background-color:yellow; outline: none;}
+    </style>
+</head>
+    <body>
+
+        <form name="myform" onSubmit="return handleClick()">
+            <input name="Submit"  type="submit" value="Add to list" >
+            <input type="text" id="myVal" placeholder="Add some text&hellip;">
+        </form>
+
+        <ul></ul>
+ 
+        <script>
+ 
+            var dataset = [];
+ 
+ 
+            function handleClick(event){
+                console.log(document.getElementById("myVal").value)
+                draw(document.getElementById("myVal").value)
+                return false;
+            }
+ 
+            function draw(val){
+                d3.select("body").select("ul").append("li");
+                dataset.push(val);
+                var p = d3.select("body").selectAll("li")
+                .data(dataset)
+                .text(function(d,i){return i + ": " + d;})
+            }
+ 
+        </script>
+
+
+    </body>
+</html>

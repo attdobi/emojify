@@ -1,14 +1,14 @@
-from __future__ import division
+from __future__ import division,unicode_literals
 import pandas as pd
 import numpy as np
 from nltk.stem.snowball import SnowballStemmer
 from string import punctuation
 import re, collections, random, datetime
-from pymongo import MongoClient
+import psycopg2
 
 #mongo query limit is currently set to 1000
 
-# guarantee unicode string
+# guarantee unicode string... #no need in python3 (will cause an error)
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
 
 class emoji_lib:
@@ -16,65 +16,61 @@ class emoji_lib:
 	def __init__(self):
 		#setup stemmer
 		self.stemmer = SnowballStemmer('english')
-		#connect to mongo client
-		client = MongoClient()
-		db = client.emoji_db
-		self.tweets = db.emoji_tweets
+		#connect to local postgreSQL server
+		self.conn = psycopg2.connect("host=localhost port=5432 dbname=emoji_db user=postgres password=darkmatter")
+		self.cur = self.conn.cursor()
 		#load emoji keys for cuts, only need to do once
 		self.emjDict=self.buildDict()
-		emoji_key = pd.read_excel('data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1) #this is a local variable
-		self.emj_codes_skin=[code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']) if ('FITZPATRICK' in name)]
-		face_index=range(69)
-		self.emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
 		
-	#query mongo db code:
-	def filter_emoji(self, word='dog',face_filter='off'):
-		if face_filter=='on':
-			face_filter=True
-		else:
-			face_filter=False
-		S= collections.defaultdict(lambda:0)
-		for tweet in self.tweets.find({'text':{"$regex": word}, 'emjTypes':{'$gt':0}, 'emjCount':{'$gt':0} } ).limit(1000): 
-			if face_filter:
-				for val in tweet['emjText']:
-					if val[0] not in (self.emj_codes_face + self.emj_codes_skin):
-						S[val[0]]+=val[1]
-			else:
-				for val in tweet['emjText']:
-					if val[0] not in  self.emj_codes_skin:
-						S[val[0]]+=val[1]
-		df=pd.DataFrame([ (key,value) for key,value in S.items()], columns=('emoji','freq'))
-		xdata = df.sort_values('freq',ascending=0)['emoji'].values[:15] #top 15 frequency
-		ydata = df.sort_values('freq',ascending=0)['freq'].values[:15] #top 15 frequency
+	######### query SQL code: ################################################
+	def filter_emoji(self, word='dog',face_filter='off',pattern_type='single'):
+		word=word.lower()
+		word=word.replace("'","''")#replace all apostrophes with double for SQL query
+		if face_filter=='off':########## If the face filter is OFF: ################
+			if pattern_type=='single':
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiLabel) as Label, unnest(emojiCount) as Freq FROM emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%')) as T group by T.Label order by TFreq DESC limit 15;".format(word))
+			elif pattern_type=='string':
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojistrLabel) as Label, unnest(emojistrCount) as Freq FROM emoji_tweet WHERE (emojistrTypes>0 AND LOWER(text) LIKE '%{:s}%')) as T group by T.Label order by TFreq DESC limit 10;".format(word))
+			elif pattern_type=='pattern':
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiPatternLabel) as Label, unnest(emojiPatternCount) as Freq FROM emoji_tweet WHERE (emojiPatternTypes>0 AND LOWER(text) LIKE '%{:s}%')) as T group by T.Label order by TFreq DESC limit 10;".format(word))
+			else:#return all
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(array_cat(emojiLabel,array_cat(emojistrLabel,emojiPatternLabel))) as Label, unnest(array_cat(emojiCount,array_cat(emojistrCount,emojiPatternCount))) as Freq FROM emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%')) as T group by T.Label order by TFreq DESC limit 15;".format(word))
+		else:############## If the face filter is ON: ####################
+			if pattern_type=='single':
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiLabel) as Label, unnest(emojiCount) as Freq, unnest(emojiLabelFaceFilter) as FF FROM emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%')) as T WHERE(T.FF is True) group by T.Label order by TFreq DESC limit 15;".format(word))
+			elif pattern_type=='string':
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojistrLabel) as Label, unnest(emojistrCount) as Freq FROM emoji_tweet WHERE (emojistrTypes>0 AND LOWER(text) LIKE '%{:s}%' AND NOT(emojiLabelFaceFilter @> ARRAY[False]))) as T group by T.Label order by TFreq DESC limit 10;".format(word));
+			elif pattern_type=='pattern':
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiPatternLabel) as Label, unnest(emojiPatternCount) as Freq FROM emoji_tweet WHERE (emojiPatternTypes>0 AND LOWER(text) LIKE '%{:s}%' AND NOT(emojiLabelFaceFilter @> ARRAY[False]))) as T group by T.Label order by TFreq DESC limit 10;".format(word));
+			else:#return all
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(array_cat(emojiLabel,array_cat(emojistrLabel,emojiPatternLabel))) as Label, unnest(array_cat(emojiCount,array_cat(emojistrCount,emojiPatternCount))) as Freq FROM emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' AND NOT(emojiLabelFaceFilter @> ARRAY[False]) )) as T group by T.Label order by TFreq DESC limit 15;".format(word));
+		#### Calculate and return the result #####################
+		result=self.cur.fetchall()
+		xdata=[val[0] for val in result]
+		ydata=[val[1] for val in result]
 		return xdata, ydata
 
-	def filter_emoji_freq(self,word='dog',face_filter='off'):
-		if face_filter=='on':
-			face_filter=True
+	def filter_emoji_freq(self,word='dog',face_filter='off',pattern_type='single'):
+		word=word.lower()
+		word=word.replace("'","''")#replace all apostrophe with double for SQL query
+		if face_filter=='off':
+			self.cur.execute("SELECT emojistrLabel[1],SUM(emojiStrCount[1]) as Freq FROM emoji_tweet WHERE (emojiStrCount[1]>0 AND LOWER(text) LIKE '%{:s}%') group by emojistrLabel[1] order by Freq DESC limit 10;".format(word))
 		else:
-			face_filter=False
-			
-		Sf=collections.defaultdict(lambda:0)
-		for tweet in self.tweets.find({'text':{"$regex": word}, 'emjTypes':{'$gt':0}, 'emjCount':{'$gt':0} } ).limit(1000): 
-			#print(tweet['mostFreqEmoji']) #print the text
-			if face_filter:
-				if tweet['mostFreqEmoji'] not in (self.emj_codes_face + self.emj_codes_skin):
-					Sf[tweet['mostFreqEmoji']]+=tweet['mostFreqEmojiCount']
-			else:
-				if tweet['mostFreqEmoji'] not in self.emj_codes_skin:
-					Sf[tweet['mostFreqEmoji']]+=tweet['mostFreqEmojiCount']
-		df=pd.DataFrame([ (key,value) for key,value in Sf.items()], columns=('emoji','freq'))
-		xdata = df.sort_values('freq',ascending=0)['emoji'].values[:15] #top 15 frequency
-		ydata = df.sort_values('freq',ascending=0)['freq'].values[:15] #top 15 frequency
+			self.cur.execute("SELECT emojiLabel[1],SUM(emojiCount[1]) as Freq FROM emoji_tweet a where( LOWER(text) LIKE '%{:s}%' and a.emojiLabelFaceFilter[1] is true) group by emojiLabel[1] order by Freq DESC limit 15;".format(word))
+		result=self.cur.fetchall()
+		xdata=[val[0] for val in result]
+		ydata=[val[1] for val in result]
 		return xdata, ydata
 
 	def sample_art(self):
-		art=[]
-		for tweet in self.tweets.find({'emjCount': {"$gt": 30} ,'emjTypes': {"$gt": 0} } ):
-			art.append(tweet['text'])
-		random.shuffle(art)
-		return '\n\n'.join(art[:40])
+		self.cur.execute("SELECT text from emoji_tweet WHERE (emojiCountSum > 30) order by random() limit 40;")
+		art=[_u(text[0]) for text in self.cur.fetchall()]
+		return '\n\n'.join(art)
 		
+	def sample_art_options(eCount='>=30',eTypes='>=0',eStrTypes='>=0',ePatTypes='>=0',NL='>=0'):
+		self.cur.execute("SELECT text from emoji_tweet WHERE (emojiCountSum {:s} AND emojiTypes {:s} AND emojistrTypes {:s} AND emojiPatternTypes {:s} AND newlineCount {:s}) order by random() limit 40;".format(eCount,eTypes,eStrTypes,ePatTypes,NL))
+		
+	######### emojify code: ################################################
 	def words(self,text):
 		try:
 			text=text.replace('"',"'") #remove quotes, make single quotes
@@ -109,7 +105,8 @@ class emoji_lib:
 			if len(xdata)==0:
 				return ""
 			else:
-				return xdata[0] #most frequent
+				#RETURN string must be in utf-8 format
+				return _u(xdata[0]) #most frequent
 		else:
 			return ""
 		
@@ -128,7 +125,7 @@ class emoji_lib:
 		return emjDict
 	
 	def emoji_fy(self,text,lyric=False):
-		text=_u(text) #ensure unicode encoding
+		text=text #ensure unicode encoding
 		#print(emoji.emojize(''.join([lookup(word) for word in words(text)])))
 		#print(''.join([lookup(word) for word in words(text)])+'\n'+text)
 		return text+'\n'+''.join([self.lookup_and_search(word,lyric=lyric) for word in self.words(text)])

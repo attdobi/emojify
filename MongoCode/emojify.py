@@ -2,6 +2,7 @@
 #base_dir=os.path.expanduser('~')
 from flask import Flask, render_template, request, request, jsonify
 import numpy as np
+import pandas as pd
 from emoji_class import *
 
 #initialize emoji class
@@ -39,14 +40,13 @@ def song():
 @application.route("/db")
 def print_data():
 	word = request.args.get('word')
-	pattern_type = request.args.get('pattern_type')
 	freq_filter = request.args.get('freq_filter')
 	face_filter = request.args.get('face_filter')
 	if freq_filter=='on':
-		xdata, ydata = Emoji.filter_emoji_freq(word,face_filter,pattern_type)
+		xdata, ydata = Emoji.filter_emoji_freq(word=word.lower(),face_filter=face_filter)
 	else:
-		xdata, ydata = Emoji.filter_emoji(word,face_filter,pattern_type)
-	#return JSON
+		xdata, ydata = Emoji.filter_emoji(word=word.lower(),face_filter=face_filter)
+	#return JSenocde
 	return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
 
 @application.route("/word/<word>")

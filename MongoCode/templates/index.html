@@ -117,16 +117,6 @@ li.dropdown {
        value = "Spring"
       onkeypress="if (event.keyCode==13){make_graph()};"
       />
-    <label for="pattern_type"
-          style="display: inline-block; width: 140px; text-align: right">
-        Pattern Type
-     </label>
-      <select id="pattern_type" onchange="update_url()">
-        <option value="single">Single Emojis</option>
-        <option value="string">Emoji Strings</option>
-        <option value="pattern">Emoji Patterns</option>
-        <option value="all">All</option>
-      </select>
     <label for="face_select"
           style="display: inline-block; width: 140px; text-align: right">
         Face Filter
@@ -151,7 +141,6 @@ li.dropdown {
 // Update graph in response to inputs 
 //this updates continuously as text is entered
  //d3.select("#word").on("input", make_graph);
- d3.select("#pattern_type").on("input", make_graph);
  d3.select("#freq_filter").on("input", make_graph);
  d3.select("#face_filter").on("input", make_graph);
 
