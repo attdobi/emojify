@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division,unicode_literals
 import pandas as pd
 import numpy as np
 from nltk.stem.snowball import SnowballStemmer
@@ -46,7 +46,7 @@ class emoji_lib:
 				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(array_cat(emojiLabel,array_cat(emojistrLabel,emojiPatternLabel))) as Label, unnest(array_cat(emojiCount,array_cat(emojistrCount,emojiPatternCount))) as Freq FROM emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' AND NOT(emojiLabelFaceFilter @> ARRAY[False]) )) as T group by T.Label order by TFreq DESC limit 15;".format(word));
 		#### Calculate and return the result #####################
 		result=self.cur.fetchall()
-		xdata=[val[0] for val in result]
+		xdata=[_u(val[0]) for val in result]
 		ydata=[val[1] for val in result]
 		return xdata, ydata
 
