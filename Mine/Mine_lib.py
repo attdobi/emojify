@@ -8,7 +8,6 @@ base_dir=os.path.expanduser('~')
 import datetime
 import time
 import psycopg2
-from pymongo import MongoClient
 
 #read emoji codes:
 emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
@@ -93,90 +92,33 @@ def surroundingText(text,emojiLabel):
 					' '.join(text[text.index(emcode)+len(emcode):].split()[:7])) for emcode in emojiLabel\
 					  if (len(re.findall(emcode,text)) > 0)])
 
-####################################################################################
-def write_emoji_usage(tweet,has_emoji): #old, Mongo usage
-	entry = {"date": datetime.datetime.utcnow(),\
-			 "created_at": tweet.created_at,\
-			 "retweet_count": tweet.retweet_count,\
-			 "favorite_count": tweet.favorite_count,\
-			 "lang": tweet.lang,\
-			 "geo": tweet.geo,\
-			 "coordinates": tweet.coordinates,\
-			 "time_zone": tweet.user.time_zone,\
-			 "name":tweet.user.name, "user_name":tweet.user.screen_name,\
-			 "has_emoji":has_emoji}
-	emoji_usage.insert_one(entry).inserted_id
-
 def checkNone(val):
 	return val if val else ''
 def checkNoneJSON(val):
 	return json.dumps(val) if val else '{}'
 
-def getMongoTweet(tweet):
-    #tweet data:
-    tweet_id = 0
-    date=tweet['date']
-    created_at=tweet['created_at']
-    try:
-        original_text=tweet['text']
-    except KeyError:
-        original_text=''
-    try:
-        has_emoji=tweet['has_emoji']
-    except KeyError:
-        has_emoji=False
-    retweet_count=tweet['retweet_count']
-    favorite_count=tweet['favorite_count']
-    lang=tweet['lang']
-    try:
-        geo=checkNoneJSON(tweet['goe'])
-    except KeyError:
-        geo=checkNoneJSON(tweet['geo'])
-    coordinates=checkNoneJSON(tweet['coordinates'])
-    try:
-        time_zone=tweet['time_zone']
-    except KeyError:
-        time_zone=''
-    try:
-        name=tweet['name']
-    except KeyError:
-        name=''
-    try:
-        user_name=tweet['user_name']
-    except KeyError:
-        user_name=''
-    
-    return tweet_id,date,created_at,original_text,has_emoji,retweet_count,favorite_count,lang,geo,coordinates,\
-    time_zone,name,user_name
-
-
-def analyze_tweet_emojis(conn,cur,SQL_return,Mongo=False):
+def analyze_tweet_emojis(conn,cur,SQL_return):
 	#tweet data:
 	has_emoji=False
-
-	if Mongo:
-		tweet_id,date,created_at,original_text,has_emoji,retweet_count,favorite_count,lang,geo,coordinates,\
-		time_zone,name,user_name = getMongoTweet(SQL_return)
-	else:
-		tweet_id = SQL_return[0]
-		date=SQL_return[1]
-		created_at=SQL_return[2]
-		original_text=SQL_return[3]
-		retweet_count=SQL_return[4]
-		favorite_count=SQL_return[5]
-		lang=SQL_return[6]
-		geo=checkNoneJSON(SQL_return[7])
-		coordinates=checkNoneJSON(SQL_return[8])
-		time_zone=SQL_return[9]
-		name=SQL_return[10]
-		user_name=SQL_return[11]
+	tweet_id = SQL_return[0]
+	date=SQL_return[1]
+	created_at=SQL_return[2]
+	original_text=SQL_return[3]
+	retweet_count=SQL_return[4]
+	favorite_count=SQL_return[5]
+	lang=SQL_return[6]
+	geo=checkNoneJSON(SQL_return[7])
+	coordinates=checkNoneJSON(SQL_return[8])
+	time_zone=SQL_return[9]
+	name=SQL_return[10]
+	user_name=SQL_return[11]
 
 	text=emoji_split(original_text)
 	emjText=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emj_codes\
 					  if (len(re.findall(emcode,text)) > 0)])
 
 	if len(emjText) >0:
-		#print(text)
+		print(text)
 		has_emoji=True
 		mostFreqWord, mostFreqWordCount = count_words(text)
 		newlineCount= text.count('\n')
@@ -253,33 +195,26 @@ def analyze_tweet_emojis(conn,cur,SQL_return,Mongo=False):
 	mostFreqWordCount,newlineCount,emojiSkinLabel,emojiSkinCount,emojiSkinCountSum,emojiSkinTypes,emojistrLabel,\
 	emojistrCount,emojistrLen,emojistrTypes,emojistr_prev_word,emojistr_next_word,emojistr_prev_sentence,\
 	emojistr_next_sentence,emojiPatternLabel,emojiPatternCount,emojiPatternLen,emojiPatternTypes)
+	
+	#write to has_emoji DB
+	has_emoji_SQL(conn,cur,tweet_id, has_emoji)
 
-	if  not Mongo:
-		has_emoji_SQL(conn,cur,tweet_id, has_emoji)
-
-def mine_tweets(conn,cur,tweet,Mongo=False):
-	#print(tweet.text)
-	if Mongo:
-		tweet_id,date,created_at,text,has_emoji,retweet_count,favorite_count,lang,geo,coordinates,\
-		time_zone,name,user_name = getMongoTweet(tweet)
-		dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
-		has_emoji_SQL(conn,cur,tweet_id, has_emoji)
-	else:
-		getMongoTweet(tweet)
-		#tweet data:
-		date= datetime.datetime.utcnow()
-		created_at = tweet.created_at
-		text = tweet.text
-		retweet_count = tweet.retweet_count
-		favorite_count = tweet.favorite_count
-		lang=checkNone(tweet.lang)
-		geo = checkNoneJSON(tweet.geo)
-		time_zone = checkNone(tweet.user.time_zone)
-		coordinates = checkNoneJSON(tweet.coordinates)
-		name = checkNone(tweet.user.name)
-		user_name = checkNone(tweet.user.screen_name)
-		dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
-
+def mine_tweets(conn,cur,tweet):
+	print(tweet.text)
+	#tweet data:
+	date= datetime.datetime.utcnow()
+	created_at = tweet.created_at
+	text = tweet.text
+	retweet_count = tweet.retweet_count
+	favorite_count = tweet.favorite_count
+	lang=checkNone(tweet.lang)
+	geo = checkNoneJSON(tweet.geo)
+	time_zone = checkNone(tweet.user.time_zone)
+	coordinates = checkNoneJSON(tweet.coordinates)
+	name = checkNone(tweet.user.name)
+	user_name = checkNone(tweet.user.screen_name)
+	dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
+	
 def dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name):
 	cur.execute("INSERT INTO tweet_dump (\
 	date,\
@@ -416,4 +351,3 @@ def insertIntoSQL(conn,cur,tweet_id, date,created_at,text,retweet_count,favorite
 	emojiPatternTypes\
 	))
 	conn.commit() #submit change to db
-
