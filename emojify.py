@@ -3,6 +3,8 @@
 from flask import Flask, render_template, request, request, jsonify
 import numpy as np
 from emoji_class import *
+import locale
+locale.setlocale(locale.LC_ALL, 'en_US')
 
 #initialize emoji class
 Emoji=emoji_lib()
@@ -46,8 +48,10 @@ def print_data():
 		xdata, ydata = Emoji.filter_emoji_freq(word,face_filter,pattern_type)
 	else:
 		xdata, ydata = Emoji.filter_emoji(word,face_filter,pattern_type)
-	#return JSON
-	return jsonify({"values":[{"value":count,"label":emoji} for count, emoji in zip(ydata,xdata)],"key": "Serie 1"})
+	#save y data as comma separated 1000s string and return JSON
+	ydata=[locale.format("%d", val, grouping=True) for val in ydata]
+	return jsonify({"values":[{"rank":rank+1,"value":count,"label":emoji} for rank,(count, emoji) in enumerate(zip(ydata,xdata))],"key": "Serie 1"})
+
 
 @application.route("/word/<word>")
 def search(word):

@@ -8,10 +8,20 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js"></script>
+    <script src="https://rawgit.com/gka/d3-jetpack/master/d3-jetpack.js"></script>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
           rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
    <style type="text/css">
+   body { font-family:  Helvetica, 'Apple Color Emoji', 'Helvetica Neue'; font-weight: 300;}
+    th { text-align: center; }
+    th, td { padding: 0 1em 0.5ex 0;}
+    th.center, td.center { text-align: center; }
+    th.num, td.num { text-align: right; }
+   html {
+   -ms-text-size-adjust: 100%; 
+   -webkit-text-size-adjust: 100%;
+   }
      html {
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%; /* 2 */
@@ -147,6 +157,16 @@ li.dropdown {
      <div id="piechart"><svg style="width:575px;height:575px;font: normal 50px Impact;"></svg></div>
     <script>
     
+// the table rows
+    // column definitions
+    var columns = [
+        { head: 'Rank', cl: 'center', html: ƒ('rank') },
+        { head: 'Emoji', cl: 'title', html: ƒ('label') },
+        { head: 'Count', cl: 'center', html: ƒ('value') },
+    ];
+
+//Update and make pie chart 
+    
   var URL_BASE = "http://52.38.112.55/db";
 // Update graph in response to inputs 
 //this updates continuously as text is entered
@@ -162,12 +182,19 @@ function update_url() {
   			"&face_filter=" + document.getElementById("face_filter").value +
   			"&pattern_type=" + document.getElementById("pattern_type").value;
 }
-   
+
+function commaSeparateNumber(val){
+    while (/(\d+)(\d{3})/.test(val.toString())){
+      val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+    }
+    return val;
+  }
+  
 function make_graph() {
   url = update_url()
   
   d3.json(url, function(error, data) {
-
+  	var fmt = d3.format("d");
     nv.addGraph(function() {
         var chart = nv.models.pieChart();
         chart.margin({top: 30, right: 60, bottom: 20, left: 20});
@@ -178,9 +205,11 @@ function make_graph() {
 
     chart.tooltipContent(function(key, y, e, graph) {
           var x = String(key);
-              var y =  String(y) +'';
-
-              tooltip_str = '<center><b>'+x+'</b></center>' + y;
+        //var y =  String(y);
+          var yy= +y.replace(/,/g, ''); //remove the comma and make yy an int with + 
+        //old: var yy= parseInt(y.replace(/,/g, ''))
+              
+              tooltip_str = '<center><b>'+x+'</b></center>' + commaSeparateNumber(yy);
               return tooltip_str;
               });
         chart.showLabels(true);
@@ -191,7 +220,8 @@ function make_graph() {
 
         chart
             .x(function(d) { return d.label })
-            .y(function(d) { return d.value });
+            //y data is saved with commas at 1000 for the table format. Remove commas:
+            .y(function(d) { return d.value.replace(/,/g, ''); });
 
         chart.width(600);
 
@@ -207,14 +237,58 @@ function make_graph() {
         
             //increase fontsize
             d3.selectAll(".nv-label text")
-            .attr("text-anchor", "middle");
+            .attr("text-anchor", "middle")
+            .style({"font-family": 'Apple Color Emoji'});
             //.style({"-webkit-transform": "scale(5)"});
             //.style({"font-size": "50px"});
             //.attr('transform', 'scale(1.5) translate(-5,0)');
             
             //select legend
             d3.selectAll(".nv-legendWrap")
-            .style({"font-size": "20px"});
+            .style({"font-size": "20px"})
+            .style({"font-family": 'Apple Color Emoji'});
+            
+// create table
+	//Clear previous table
+	d3.selectAll("#table > *").remove();
+    var table = d3.select('#table');
+     
+    // create table header
+    var header=table.append("thead")
+        .selectAll('th');
+        
+        //header.data(data).exit().remove();
+    
+        header
+        .data(columns).enter()
+        .append('th')
+        .attr('class', ƒ('cl'))
+        .text(ƒ('head'));
+
+    // create table body
+    var body = table.append("tbody")
+        .selectAll('tr');
+        
+        //body.data(data).exit().remove();
+    
+        body
+        .data(datum).enter()
+        .append('tr')
+        .selectAll('td')
+        .data(function(row, i) {
+            return columns.map(function(c) {
+                // compute cell values for this specific row
+                var cell = {};
+                d3.keys(c).forEach(function(k) {
+                    cell[k] = typeof c[k] == 'function' ? c[k](row,i) : c[k];
+                });
+                return cell;
+            });
+        }).enter()
+        .append('td')
+        .html(ƒ('html'))
+        .attr('class', ƒ('cl'));
+
             
         });
     });
