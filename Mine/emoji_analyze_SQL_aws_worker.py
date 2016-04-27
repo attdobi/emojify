@@ -39,7 +39,7 @@ if __name__ == "__main__":
 		print(len(SQL_result))
 		if len(SQL_result)>0:#begin analysis
 			for result in SQL_result:
-				if result[0]%2==core_number
+				if result[0]%2==core_number:
 					analyze_tweet_emojis(conn,cur,result)
 		else:#else quit ... or sleep
 			run=False
