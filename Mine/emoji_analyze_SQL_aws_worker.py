@@ -31,15 +31,15 @@ else:
 run=True
 if __name__ == "__main__":
 	while run:
-		cur.execute("SELECT tweet_id from has_emoji order by tweet_id DESC limit 1;")#find last processed id
-		#last_date=cur.fetchone()
-		last_id=15532115
-		cur.execute("SELECT * from tweet_dump WHERE (id>15532115);") #where id>tweet_id
+		cur.execute("SELECT tweet_id from has_emoji WHERE tweet_id%2=%s order by tweet_id DESC limit 1;",(core_number))#find last processed id
+		last_id=cur.fetchone()
+		#last_id=15532115
+		cur.execute("SELECT * from tweet_dump WHERE (id>%s AND id%2=%s);",(last_id,core_number)) 
+		#where id>tweet_id, only odd or even
 		SQL_result=cur.fetchall()
 		print(len(SQL_result))
 		if len(SQL_result)>0:#begin analysis
 			for result in SQL_result:
-				if result[0]%2==core_number:
-					analyze_tweet_emojis(conn,cur,result)
+				analyze_tweet_emojis(conn,cur,result)
 		else:#else quit ... or sleep
 			run=False
