@@ -15,6 +15,9 @@ application = Flask(__name__)
 def index():
     return render_template("index.html")
 #    #return "<h1 style='color:blue'>Hello There!</h1>"
+@application.route("/skin")
+def skin():
+    return render_template("skin.html")
 @application.route("/emojify")
 def emojify():
     return render_template("emojify.html")
@@ -52,6 +55,14 @@ def print_data():
 	ydata=[locale.format("%d", val, grouping=True) for val in ydata]
 	return jsonify({"values":[{"rank":rank+1,"value":count,"label":emoji} for rank,(count, emoji) in enumerate(zip(ydata,xdata))],"key": "Serie 1"})
 
+@application.route("/dbskin")
+def skin_data():
+	word = request.args.get('word')
+	pattern_type = request.args.get('search_type')
+	xdata, ydata = Emoji.emoji_skin(word,pattern_type)
+	#save y data as comma separated 1000s string and return JSON
+	ydata=[locale.format("%d", val, grouping=True) for val in ydata]
+	return jsonify({"values":[{"rank":rank+1,"value":count,"label":emoji} for rank,(count, emoji) in enumerate(zip(ydata,xdata))],"key": "Serie 1"})
 
 @application.route("/word/<word>")
 def search(word):

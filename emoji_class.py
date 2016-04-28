@@ -23,6 +23,16 @@ class emoji_lib:
 		self.emjDict=self.buildDict()
 		
 	######### query SQL code: ################################################
+	######### query skin code: ################################################
+	def emoji_skin(self, word='dog',search_type='all'):
+		word=word.lower()
+		word=word.replace("'","''")#replace all apostrophes with double for SQL query
+		self.cur.execute("SELECT Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiSkinLabel) as Label, unnest(emojiSkinCount) as Freq FROM emoji_tweet WHERE (emojiSkinCountSum>0 AND LOWER(text) LIKE '%{:s}%')) as T group by Label order by TFreq DESC;".format(word))
+		result=self.cur.fetchall()
+		xdata=[val[0] for val in result]
+		ydata=[val[1] for val in result]
+		return xdata, ydata
+	####### emoji Tweet search ###################################################
 	def filter_emoji(self, word='dog',face_filter='off',pattern_type='single'):
 		word=word.lower()
 		word=word.replace("'","''")#replace all apostrophes with double for SQL query
