@@ -34,7 +34,7 @@ if __name__ == "__main__":
 		cur.execute("SELECT tweet_id from has_emoji WHERE MOD(tweet_id,2)=%s order by tweet_id DESC limit 1;",(core_number,))#find last processed id
 		last_id=cur.fetchone()
 		#last_id=15532115
-		cur.execute("SELECT * from tweet_dump WHERE (id>%s AND MOD(id,2)=%s) LIMIT 100000;",(last_id,core_number)) 
+		cur.execute("SELECT * from tweet_dump WHERE (id>%s AND MOD(id,2)=%s) LIMIT 10000;",(last_id,core_number)) 
 		#where id>tweet_id, only odd or even
 		SQL_result=cur.fetchall()
 		print(len(SQL_result))
