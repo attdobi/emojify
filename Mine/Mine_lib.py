@@ -113,13 +113,14 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 	name=SQL_return[10]
 	user_name=SQL_return[11]
 
-	text=emoji_split(original_text)
-	emjText=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emj_codes\
-					  if (len(re.findall(emcode,text)) > 0)])
+	text=emoji_split_all(original_text)
+	emojiLabel=np.intersect1d(text.split(),emj_codes,assume_unique=False)
 
-	if len(emjText) >0:
+	if len(emojiLabel) >0:
 		print(text)
 		has_emoji=True
+		text=emoji_split(original_text)
+		emjText=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emojiLabel])
 		mostFreqWord, mostFreqWordCount = count_words(text)
 		newlineCount= text.count('\n')
 		#create arrays to save in SQL. Sorted by frequency
@@ -135,7 +136,7 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 		next_sentence=surrounding_text[:,4]
 
 		#build array of emoji strings
-		emj_str = np.array([(emj_str, int(len(emj_str)/2)) for emj_str in sum([''.join([word if word in emj_codes+[' '] \
+		emj_str = np.array([(emj_str, int(len(emj_str)/2)) for emj_str in sum([''.join([word if word in emojiLabel.tolist()+[' '] \
 		else 'T' for word in emoji_split_line(line).split()]).rsplit('T') for line in text.split('\n')],[]) if emj_str != ''])
 	
 		#analyze emoji strings, cut away length 1 emojis and call new array a:
