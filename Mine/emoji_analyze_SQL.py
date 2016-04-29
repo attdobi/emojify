@@ -22,7 +22,7 @@ if __name__ == "__main__":
 	while run:
 		cur.execute("SELECT tweet_id from has_emoji order by tweet_id DESC limit 1;")#find last processed id
 		last_date=cur.fetchone()
-		cur.execute("SELECT * from tweet_dump WHERE (id>%s);",last_date) #where id>tweet_id
+		cur.execute("SELECT * from tweet_dump WHERE (id>%s) LIMIT 100000;",last_date) #where id>tweet_id
 		SQL_result=cur.fetchall()
 		print(len(SQL_result))
 		if len(SQL_result)>0:#begin analysis
