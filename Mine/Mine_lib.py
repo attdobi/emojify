@@ -103,7 +103,7 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 	tweet_id = SQL_return[0]
 	date=SQL_return[1]
 	created_at=SQL_return[2]
-	original_text=SQL_return[3]
+	original_text=SQL_return[3].decode('utf-8')
 	retweet_count=SQL_return[4]
 	favorite_count=SQL_return[5]
 	lang=SQL_return[6]
@@ -112,14 +112,18 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 	time_zone=SQL_return[9]
 	name=SQL_return[10]
 	user_name=SQL_return[11]
-
-	text=emoji_split(original_text)
-	emjText=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emj_codes\
-					  if (len(re.findall(emcode,text)) > 0)])
-
-	if len(emjText) >0:
+	#function to quickly scan for has emoji
+	for emcode in emj_codes:
+		if (len(re.findall(emcode,original_text))) > 0:
+			has_emoji=True
+			break
+	
+	if has_emoji:
+		text=emoji_split(original_text)
+		emjText=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emj_codes\
+			if (len(re.findall(emcode,text)) > 0)])
 		print(text)
-		has_emoji=True
+		#has_emoji=True
 		mostFreqWord, mostFreqWordCount = count_words(text)
 		newlineCount= text.count('\n')
 		#create arrays to save in SQL. Sorted by frequency
@@ -207,7 +211,10 @@ def mine_tweets(conn,cur,tweet):
 	text = tweet.text
 	retweet_count = tweet.retweet_count
 	favorite_count = tweet.favorite_count
-	lang=checkNone(tweet.lang)
+	try:
+		lang=checkNone(tweet.lang)
+	except AttributeError:
+		lang=''
 	geo = checkNoneJSON(tweet.geo)
 	time_zone = checkNone(tweet.user.time_zone)
 	coordinates = checkNoneJSON(tweet.coordinates)
