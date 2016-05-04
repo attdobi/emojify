@@ -122,7 +122,7 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 		text=emoji_split(original_text)
 		emjText=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emj_codes\
 			if (len(re.findall(emcode,text)) > 0)])
-		print(text)
+		#print(text)
 		#has_emoji=True
 		mostFreqWord, mostFreqWordCount = count_words(text)
 		newlineCount= text.count('\n')
@@ -204,7 +204,7 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 	has_emoji_SQL(conn,cur,tweet_id, has_emoji)
 
 def mine_tweets(conn,cur,tweet):
-	print(tweet.text)
+	#print(tweet.text)
 	#tweet data:
 	date= datetime.datetime.utcnow()
 	created_at = tweet.created_at
