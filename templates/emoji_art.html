@@ -178,8 +178,12 @@ select {
 <h6> 
      <a class="btn btn-lg btn-success" "javascript:void();" id="getArt" role="button">Sample Art</a>
 </h6>
-      <p>
-      <textarea id="result" rows="30" cols="70"></textarea>
+      <pre class="box" id="result"> </pre>
       </div>
   </body>
 </html>
+
+<script>
+window.onload = function(){
+document.getElementsByClassName("btn btn-lg btn-success")[0].click();}
+</script>
