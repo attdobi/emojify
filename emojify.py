@@ -24,6 +24,9 @@ def emojify():
 @application.route("/emoji_art")
 def emoji_art():
     return render_template("emoji_art.html")
+@application.route("/emoji_context")
+def emoji_context():
+    return render_template("emoji_context.html")
 
 @application.route('/_getArt')
 def getArt():
@@ -40,6 +43,12 @@ def song():
     a = request.args.get('a', 0,type=str)
     TS=Emoji.emojifyLyrics(a)
     return jsonify(result=TS)
+    
+@application.route('/_context')
+def context():
+    a = request.args.get('a')
+    text=Emoji.get_context(a)
+    return jsonify(result=text)
 
 @application.route("/db")
 def print_data():

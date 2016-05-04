@@ -95,6 +95,14 @@ class emoji_lib:
 	def sample_art_options(eCount='>=30',eTypes='>=0',eStrTypes='>=0',ePatTypes='>=0',NL='>=0'):
 		self.cur.execute("SELECT text from emoji_tweet WHERE (emojiCountSum {:s} AND emojiTypes {:s} AND emojistrTypes {:s} AND emojiPatternTypes {:s} AND newlineCount {:s}) order by random() limit 40;".format(eCount,eTypes,eStrTypes,ePatTypes,NL))
 		
+	########## emoji context code ##########################################
+	def get_context(self,word):
+		word=word.lower()
+		word=word.replace("'","''")#replace all apostrophe with double for SQL query
+		self.cur.execute("SELECT text from emoji_tweet WHERE LOWER(text) LIKE '%{:s}%' order by random() DESC limit 1000;".format(_u(word)))
+		result=[_u(text[0]) for text in self.cur.fetchall()]
+		return '\n'.join(result)
+		
 	######### emojify code: ################################################
 	def words(self,text):
 		try:

@@ -12,7 +12,7 @@
           rel="stylesheet">
     <link media="only screen and (min-device-width: 0px) and (max-width:800px)" href="mobile.css" type="text/css" rel="stylesheet" />
 <link media="only screen and (min-device-width: 801px) and (max-width:9999px)" href="<?php bloginfo('stylesheet_url'); ?>" title="Simplr" type="text/css" rel="stylesheet" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+   
    <style type="text/css">
     html {
     -webkit-text-size-adjust: 100%;
@@ -151,15 +151,16 @@ select {
 </style> 
   <script type=text/javascript>
     $(function() {
-      $('a#getArt').bind('click', function() {
-        $.getJSON('/_getArt', {
-          a: 1
+    $('#getCon').click(function() {
+        $.getJSON('/_context', {
+          a: $('input[id="context"]').val()
         }, function(data) {
           $("#result").text(data.result);
         });
         return false;
       });
     });
+    
   </script>
   </head>
   <body>
@@ -172,14 +173,31 @@ select {
   <li><a href="/emojify">Emojify</a></li>
   <li><a href="/emoji_art">Emoji Art</a></li>
 </ul>
-        <h3 class="text-muted">Emoji Art 🦄🦄🦄</h3>
+        <h3 class="text-muted">Emoji Context🦄</h3>
       </div>
       <hr/>
 <h6> 
-     <a class="btn btn-lg btn-success" "javascript:void();" id="getArt" role="button">Sample Art</a>
+     <p>
+    Enter emoji or word:
+    <input type = "text" 
+       id = "context"
+       value = "finna"
+      onkeypress="if (event.keyCode==13){window.onload()};"
+      />
+      
+     <a class="btn btn btn-success" "javascript:void();" id="getCon" role="button">Get Context</a>
+     </p>
+     <p> Examples: finna, 🍆 , 💩, 🌮 (what is wrong with this generation) </p>
 </h6>
-      <p>
-      <textarea id="result" rows="30" cols="70"></textarea>
-      </div>
+		<pre class="box">
+      <h4 id="result"></h4>
+      </pre>
+    </form>
+    </div>
   </body>
 </html>
+
+<script>
+window.onload = function(){
+document.getElementsByClassName("btn btn btn-success")[0].click();}
+</script>
