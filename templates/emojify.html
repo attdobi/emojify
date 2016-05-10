@@ -153,7 +153,17 @@ select {
     $(function() {
       $('a#calculate').bind('click', function() {
         $.getJSON('/_add_numbers', {
-          a: $('textarea[name="a"]').val()
+          a: $('textarea[name="a"]').val(),
+          lang: $('select[id="user_lang"]').val()
+        }, function(data) {
+          $("#result").text(data.result);
+        });
+        return false;
+      });
+    $('#user_lang').bind('click', function() {
+        $.getJSON('/_add_numbers', {
+          a: $('textarea[name="a"]').val(),
+          lang: $('select[name="user_lang"]').val()
         }, function(data) {
           $("#result").text(data.result);
         });
@@ -187,8 +197,68 @@ select {
 <h6> 
      <textarea name="a" rows="3" cols="30"> </textarea>
      <a class="btn btn-lg btn-success" "javascript:void();" id="calculate" role="button">Emojify</a>
-<div id="mainselection">
-    <select name="sel" "javascript:void();" id="selection">
+     <label for="lang"
+          style="display: inline-block; width: 140px; text-align: right; font-size:12pt;">
+        Select Language
+     </label>
+		<select name="user_id" "javascript:void();" id="user_lang" style="background-color:green;font-size:11pt">
+		  <option value="all" selected="">All</option>
+		  <option value="id">Bahasa Indonesia - Indonesian</option>
+		  <option value="msa">Bahasa Melayu - Malay</option>
+		  <option value="ca">Català - Catalan</option>
+		  <option value="cs">Čeština - Czech</option>
+		  <option value="da">Dansk - Danish</option>
+		  <option value="de">Deutsch - German</option>
+		  <option value="en">English</option>
+		  <option value="en-gb">English UK - British English</option>
+		  <option value="es">Español - Spanish</option>
+		  <option value="eu">Euskara - Basque (beta)</option>
+		  <option value="fil">Filipino</option>
+		  <option value="fr">Français - French</option>
+		  <option value="ga">Gaeilge - Irish (beta)</option>
+		  <option value="gl">Galego - Galician (beta)</option>
+		  <option value="hr">Hrvatski - Croatian</option>
+		  <option value="it">Italiano - Italian</option>
+		  <option value="xx-lc">LOLCATZ - Lolcat (beta)</option>
+		  <option value="hu">Magyar - Hungarian</option>
+		  <option value="nl">Nederlands - Dutch</option>
+		  <option value="no">Norsk - Norwegian</option>
+		  <option value="pl">Polski - Polish</option>
+		  <option value="pt">Português - Portuguese</option>
+		  <option value="ro">Română - Romanian</option>
+		  <option value="sk">Slovenčina - Slovak</option>
+		  <option value="fi">Suomi - Finnish</option>
+		  <option value="sv">Svenska - Swedish</option>
+		  <option value="vi">Tiếng Việt - Vietnamese</option>
+		  <option value="tr">Türkçe - Turkish</option>
+		  <option value="el">Ελληνικά - Greek</option>
+		  <option value="bg">Български език - Bulgarian</option>
+		  <option value="ru">Русский - Russian</option>
+		  <option value="sr">Српски - Serbian</option>
+		  <option value="uk">Українська мова - Ukrainian</option>
+		  <option value="he">עִבְרִית - Hebrew</option>
+		  <option value="ur">اردو - Urdu (beta)</option>
+		  <option value="ar">العربية - Arabic</option>
+		  <option value="fa">فارسی - Persian</option>
+		  <option value="mr">मराठी - Marathi</option>
+		  <option value="hi">हिन्दी - Hindi</option>
+		  <option value="bn">বাংলা - Bengali</option>
+		  <option value="gu">ગુજરાતી - Gujarati</option>
+		  <option value="ta">தமிழ் - Tamil</option>
+		  <option value="kn">ಕನ್ನಡ - Kannada</option>
+		  <option value="zh-tw">繁體中文 - Traditional Chinese</option><option value="th">ภาษาไทย - Thai</option>
+		  <option value="ko">한국어 - Korean</option>
+		  <option value="ja">日本語 - Japanese</option>
+		  <option value="zh-cn">简体中文 - Simplified Chinese</option>
+		</select>
+		</h6>
+		<h6>
+		<label for="lang"
+          style="display: inline-block; width: 100; text-align: left; font-size:12pt;">
+        Emojify Song
+     </label>
+<div id="mainselection" style="float:center;">
+    <select name="sel" "javascript:void();" id="selection" style="font-size:11pt">
     <option>Shake it Off (Taylor Swift)</option>
     <option>Boyz n The Hood (Eazy-E)</option>
     <option>Let it Snow (Frozen)</option>
@@ -197,8 +267,14 @@ select {
 </div>
 </h6>
       <p>
-      <textarea id="result" rows="30" cols="60"></textarea>
+      <pre class="box" id="result" style="font-size:12pt"> </pre>
+      <!<textarea id="result" rows="30" cols="60"><!</textarea>
       </form>
       </div>
   </body>
 </html>
+
+<script>
+window.onload = function(){
+document.getElementsByName("sel")[0].click();}
+</script>

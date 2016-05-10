@@ -115,23 +115,72 @@ li.dropdown {
       </div>
       <hr/>
       <p>
+       <label for="lang"
+          style="display: inline-block; width: 146px; text-align: right">
     Enter word or phrase:
+     </label>
     <input type = "text"
        id = "word"
        value = "Spring"
       onkeypress="if (event.keyCode==13){make_graph()};"
       />
-    <label for="search_type"
+    <label for="lang"
           style="display: inline-block; width: 140px; text-align: right">
-        Pattern Type
+        Select Language
      </label>
-      <select id="search_type" onchange="update_url()">
-        <option value="all">All</option>
-        <option value="surrounding">Surrounding Text</option>
-      </select>
+		<select id="user_lang" name="user[lang]" onchange="update_url()">
+		  <option value="all" selected="">All</option>
+		  <option value="id">Bahasa Indonesia - Indonesian</option>
+		  <option value="msa">Bahasa Melayu - Malay</option>
+		  <option value="ca">Català - Catalan</option>
+		  <option value="cs">Čeština - Czech</option>
+		  <option value="da">Dansk - Danish</option>
+		  <option value="de">Deutsch - German</option>
+		  <option value="en">English</option>
+		  <option value="en-gb">English UK - British English</option>
+		  <option value="es">Español - Spanish</option>
+		  <option value="eu">Euskara - Basque (beta)</option>
+		  <option value="fil">Filipino</option>
+		  <option value="fr">Français - French</option>
+		  <option value="ga">Gaeilge - Irish (beta)</option>
+		  <option value="gl">Galego - Galician (beta)</option>
+		  <option value="hr">Hrvatski - Croatian</option>
+		  <option value="it">Italiano - Italian</option>
+		  <option value="xx-lc">LOLCATZ - Lolcat (beta)</option>
+		  <option value="hu">Magyar - Hungarian</option>
+		  <option value="nl">Nederlands - Dutch</option>
+		  <option value="no">Norsk - Norwegian</option>
+		  <option value="pl">Polski - Polish</option>
+		  <option value="pt">Português - Portuguese</option>
+		  <option value="ro">Română - Romanian</option>
+		  <option value="sk">Slovenčina - Slovak</option>
+		  <option value="fi">Suomi - Finnish</option>
+		  <option value="sv">Svenska - Swedish</option>
+		  <option value="vi">Tiếng Việt - Vietnamese</option>
+		  <option value="tr">Türkçe - Turkish</option>
+		  <option value="el">Ελληνικά - Greek</option>
+		  <option value="bg">Български език - Bulgarian</option>
+		  <option value="ru">Русский - Russian</option>
+		  <option value="sr">Српски - Serbian</option>
+		  <option value="uk">Українська мова - Ukrainian</option>
+		  <option value="he">עִבְרִית - Hebrew</option>
+		  <option value="ur">اردو - Urdu (beta)</option>
+		  <option value="ar">العربية - Arabic</option>
+		  <option value="fa">فارسی - Persian</option>
+		  <option value="mr">मराठी - Marathi</option>
+		  <option value="hi">हिन्दी - Hindi</option>
+		  <option value="bn">বাংলা - Bengali</option>
+		  <option value="gu">ગુજરાતી - Gujarati</option>
+		  <option value="ta">தமிழ் - Tamil</option>
+		  <option value="kn">ಕನ್ನಡ - Kannada</option>
+		  <option value="zh-tw">繁體中文 - Traditional Chinese</option><option value="th">ภาษาไทย - Thai</option>
+		  <option value="ko">한국어 - Korean</option>
+		  <option value="ja">日本語 - Japanese</option>
+		  <option value="zh-cn">简体中文 - Simplified Chinese</option>
+		</select>
      </p>
      
-    <div id="piechart"><svg style="width:575px;height:575px;"></svg></div>
+    <div id="piechart" style="float:left;"><svg style="width:575px;height:575px;"></svg></div>
     <div id="table" style="font-size:16pt"></div>
 
 <script>
@@ -142,22 +191,23 @@ li.dropdown {
         { head: 'Rank', cl: 'center', html: ƒ('rank') },
         { head: 'Emoji', cl: 'title', html: ƒ('label') },
         { head: 'Count', cl: 'center', html: ƒ('value') },
+        { head: '%', cl: 'center', html: ƒ('percent') },
     ];
 
         
 //Update and make pie chart 
 
     //var URL_BASE = "http://localhost:5000/db";
-    var URL_BASE = "http://52.38.112.55/dbskin";
+    var URL_BASE = "http://52.38.112.55/db";
 // Update graph in response to inputs 
 //this updates continuously as text is entered
  //d3.select("#word").on("input", make_graph);
- d3.select("#search_type").on("input", make_graph);
+ d3.select("#user_lang").on("input", make_graph);
 
 // Return url to recieve csv data with query filled in from input fields
 function update_url() {
   return URL_BASE +"?word=" + document.getElementById("word").value +
-  			"&freq_filter=" + document.getElementById("search_type").value;
+  			"&user_lang=" + document.getElementById("user_lang").value;
 }
 
 function commaSeparateNumber(val){
@@ -166,6 +216,9 @@ function commaSeparateNumber(val){
     }
     return val;
   }
+function add(a, b) {
+    return a + b;
+}
 
 function make_graph() {
   url = update_url()
@@ -182,12 +235,14 @@ function make_graph() {
         chart.color(d3.scale.category20c().range());
 
     chart.tooltipContent(function(key, y, e, graph) {
-          var x = String(key);
-        //var y =  String(y);
-        var yy= +y.replace(/,/g, ''); //remove the comma and make yy an int with + 
+        var x = String(key);
+        var y =  String(y);
+        //var yy= +y.replace(/,/g, ''); //remove the comma and make yy an int with + 
+        //var perc = e.series.values[e.pointIndex];
         //old: var yy= parseInt(y.replace(/,/g, ''))
               
-              tooltip_str = '<center><b>'+x+'</b></center>' + commaSeparateNumber(yy);
+              //tooltip_str = '<center><b>'+x+'</b></center>' +'<center>'+ commaSeparateNumber(yy)+'</center>' ;
+              tooltip_str = '<center><b>'+x+'</b></center>' +'<center>'+ y+'%'+'</center>' ;
               return tooltip_str;
               });
         chart.showLabels(true);
@@ -198,8 +253,9 @@ function make_graph() {
 
         chart
             .x(function(d) { return d.label })
-            //y data is saved with commas at 1000 for the table format. Remove commas:
-            .y(function(d) { return d.value.replace(/,/g, ''); });
+            .y(function(d) { return d.percent });
+            //y data (count) is saved with commas at 1000 for the table format. Remove commas:
+            //.y(function(d) { return d.value.replace(/,/g, ''); });
 
         chart.width(600);
 
@@ -246,7 +302,6 @@ function make_graph() {
     // create table body
     var body = table.append("tbody")
         .selectAll('tr');
-        
         //body.data(data).exit().remove();
     
         body
@@ -266,8 +321,14 @@ function make_graph() {
         .append('td')
         .html(ƒ('html'))
         .attr('class', ƒ('cl'));
-
-
+		
+		//table.selectAll("td").style("border", "solid 1px")
+		table.selectAll("th").style("background-color", "#D8D8D8");
+		table.selectAll("tr").style("background-color", function(d, i){
+     				if(i%2 == 1){
+     					return "#D8D8D8";
+     				}
+     			})
         
         });
     });
@@ -280,3 +341,4 @@ make_graph();
 </script>
   </body>
 </html>
+

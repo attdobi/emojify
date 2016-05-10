@@ -11,9 +11,7 @@
     <script src="https://rawgit.com/gka/d3-jetpack/master/d3-jetpack.js"></script>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
           rel="stylesheet">
- <link media="only screen and (min-device-width: 0px) and (max-width:800px)" href="mobile.css" type="text/css" rel="stylesheet" />
-<link media="only screen and (min-device-width: 801px) and (max-width:9999px)" href="<?php bloginfo('stylesheet_url'); ?>" title="Simplr" type="text/css" rel="stylesheet" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
    <style type="text/css">
    body { font-family:  Helvetica, 'Apple Color Emoji', 'Helvetica Neue'; font-weight: 300;}
     th { text-align: center; }
@@ -24,37 +22,29 @@
    -ms-text-size-adjust: 100%; 
    -webkit-text-size-adjust: 100%;
    }
-     html {
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%; /* 2 */
-    }
-  #chart svg {
+   #chart svg {
   font-size: 50px;
-  -webkit-text-size-adjust:100%;
    }
     textarea {
     font-size: 16pt;
-    font-family: Arial;
+    font-family:  Arial;
     }
     svg text {
      font: normal 50px Impact;
-     -webkit-text-size-adjust:100%;
     }
     div text {
-    font: normal 50px Impact;
-    -webkit-text-size-adjust:100%;
+     font: normal 50px Impact;
     }
     .nv-label text{
     font-size: 50px;
-    -webkit-text-size-adjust:100%;
     }
-        ul {
+    ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
     background-color: #333;
-}
+   }
 
 li {
     float: left;
@@ -125,12 +115,71 @@ li.dropdown {
       </div>
       <hr/>
       <p>
-    Enter word or phrase:
-    <input type = "text" 
+       <label for="pattern_type"
+          style="display: inline-block; width: 146px; text-align: right">
+        Enter word or phrase:
+      </label>
+    <input type = "text"
        id = "word"
        value = "Spring"
       onkeypress="if (event.keyCode==13){make_graph()};"
       />
+    <label for="lang"
+          style="display: inline-block; width: 140px; text-align: right">
+        Select Language
+     </label>
+		<select id="user_lang" name="user[lang]" onchange="update_url()">
+		  <option value="all" selected="">All</option>
+		  <option value="id">Bahasa Indonesia - Indonesian</option>
+		  <option value="msa">Bahasa Melayu - Malay</option>
+		  <option value="ca">Català - Catalan</option>
+		  <option value="cs">Čeština - Czech</option>
+		  <option value="da">Dansk - Danish</option>
+		  <option value="de">Deutsch - German</option>
+		  <option value="en">English</option>
+		  <option value="en-gb">English UK - British English</option>
+		  <option value="es">Español - Spanish</option>
+		  <option value="eu">Euskara - Basque (beta)</option>
+		  <option value="fil">Filipino</option>
+		  <option value="fr">Français - French</option>
+		  <option value="ga">Gaeilge - Irish (beta)</option>
+		  <option value="gl">Galego - Galician (beta)</option>
+		  <option value="hr">Hrvatski - Croatian</option>
+		  <option value="it">Italiano - Italian</option>
+		  <option value="xx-lc">LOLCATZ - Lolcat (beta)</option>
+		  <option value="hu">Magyar - Hungarian</option>
+		  <option value="nl">Nederlands - Dutch</option>
+		  <option value="no">Norsk - Norwegian</option>
+		  <option value="pl">Polski - Polish</option>
+		  <option value="pt">Português - Portuguese</option>
+		  <option value="ro">Română - Romanian</option>
+		  <option value="sk">Slovenčina - Slovak</option>
+		  <option value="fi">Suomi - Finnish</option>
+		  <option value="sv">Svenska - Swedish</option>
+		  <option value="vi">Tiếng Việt - Vietnamese</option>
+		  <option value="tr">Türkçe - Turkish</option>
+		  <option value="el">Ελληνικά - Greek</option>
+		  <option value="bg">Български език - Bulgarian</option>
+		  <option value="ru">Русский - Russian</option>
+		  <option value="sr">Српски - Serbian</option>
+		  <option value="uk">Українська мова - Ukrainian</option>
+		  <option value="he">עִבְרִית - Hebrew</option>
+		  <option value="ur">اردو - Urdu (beta)</option>
+		  <option value="ar">العربية - Arabic</option>
+		  <option value="fa">فارسی - Persian</option>
+		  <option value="mr">मराठी - Marathi</option>
+		  <option value="hi">हिन्दी - Hindi</option>
+		  <option value="bn">বাংলা - Bengali</option>
+		  <option value="gu">ગુજરાતી - Gujarati</option>
+		  <option value="ta">தமிழ் - Tamil</option>
+		  <option value="kn">ಕನ್ನಡ - Kannada</option>
+		  <option value="zh-tw">繁體中文 - Traditional Chinese</option><option value="th">ภาษาไทย - Thai</option>
+		  <option value="ko">한국어 - Korean</option>
+		  <option value="ja">日本語 - Japanese</option>
+		  <option value="zh-cn">简体中文 - Simplified Chinese</option>
+		</select>
+	</p>
+	<p>
     <label for="pattern_type"
           style="display: inline-block; width: 140px; text-align: right">
         Pattern Type
@@ -151,43 +200,51 @@ li.dropdown {
       </select>
     <label for="freq_select"
           style="display: inline-block; width: 140px; text-align: right">
-        Frequency Filter
+        Text Filter
       </label>
       <select id="freq_filter" onchange="update_url()">
-        <option value="off">All in Tweet</option>
-        <option value="on">Most Frequent in Tweet</option>
+        <option value="all">All in Tweet</option>
+        <option value="freq">Most Frequent in Tweet</option>
+        <option value="surr">Surrounding Text</option>
       </select>
      </p>
-     <div id="piechart"><svg style="width:575px;height:575px;" viewBox="0 0 575 575"
+     
+    <div id="piechart" style="float:left;"><svg style="width:575px;height:575px" viewBox="0 0 575 575"
   preserveAspectRatio=""xMidYMid"></svg></div>
-     <div id="table" style="font-size:16pt"></div>
-    <script>
-    
+    <div id="table" style="font-size:16pt"></div>
+
+<script>
+
 // the table rows
     // column definitions
     var columns = [
         { head: 'Rank', cl: 'center', html: ƒ('rank') },
         { head: 'Emoji', cl: 'title', html: ƒ('label') },
         { head: 'Count', cl: 'center', html: ƒ('value') },
+        { head: '%', cl: 'center', html: ƒ('percent') },
     ];
 
         
 //Update and make pie chart 
-    
-  var URL_BASE = "http://52.38.112.55/db";
+
+    //var URL_BASE = "http://localhost:5000/db";
+    var URL_BASE = "http://52.38.112.55/db";
 // Update graph in response to inputs 
 //this updates continuously as text is entered
  //d3.select("#word").on("input", make_graph);
+ d3.select("#user_lang").on("input", make_graph);
  d3.select("#pattern_type").on("input", make_graph);
  d3.select("#freq_filter").on("input", make_graph);
  d3.select("#face_filter").on("input", make_graph);
+
 
 // Return url to recieve csv data with query filled in from input fields
 function update_url() {
   return URL_BASE +"?word=" + document.getElementById("word").value +
   			"&freq_filter=" + document.getElementById("freq_filter").value + 
   			"&face_filter=" + document.getElementById("face_filter").value +
-  			"&pattern_type=" + document.getElementById("pattern_type").value;
+  			"&pattern_type=" + document.getElementById("pattern_type").value +
+  			"&user_lang=" + document.getElementById("user_lang").value;
 }
 
 function commaSeparateNumber(val){
@@ -197,14 +254,19 @@ function commaSeparateNumber(val){
     return val;
   }
   
+function add(a, b) {
+    return a + b;
+}
+
 function make_graph() {
   url = update_url()
   
   d3.json(url, function(error, data) {
-  	var fmt = d3.format("d");
+    var fmt = d3.format("d");
     nv.addGraph(function() {
         var chart = nv.models.pieChart();
         chart.margin({top: 30, right: 60, bottom: 20, left: 20});
+        
         var datum = data.values;
         //var datum = data_piechart;
 
@@ -212,11 +274,13 @@ function make_graph() {
 
     chart.tooltipContent(function(key, y, e, graph) {
           var x = String(key);
-        //var y =  String(y);
-          var yy= +y.replace(/,/g, ''); //remove the comma and make yy an int with + 
-        //old: var yy= parseInt(y.replace(/,/g, ''))
+          var y =  String(y);
+         //var yy= +y.replace(/,/g, ''); //remove the comma and make yy an int with + 
+         //var yper = String(yper)
+         //old: var yy= parseInt(y.replace(/,/g, ''))
               
-              tooltip_str = '<center><b>'+x+'</b></center>' + commaSeparateNumber(yy);
+              //tooltip_str = '<center><b>'+x+'</b></center>' +'<center>'+ commaSeparateNumber(yy)+'</center>' +  d3.format(".1%")(yy/ysum);
+              tooltip_str = '<center><b>'+x+'</b></center>' +'<center>'+ y+'%'+'</center>' ;
               return tooltip_str;
               });
         chart.showLabels(true);
@@ -227,8 +291,9 @@ function make_graph() {
 
         chart
             .x(function(d) { return d.label })
+            .y(function(d) { return d.percent });
             //y data is saved with commas at 1000 for the table format. Remove commas:
-            .y(function(d) { return d.value.replace(/,/g, ''); });
+            //.y(function(d) { return d.value.replace(/,/g, ''); });
 
         chart.width(600);
 
@@ -246,8 +311,8 @@ function make_graph() {
             d3.selectAll(".nv-label text")
             .attr("text-anchor", "middle")
             .style({"font-family": 'Apple Color Emoji'});
-            //.style({"-webkit-transform": "scale(5)"});
-            //.style({"font-size": "50px"});
+            //.style({"-webkit-transform": "scale(2)"});
+            //.style({"font-size": "50px"})
             //.attr('transform', 'scale(1.5) translate(-5,0)');
             
             //select legend
@@ -255,6 +320,8 @@ function make_graph() {
             .style({"font-size": "20px"})
             .style({"font-family": 'Apple Color Emoji'});
             
+  
+        
 // create table
 	//Clear previous table
 	d3.selectAll("#table > *").remove();
@@ -296,11 +363,21 @@ function make_graph() {
         .html(ƒ('html'))
         .attr('class', ƒ('cl'));
 
-            
+		table.selectAll("th").style("background-color", "#D8D8D8");
+		table.selectAll("tr").style("background-color", function(d, i){
+     				if(i%2 == 1){
+     					return "#D8D8D8";
+     				}
+     			})
+
+        
         });
     });
 }
 make_graph();
+
+
+
 </script>
   </body>
 </html>

@@ -1,5 +1,6 @@
 #import os
 #base_dir=os.path.expanduser('~')
+from __future__ import division
 from flask import Flask, render_template, request, request, jsonify
 import numpy as np
 from emoji_class import *
@@ -34,7 +35,8 @@ def getArt():
 
 @application.route('/_add_numbers')
 def add_numbers():
-    a = request.args.get('a', 0,type=str)
+    a = request.args.get('a', '',type=str)
+    user_lang = request.args.get('lang')
     #TS=emojify
     return jsonify(result=Emoji.emojifyText(a))
     
@@ -43,11 +45,12 @@ def song():
     a = request.args.get('a', 0,type=str)
     TS=Emoji.emojifyLyrics(a)
     return jsonify(result=TS)
-    
+
 @application.route('/_context')
 def context():
     a = request.args.get('a')
-    text=Emoji.get_context(a)
+    user_lang = request.args.get('lang')
+    text=Emoji.get_context(a,user_lang)
     return jsonify(result=text)
 
 @application.route("/db")
@@ -56,23 +59,31 @@ def print_data():
 	pattern_type = request.args.get('pattern_type')
 	freq_filter = request.args.get('freq_filter')
 	face_filter = request.args.get('face_filter')
-	if freq_filter=='on':
-		xdata, ydata = Emoji.filter_emoji_freq(word,face_filter,pattern_type)
-	else:
-		xdata, ydata = Emoji.filter_emoji(word,face_filter,pattern_type)
+	user_lang = request.args.get('user_lang')
+	if freq_filter=='freq':
+		xdata, ydata = Emoji.filter_emoji_freq(word,face_filter,pattern_type,user_lang)
+	elif freq_filter=='all':
+		xdata, ydata = Emoji.filter_emoji(word,face_filter,pattern_type,user_lang)
+	else: #surr (surrounding text, takes long to query)
+		xdata, ydata = Emoji.filter_emoji_surr(word,face_filter,pattern_type,user_lang)
+	#write result to DB
+	Emoji.index_result(word,freq_filter,face_filter,pattern_type,user_lang,xdata,ydata)
+	ysum=sum(ydata)
 	#save y data as comma separated 1000s string and return JSON
-	ydata=[locale.format("%d", val, grouping=True) for val in ydata]
-	return jsonify({"values":[{"rank":rank+1,"value":count,"label":emoji} for rank,(count, emoji) in enumerate(zip(ydata,xdata))],"key": "Serie 1"})
+	ystr=[locale.format("%d", val, grouping=True) for val in ydata]
+	return jsonify({"values":[{"rank":rank+1,"value":countstr,"percent":"{:0.2f}".format(count/ysum*100),"label":emoji} for rank,(countstr,count,emoji) in enumerate(zip(ystr,ydata,xdata))],"key": "Serie 1"})
 
 @application.route("/dbskin")
 def skin_data():
 	word = request.args.get('word')
-	pattern_type = request.args.get('search_type')
-	xdata, ydata = Emoji.emoji_skin(word,pattern_type)
+	user_lang = request.args.get('user_lang')
+	xdata, ydata = Emoji.emoji_skin(word,user_lang)
+	Emoji.index_skin_result(word,user_lang,xdata,ydata)
+	ysum=sum(ydata)
 	#save y data as comma separated 1000s string and return JSON
-	ydata=[locale.format("%d", val, grouping=True) for val in ydata]
-	return jsonify({"values":[{"rank":rank+1,"value":count,"label":emoji} for rank,(count, emoji) in enumerate(zip(ydata,xdata))],"key": "Serie 1"})
-
+	ystr=[locale.format("%d", val, grouping=True) for val in ydata]
+	return jsonify({"values":[{"rank":rank+1,"value":countstr,"percent":"{:0.2f}".format(count/ysum*100),"label":emoji} for rank,(countstr,count,emoji) in enumerate(zip(ystr,ydata,xdata))],"key": "Serie 1"})
+	
 @application.route("/word/<word>")
 def search(word):
     print(word.title().lower())
