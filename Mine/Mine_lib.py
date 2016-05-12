@@ -7,6 +7,7 @@ import os, sys
 base_dir=os.path.expanduser('~')
 import datetime
 import time
+import json
 import psycopg2
 
 #read emoji codes:
@@ -206,6 +207,15 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 def mine_tweets(conn,cur,tweet):
 	#print(tweet.text)
 	#tweet data:
+	#get place data and write as json object
+	if tweet.place:
+		try:
+			tweet.place={"full_name":tweet.place.full_name,"country_code":tweet.place.country_code,"country":tweet.place.country,\
+			"place_type":tweet.place.place_type,"coordinates":tweet.place.bounding_box.coordinates,"id":tweet.place.id,"name":tweet.place.name}
+		except AttributeError:
+			tweet.place={"full_name":tweet.place.full_name,"country_code":tweet.place.country_code,"country":tweet.place.country,\
+			"place_type":tweet.place.place_type,"id":tweet.place.id,"name":tweet.place.name}
+	
 	date= datetime.datetime.utcnow()
 	created_at = tweet.created_at
 	text = tweet.text
@@ -215,9 +225,11 @@ def mine_tweets(conn,cur,tweet):
 		lang=checkNone(tweet.lang)
 	except AttributeError:
 		lang=''
-	geo = checkNoneJSON(tweet.geo)
+	#geo = checkNoneJSON(tweet.geo) always null, using place instead
+	geo = checkNoneJSON(tweet.place)
 	time_zone = checkNone(tweet.user.time_zone)
-	coordinates = checkNoneJSON(tweet.coordinates)
+	#coordinates = checkNoneJSON(tweet.coordinates)
+	coordinates = checkNoneJSON(tweet.geo) #null anyway, storing the place info in geo
 	name = checkNone(tweet.user.name)
 	user_name = checkNone(tweet.user.screen_name)
 	dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
