@@ -15,6 +15,9 @@ emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='ut
 emj_codes_skin=[code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']) if ('FITZPATRICK' in name)]
 emj_codes=[code for code in emoji_key['Unicode'] if code!="Browser" \
            if (code not in emj_codes_skin) if sum([c=="*" for c in code])==0]
+#codes that are yellow with the potential for a skin tone
+can_have_skin=[key[0:2] for key in emj_codes if re.findall(emj_codes_skin[0],key) != []]
+can_have_skin += [key[0:1] for key in emj_codes if len(key[0:2].encode("utf-8"))==6 and re.findall(emj_codes_skin[0],key) != []]
 #remove common face emojis
 face_index=range(69)
 emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
@@ -115,34 +118,62 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 	user_name=SQL_return[11]
 	#function to quickly scan for has emoji
 	for emcode in emj_codes:
-		if (len(re.findall(emcode,original_text))) > 0:
+		if re.findall(emcode,original_text) != []:
 			has_emoji=True
 			break
 	
 	if has_emoji:
-		text=emoji_split(original_text)
-		emjText=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emj_codes\
-			if (len(re.findall(emcode,text)) > 0)])
+	 	#split text using "all" function, then find labels. This counts skin tones properly
+		text=emoji_split_all(original_text)
+		emojiLabel=np.intersect1d(text.split(),emj_codes,assume_unique=False)
+		emjText=np.array([(emcode, text.split().count(emcode)) for emcode in emojiLabel \
+			if re.findall(emcode,text)!=[]])
+		
+		#old
+		#emjText=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emj_codes\
+		#	if (re.findall(emcode,text) != [])])
 		#print(text)
 		#has_emoji=True
 		mostFreqWord, mostFreqWordCount = count_words(text)
 		newlineCount= text.count('\n')
 		#create arrays to save in SQL. Sorted by frequency
-		emojiLabel=emjText[np.argsort(emjText[:, 1])[::-1]][:,0]
+		emojiLabel=emjText[np.argsort(emjText[:, 1].astype(int))[::-1]][:,0] #sort by frequency
 		emojiLabelFaceFilter= np.in1d(emojiLabel,emj_codes_face,invert=True)
-		emojiCount=np.array(emjText[np.argsort(emjText[:, 1])[::-1]][:,1], dtype=int)
+		emojiCount=np.array(emjText[np.argsort(emjText[:, 1].astype(int))[::-1]][:,1], dtype=int)
 		emojiTypes=len(emojiCount)
 		emojiCountSum=sum(emojiCount)
-		surrounding_text=surroundingText(text,emojiLabel) #sorted by frequency
+		surrounding_text=surroundingText(text,emojiLabel) #sorted by frequency, using 
 		prev_word=surrounding_text[:,1]
 		next_word=surrounding_text[:,2]
 		prev_sentence=surrounding_text[:,3]
 		next_sentence=surrounding_text[:,4]
-
-		#build array of emoji strings
-		emj_str = np.array([(emj_str, int(len(emj_str)/2)) for emj_str in sum([''.join([word if word in emj_codes+[' '] \
-		else 'T' for word in emoji_split_line(line).split()]).rsplit('T') for line in text.split('\n')],[]) if emj_str != ''])
+		
+		#skin tone information
+		emjText_skin=[(emcode, len(re.findall(emcode,text))) for emcode in emj_codes_skin\
+			if (re.findall(emcode,text) !=[])]
+		emjText_skinYellow=np.array([(emcode, text.split().count(emcode)) for emcode in can_have_skin\
+			if text.split().count(emcode)>0])
+		#note: findall will look for the skin codes in the double unicode singlets. text.split().count will explicitly look for emojois that could have had a skin tone but didn't
+		if len(emjText_skinYellow) > 0:#if yellow skin count is non zero then add it
+			emjText_skin.append((u'\U0001f590',sum(emjText_skinYellow[:,1].astype(int))))
+			#emjText_skin=np.vstack((emjText_skin,np.array([u'\U0001f590',sum(emjText_skinYellow[:,1].astype(int))])))#yellow hand emoji
+		
+		if len(emjText_skin)==0:
+			emojiSkinLabel, emojiSkinCount,emojiSkinCountSum,emojiSkinTypes= [],[],0,0
+		else:
+			emjText_skin=np.array(emjText_skin)
+			#create arrays to save in SQL. Sorted by frequency
+			emojiSkinLabel=emjText_skin[np.argsort(emjText_skin[:, 1].astype(int))[::-1]][:,0] 
+			emojiSkinCount=np.array(emjText_skin[np.argsort(emjText_skin[:, 1].astype(int))[::-1]][:,1],dtype=int)
+			emojiSkinCountSum=sum(emojiSkinCount)
+			emojiSkinTypes=len(emojiSkinCount)
 	
+		#split with  this function to analyze the strings, no spaces between emojis
+		text=emoji_split(original_text)
+		#build array of emoji strings
+		emj_str = np.array([(emj_str, int(len(emj_str)/2)) for emj_str in sum([''.join([word if word in emojiLabel.tolist()+[' '] \
+		else 'T' for word in emoji_split_line(line).split()]).rsplit('T') for line in text.split('\n')],[]) if emj_str != ''])
+		
 		#analyze emoji strings, cut away length 1 emojis and call new array a:
 		if len(emj_str)==0:
 			emojistrLabel,emojistrCount,emojistrLen,emojistrTypes,emojistr_prev_word,emojistr_next_word,\
@@ -151,12 +182,13 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 		else: #try to find strings, but first filter length 1 and those with length 2(with skin codes)
 			d=collections.defaultdict(lambda:0)
 			for key in emj_str[:,0]:
-				d[key]+=1
+				if key not in emj_codes:#do not include length 2 emoji codes, flags, skins, etc.
+					d[key]+=1
 			a=np.array([d.values(),d.keys(),[int(len(key)/2) for key in d.keys()]])
-			#remove single emojis and double if skin code is included:
-			skin_cut=~np.bool8(((np.int32(a[2,:]))==2) & (np.array([sum([len(re.findall(emcode,val)) for emcode in emj_codes_skin]) for val in a[1,:]])))
-			multi_cut=(np.int32(a[2,:])>1) & skin_cut
-			a=a[:,multi_cut]
+			#Old, remove single emojis and double if skin code is included:
+			#skin_cut=~np.bool8(((np.int32(a[2,:]))==2) & (np.array([sum([len(re.findall(emcode,val)) for emcode in emj_codes_skin]) for val in a[1,:]])))
+			#multi_cut=(np.int32(a[2,:])>1) & skin_cut
+			#a=a[:,multi_cut]
 
 			if len(a[0])==0:
 				emojistrLabel,emojistrCount,emojistrLen,emojistrTypes,emojistr_prev_word,emojistr_next_word,\
@@ -182,18 +214,6 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 				emojiPatternCount=np.array(pattern[np.argsort(pattern[:, 1])[::-1]][:,1],dtype=int)
 				emojiPatternLen=np.array([np.int32(len(val)/2) for val in emojiPatternLabel],dtype=int)
 				emojiPatternTypes=len(emojiPatternCount)
-
-		#skin tone information
-		emjText_skin=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emj_codes_skin\
-					  if (len(re.findall(emcode,text)) > 0)])
-		if len(emjText_skin)==0:
-			emojiSkinLabel, emojiSkinCount,emojiSkinCountSum,emojiSkinTypes= [],[],0,0
-		else:
-			#create arrays to save in SQL. Sorted by frequency
-			emojiSkinLabel=emjText_skin[np.argsort(emjText_skin[:, 1])[::-1]][:,0] 
-			emojiSkinCount=np.array(emjText_skin[np.argsort(emjText_skin[:, 1])[::-1]][:,1],dtype=int)
-			emojiSkinCountSum=sum(emojiSkinCount)
-			emojiSkinTypes=len(emojiSkinCount)
 	
 		insertIntoSQL(conn,cur,tweet_id, date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name,\
 	emojiLabel,emojiLabelFaceFilter,emojiCount,emojiCountSum,emojiTypes,prev_word,next_word,prev_sentence,next_sentence,mostFreqWord,\
