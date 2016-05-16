@@ -22,10 +22,17 @@ class emoji_lib:
 		self.cur = self.conn.cursor()
 		#load emoji keys for cuts, only need to do once
 		self.emjDict=self.buildDict()
-	######### Index search result, write to SQL DB ###########################
-	def index_result(self, word,freq_filter,face_filter,pattern_type,user_lang,xdata,ydata):
+	def sql_word(self,word):
 		word=word.lower()
 		word=word.replace("'","''")#replace all apostrophes with double for SQL query
+		if (re.findall("[a-z]",word) == []) or len(word.split())>1:
+			return word
+		else:
+			return ' '+word #text is already saved with words split from emojis. potential punctuation afterwards
+		
+	######### Index search result, write to SQL DB ###########################
+	def index_result(self, word,freq_filter,face_filter,pattern_type,user_lang,xdata,ydata):
+		word=self.sql_word(word)
 		self.cur.execute("INSERT INTO emoji_search (\
 		date,\
 		searchTerm ,\
@@ -51,8 +58,7 @@ class emoji_lib:
 		self.conn.commit() #submit change to db
 		
 	def index_skin_result(self,word,user_lang,xdata,ydata):
-		word=word.lower()
-		word=word.replace("'","''")#replace all apostrophes with double for SQL query
+		word=self.sql_word(word)
 		self.cur.execute("INSERT INTO emoji_skin_search (\
 		date,\
 		searchTerm ,\
@@ -74,8 +80,7 @@ class emoji_lib:
 	######### query SQL code: ################################################
 	######### query skin code: ################################################
 	def emoji_skin(self, word='dog',user_lang='all'):
-		word=word.lower()
-		word=word.replace("'","''")#replace all apostrophes with double for SQL query
+		word=self.sql_word(word)
 		if user_lang=='all':
 			lang=''
 		else:
@@ -88,8 +93,7 @@ class emoji_lib:
 		return xdata, ydata
 	####### emoji Tweet search ###################################################
 	def filter_emoji(self, word='dog',face_filter='off',pattern_type='single',user_lang='all'):
-		word=word.lower()
-		word=word.replace("'","''")#replace all apostrophes with double for SQL query
+		word=self.sql_word(word)
 		if user_lang=='all':
 			lang=''
 		else:
@@ -120,8 +124,7 @@ class emoji_lib:
 		return xdata, ydata
 
 	def filter_emoji_freq(self,word='dog',face_filter='off',pattern_type='single',user_lang='all'):
-		word=word.lower()
-		word=word.replace("'","''")#replace all apostrophe with double for SQL query
+		word=self.sql_word(word)
 		if user_lang=='all':
 			lang=''
 		else:
@@ -152,8 +155,7 @@ class emoji_lib:
 		return xdata, ydata
 	######## Search Surrounding Text ########################################################
 	def filter_emoji_surr(self,word='dog',face_filter='off',pattern_type='single',user_lang='all'):
-		word=word.lower()
-		word=word.replace("'","''")#replace all apostrophe with double for SQL query
+		word=self.sql_word(word)
 		if user_lang=='all':
 			lang,lang2='',''
 		else:
@@ -193,8 +195,7 @@ class emoji_lib:
 		
 	########## emoji context code ##########################################
 	def get_context(self,word,user_lang):
-		word=word.lower()
-		word=word.replace("'","''")#replace all apostrophe with double for SQL query
+		word=self.sql_word(word)
 		if user_lang=='all':
 			lang=''
 		else:
