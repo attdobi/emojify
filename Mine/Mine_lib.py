@@ -128,12 +128,14 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 		emojiLabel=np.intersect1d(text.split(),emj_codes,assume_unique=False)
 		emjText=np.array([(emcode, text.split().count(emcode)) for emcode in emojiLabel \
 			if re.findall(emcode,text)!=[]])
+			
+		if len(emojiLabel)==0:
+			#old, but will work in the case a lone skin tone is used
+			emjText=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emj_codes\
+				if (re.findall(emcode,text) != [])])
 		
-		#old
-		#emjText=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emj_codes\
-		#	if (re.findall(emcode,text) != [])])
-		#print(text)
-		#has_emoji=True
+		print(text)
+		print(emjText)
 		mostFreqWord, mostFreqWordCount = count_words(text)
 		newlineCount= text.count('\n')
 		#create arrays to save in SQL. Sorted by frequency
