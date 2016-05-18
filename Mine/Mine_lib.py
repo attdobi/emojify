@@ -134,8 +134,6 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 			emjText=np.array([(emcode, len(re.findall(emcode,text))) for emcode in emj_codes\
 				if (re.findall(emcode,text) != [])])
 		
-		print(text)
-		print(emjText)
 		mostFreqWord, mostFreqWordCount = count_words(text)
 		newlineCount= text.count('\n')
 		#create arrays to save in SQL. Sorted by frequency
