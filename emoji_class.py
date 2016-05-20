@@ -272,7 +272,7 @@ class emoji_lib:
 	def emojifyLyrics(self, a):
 		song_list=dict({"Shake it Off (Taylor Swift)":"ShakeItOff_TS.txt","Boyz n The Hood (Eazy-E)":"Boyz-n-the-Hood.txt","Let it Snow (Frozen)":"Let-It_Go.txt","Lollipop (Lil Wayne)":"Lollipop-LW.txt"})
 		try:
-			TS = _u(file(base_dir+'data/lyrics/'+song_list[a]).read())
+			TS = _u(file(base_dir+'/data/lyrics/'+song_list[a]).read())
 		except KeyError:
 			TS=['']
 		return('\n'.join([self.emoji_fy(line,lyric=True) for line in TS.split('\n')]))
