@@ -43,6 +43,6 @@ if __name__ == "__main__":
 			for result in SQL_result:
 				analyze_tweet_emojis(conn,cur,result)
 			conn.close()
-			time.sleep(120)
+			time.sleep(300)
 		else:#else quit ... or sleep
 			run=False
