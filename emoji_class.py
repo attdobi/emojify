@@ -1,4 +1,6 @@
 from __future__ import division,unicode_literals
+import os
+base_dir=os.path.expanduser('~')+'/emojify' #get home dir, point to emojify folder
 import pandas as pd
 import datetime
 import numpy as np
@@ -33,6 +35,7 @@ class emoji_lib:
 	######### Index search result, write to SQL DB ###########################
 	def index_result(self, word,freq_filter,face_filter,pattern_type,user_lang,xdata,ydata):
 		word=self.sql_word(word)
+		word=word.replace("''","'")#undo all double apostrophes used for SQL query
 		self.cur.execute("INSERT INTO emoji_search (\
 		date,\
 		searchTerm ,\
@@ -59,6 +62,7 @@ class emoji_lib:
 		
 	def index_skin_result(self,word,user_lang,xdata,ydata):
 		word=self.sql_word(word)
+		word=word.replace("''","'")#undo all double apostrophes used for SQL query
 		self.cur.execute("INSERT INTO emoji_skin_search (\
 		date,\
 		searchTerm ,\
@@ -245,8 +249,8 @@ class emoji_lib:
 			return ""
 		
 	def buildDict(self):
-		emoji_key = pd.read_excel('data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
-		emoji_TS = pd.read_excel('data/emoji_TS.xlsx', encoding='utf-8', skiprows=1)
+		emoji_key = pd.read_excel(base_dir+'/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
+		emoji_TS = pd.read_excel(base_dir+'/data/emoji_TS.xlsx', encoding='utf-8', skiprows=1)
 		emoji_TS=emoji_TS.replace(np.nan,"") # need to remove nan
 		emjDict=dict()
 		for key, name, annotation,action in zip(emoji_key['Unicode'], emoji_key['Name'], emoji_key['Annotations'], emoji_key['Action']):
@@ -268,7 +272,7 @@ class emoji_lib:
 	def emojifyLyrics(self, a):
 		song_list=dict({"Shake it Off (Taylor Swift)":"ShakeItOff_TS.txt","Boyz n The Hood (Eazy-E)":"Boyz-n-the-Hood.txt","Let it Snow (Frozen)":"Let-It_Go.txt","Lollipop (Lil Wayne)":"Lollipop-LW.txt"})
 		try:
-			TS = _u(file("data/lyrics/"+song_list[a]).read())
+			TS = _u(file(base_dir+'data/lyrics/'+song_list[a]).read())
 		except KeyError:
 			TS=['']
 		return('\n'.join([self.emoji_fy(line,lyric=True) for line in TS.split('\n')]))
