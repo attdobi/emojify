@@ -10,7 +10,7 @@ locale.setlocale(locale.LC_ALL, 'en_US')
 from nltk.corpus import words
 #the full english dict is 200k+ words. Lets use the top 20k for speed (takes about 1 days for 20k)
 top20k_en=file('20k.txt').read().split('\n')
-
+top20k_es=np.loadtxt('es.txt',unpack=True,dtype=str)[0][:20000]
 #initialize emoji class
 Emoji=emoji_lib()
 
@@ -19,9 +19,11 @@ Emoji=emoji_lib()
 pattern_type = 'single'
 freq_filter = 'all'
 face_filter = 'on'
-user_lang = 'en'
+user_lang = 'es'
+
 #for word in words.words(): #full list of 230k
-for word in top20k_en: #top 20k
+for word in top20k_es: #top 20k
+    word = word.decode('utf-8')
     print(word)
     if freq_filter=='freq':
         xdata, ydata = Emoji.filter_emoji_freq(word,face_filter,pattern_type,user_lang)
