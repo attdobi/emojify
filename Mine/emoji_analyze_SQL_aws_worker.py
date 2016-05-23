@@ -12,8 +12,8 @@ OAUTH_TOKEN = '3229899732-piSMFy32Vi0VSyXJX8R9y2qrkr0piesoHXBdI3v'
 OAUTH_TOKEN_SECRET = 'Jq9oTRMUjHRgA7NkJLLHIEyjtCRhYiFHdWkpBw28IBtHG'
 
 #connect to postgrSQL
-#conn = psycopg2.connect("host=172.31.22.77 port=5432 dbname=emoji_db user=postgres password=darkmatter")
-#cur = conn.cursor()
+conn = psycopg2.connect("host=172.31.22.77 port=5432 dbname=emoji_db user=postgres password=darkmatter")
+cur = conn.cursor()
 
 #set up parallel cores:, we will use 3
 if len(sys.argv) == 2:
@@ -31,18 +31,14 @@ else:
 run=True
 if __name__ == "__main__":
 	while run:
-		conn = psycopg2.connect("host=172.31.22.77 port=5432 dbname=emoji_db user=postgres password=darkmatter")
-		cur = conn.cursor()
 		cur.execute("SELECT tweet_id from has_emoji WHERE MOD(tweet_id,2)=%s order by tweet_id DESC limit 1;",(core_number,))#find last processed id
 		last_id=cur.fetchone()
-		cur.execute("SELECT * from tweet_dump WHERE (id>%s AND MOD(id,2)=%s) LIMIT 10000;",(last_id,core_number)) 
+		cur.execute("SELECT * from tweet_dump WHERE (id>%s AND MOD(id,2)=%s) LIMIT 100000;",(last_id,core_number)) 
 		#where id>tweet_id, only odd or even
 		SQL_result=cur.fetchall()
 		print(len(SQL_result))
 		if len(SQL_result)>0:#begin analysis
 			for result in SQL_result:
 				analyze_tweet_emojis(conn,cur,result)
-			conn.close()
-			time.sleep(60)
 		else:#else quit ... or sleep
 			run=False
