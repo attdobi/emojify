@@ -41,9 +41,11 @@ class emoji_lib:
 		return "AND created_at BETWEEN '{:s}' AND '{:s}'".format(start_date,end_date)
 		
 	######### Index search result, write to SQL DB ###########################
-	def index_result(self, word,freq_filter,face_filter,pattern_type,user_lang,xdata,ydata):
+	def index_result(self, word,freq_filter,face_filter,pattern_type,user_lang,date_range,xdata,ydata):
 		word=self.sql_word(word)
 		word=word.replace("''","'")#undo all double apostrophes used for SQL query
+		start_date=datetime.datetime.strptime(date_range[0], "%B %d, %Y, %H, %M")
+		end_date=datetime.datetime.strptime(date_range[1], "%B %d, %Y, %H, %M")
 		self.cur.execute("INSERT INTO emoji_search (\
 		date,\
 		searchTerm ,\
@@ -52,10 +54,11 @@ class emoji_lib:
 		FreqFilter,\
 		FaceFilter,\
 		PatternType,\
-		Lang\
+		Lang,\
+		daterange\
 		)\
 		VALUES (\
-		%s,%s,%s,%s,%s,%s,%s,%s\
+		%s,%s,%s,%s,%s,%s,%s,%s,%s\
 		)",(\
 		datetime.datetime.utcnow(),\
 		word,\
@@ -65,27 +68,32 @@ class emoji_lib:
 		face_filter,\
 		pattern_type,\
 		user_lang,\
+		[start_date,end_date],\
 		))
 		self.conn.commit() #submit change to db
 		
-	def index_skin_result(self,word,user_lang,xdata,ydata):
+	def index_skin_result(self,word,user_lang,date_range,xdata,ydata):
 		word=self.sql_word(word)
 		word=word.replace("''","'")#undo all double apostrophes used for SQL query
+		start_date=datetime.datetime.strptime(date_range[0], "%B %d, %Y, %H, %M")
+		end_date=datetime.datetime.strptime(date_range[1], "%B %d, %Y, %H, %M")
 		self.cur.execute("INSERT INTO emoji_skin_search (\
 		date,\
 		searchTerm ,\
 		emojiLabel,\
 		emojiCount,\
-		Lang\
+		Lang,\
+		daterange\
 		)\
 		VALUES (\
-		%s,%s,%s,%s,%s\
+		%s,%s,%s,%s,%s,%s\
 		)",(\
 		datetime.datetime.utcnow(),\
 		word,\
 		xdata,\
 		ydata,\
 		user_lang,\
+		[start_date,end_date],\
 		))
 		self.conn.commit() #submit change to db
 	

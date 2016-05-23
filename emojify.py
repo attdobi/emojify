@@ -69,7 +69,7 @@ def print_data():
 	else: #surr (surrounding text, takes long to query)
 		xdata, ydata = Emoji.filter_emoji_surr(word,face_filter,pattern_type,user_lang,date_range)
 	#write result to DB
-	Emoji.index_result(word,freq_filter,face_filter,pattern_type,user_lang,xdata,ydata)
+	Emoji.index_result(word,freq_filter,face_filter,pattern_type,user_lang,date_range,xdata,ydata)
 	ysum=sum(ydata)
 	#save y data as comma separated 1000s string and return JSON
 	ystr=[locale.format("%d", val, grouping=True) for val in ydata]
@@ -82,7 +82,7 @@ def skin_data():
 	date_range=request.args.get('date_range')
 	date_range=date_range.split(' - ') #split start,end
 	xdata, ydata = Emoji.emoji_skin(word,user_lang,date_range)
-	Emoji.index_skin_result(word,user_lang,xdata,ydata)
+	Emoji.index_skin_result(word,user_lang,date_range,xdata,ydata)
 	ysum=sum(ydata)
 	#save y data as comma separated 1000s string and return JSON
 	ystr=[locale.format("%d", val, grouping=True) for val in ydata]
