@@ -12,6 +12,7 @@ from nltk.corpus import words
 top20k_en=file('20k.txt').read().split('\n')
 top20k_es=np.loadtxt('es.txt',unpack=True,dtype=str)[0][:20000]
 top20k_ko=np.loadtxt('ko.txt',unpack=True,dtype=str)[0][:20000]
+top3k_ja=np.loadtxt('jap3000.txt',unpack=True,dtype=str)
 
 #initialize emoji class
 Emoji=emoji_lib()
@@ -21,10 +22,10 @@ Emoji=emoji_lib()
 pattern_type = 'single'
 freq_filter = 'all'
 face_filter = 'on'
-user_lang = 'ko'
+user_lang = 'ja'
 
 #for word in words.words(): #full list of 230k
-for word in top20k_ko: #top 20k
+for word in top3k_ja:
     word = word.decode('utf-8')
     print(word)
     if freq_filter=='freq':
