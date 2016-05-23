@@ -105,7 +105,7 @@ def analyze_tweet_emojis(conn,cur,SQL_return):
 	#tweet data:
 	has_emoji=False
 	tweet_id = SQL_return[0]
-	date=SQL_return[1]
+	date=datetime.datetime.utcnow() #the date processed
 	created_at=SQL_return[2]
 	original_text=SQL_return[3].decode('utf-8')
 	retweet_count=SQL_return[4]
@@ -252,6 +252,7 @@ def mine_tweets(conn,cur,tweet):
 	coordinates = checkNoneJSON(tweet.geo) #null anyway, storing the place info in geo
 	name = checkNone(tweet.user.name)
 	user_name = checkNone(tweet.user.screen_name)
+	print(date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
 	dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
 	
 def dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name):

@@ -11,6 +11,11 @@
     <script src="https://rawgit.com/gka/d3-jetpack/master/d3-jetpack.js"></script>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
           rel="stylesheet">
+    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+	<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+	<! link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.css" />
+	<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
    <style type="text/css">
    body { font-family:  Helvetica, 'Apple Color Emoji', 'Helvetica Neue'; font-weight: 300;}
@@ -89,16 +94,30 @@ li.dropdown {
 }
     </style> 
   <script type=text/javascript>
-    $(function() {
-      $('a#calculate').bind('click', function() {
-        $.getJSON('/_add_numbers', {
-          a: $('textarea[name="a"]').val()
-        }, function(data) {
-          $("#result").text(data.result);
-        });
-        return false;
-      });
-    });
+	$(function() {
+    function cb(start, end) {
+        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        window['range'] = start.format('MMMM D, YYYY, HH, mm') + ' - ' + end.format('MMMM D, YYYY, HH, mm')
+        make_graph() //call make_graph function
+       // $.getJSON('/_report_range', {
+       //daterange:start.format('MMMM D, YYYY, HH') + ' - ' + end.format('MMMM D, YYYY, HH')});
+    }
+    cb(moment().subtract(60, 'days'), moment());
+    $('#reportrange').daterangepicker({
+        timePicker: true,
+        timePickerIncrement: 30,
+        ranges: {
+           'Today': [ moment().subtract(1, 'days').endOf('day'), moment()],
+           'Yesterday': [ moment().subtract(2, 'days').endOf('day'), moment().subtract(1, 'days').endOf('day')],
+           'Last Hour': [moment().subtract(1, 'hours'), moment()],
+           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+           'This Month': [moment().startOf('month'), moment().endOf('month')],
+           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+           'Last Year':[moment().subtract(1, 'year'), moment()]
+        }
+    }, cb);
+	});
   </script>
   </head>
   <body>
@@ -110,6 +129,10 @@ li.dropdown {
   <li><a href="/emoji_context">Emoji Context</a></li>
   <li><a href="/emojify">Emojify</a></li>
   <li><a href="/emoji_art">Emoji Art</a></li>
+  <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 13px 13px; border: 1px solid #ccc; width: 36%">
+    		<b>Time Range: </b> <i id="range" class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
+    		<span id ="dateinput"></span> <b class="caret"></b>
+			</div>
 </ul>
         <h3 class="text-muted">Emoji Skins 🏼🏻🏾🏽🏿🖐🦄</h3>
       </div>
@@ -184,6 +207,8 @@ li.dropdown {
     <div id="table" style="font-size:16pt"></div>
 
 <script>
+//initiallize search window to past 1 month
+window['range']=moment().subtract(60, 'days').format('MMMM D, YYYY, HH, mm') + ' - ' + moment().format('MMMM D, YYYY, HH, mm')
 
 // the table rows
     // column definitions
@@ -198,8 +223,6 @@ li.dropdown {
 //Update and make pie chart 
 
     //var URL_BASE = "http://localhost:5000/dbskin";
-    //var URL_BASE = "http://52.38.112.55/dbskin";
-    //var URL_BASE = "http://attiladobi/dbskin";
     var URL_BASE = "/dbskin";
 // Update graph in response to inputs 
 //this updates continuously as text is entered
@@ -209,7 +232,8 @@ li.dropdown {
 // Return url to recieve csv data with query filled in from input fields
 function update_url() {
   return URL_BASE +"?word=" + document.getElementById("word").value +
-  			"&user_lang=" + document.getElementById("user_lang").value;
+  			"&user_lang=" + document.getElementById("user_lang").value+
+  			"&date_range=" + window['range'] ;;
 }
 
 function commaSeparateNumber(val){

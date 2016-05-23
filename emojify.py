@@ -60,12 +60,14 @@ def print_data():
 	freq_filter = request.args.get('freq_filter')
 	face_filter = request.args.get('face_filter')
 	user_lang = request.args.get('user_lang')
+	date_range=request.args.get('date_range')
+	date_range=date_range.split(' - ') #split start,end
 	if freq_filter=='freq':
-		xdata, ydata = Emoji.filter_emoji_freq(word,face_filter,pattern_type,user_lang)
+		xdata, ydata = Emoji.filter_emoji_freq(word,face_filter,pattern_type,user_lang,date_range)
 	elif freq_filter=='all':
-		xdata, ydata = Emoji.filter_emoji(word,face_filter,pattern_type,user_lang)
+		xdata, ydata = Emoji.filter_emoji(word,face_filter,pattern_type,user_lang,date_range)
 	else: #surr (surrounding text, takes long to query)
-		xdata, ydata = Emoji.filter_emoji_surr(word,face_filter,pattern_type,user_lang)
+		xdata, ydata = Emoji.filter_emoji_surr(word,face_filter,pattern_type,user_lang,date_range)
 	#write result to DB
 	Emoji.index_result(word,freq_filter,face_filter,pattern_type,user_lang,xdata,ydata)
 	ysum=sum(ydata)
@@ -77,13 +79,22 @@ def print_data():
 def skin_data():
 	word = request.args.get('word')
 	user_lang = request.args.get('user_lang')
-	xdata, ydata = Emoji.emoji_skin(word,user_lang)
+	date_range=request.args.get('date_range')
+	date_range=date_range.split(' - ') #split start,end
+	xdata, ydata = Emoji.emoji_skin(word,user_lang,date_range)
 	Emoji.index_skin_result(word,user_lang,xdata,ydata)
 	ysum=sum(ydata)
 	#save y data as comma separated 1000s string and return JSON
 	ystr=[locale.format("%d", val, grouping=True) for val in ydata]
 	return jsonify({"values":[{"rank":rank+1,"value":countstr,"percent":"{:0.2f}".format(count/ysum*100),"label":emoji} for rank,(countstr,count,emoji) in enumerate(zip(ystr,ydata,xdata))],"key": "Serie 1"})
-	
+
+@application.route("/_report_range")
+def report_range():
+	daterange=request.args.get('daterange')
+	print(daterange)
+	print_data()
+	return 0
+
 @application.route("/word/<word>")
 def search(word):
     print(word.title().lower())
