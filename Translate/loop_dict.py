@@ -1,5 +1,6 @@
 from __future__ import division
 import os,sys
+import datetime
 base_dir=os.path.expanduser('~')
 sys.path.append(base_dir+'/emojify')
 sys.path.append(base_dir+'/emojify/Mine')
@@ -21,18 +22,20 @@ Emoji=emoji_lib()
 
 pattern_type = 'single'
 freq_filter = 'all'
-face_filter = 'on'
-user_lang = 'ja'
+face_filter = 'off'
+user_lang = 'en'
+date_range='all'
+#Add date range
 
 #for word in words.words(): #full list of 230k
-for word in top3k_ja:
+for word in top20k_en:
     word = word.decode('utf-8')
     print(word)
     if freq_filter=='freq':
-        xdata, ydata = Emoji.filter_emoji_freq(word,face_filter,pattern_type,user_lang)
+        xdata, ydata = Emoji.filter_emoji_freq(word,face_filter,pattern_type,user_lang,date_range)
     elif freq_filter=='all':
-        xdata, ydata = Emoji.filter_emoji(word,face_filter,pattern_type,user_lang)
+        xdata, ydata = Emoji.filter_emoji(word,face_filter,pattern_type,user_lang,date_range)
     else: #surr (surrounding text, takes long to query)
-        xdata, ydata = Emoji.filter_emoji_surr(word,face_filter,pattern_type,user_lang)
+        xdata, ydata = Emoji.filter_emoji_surr(word,face_filter,pattern_type,user_lang,date_range)
     #write result to DB
-    Emoji.index_result(word,freq_filter,face_filter,pattern_type,user_lang,xdata,ydata)
+    Emoji.index_result(word,freq_filter,face_filter,pattern_type,user_lang,date_range,xdata,ydata)

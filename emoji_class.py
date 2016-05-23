@@ -33,7 +33,7 @@ class emoji_lib:
 			return ' '+word #text is already saved with words split from emojis. potential punctuation afterwards
 	def parse_date(self,date_range):
 		if date_range=='all':
-			start_date='2016-03-20 19:28:00'
+			start_date='2016-03-20 12:00:00'
 			end_date=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 		else:
 			start_date=datetime.datetime.strptime(date_range[0], "%B %d, %Y, %H, %M").strftime('%Y-%m-%d %H:%M:%S')
@@ -44,8 +44,12 @@ class emoji_lib:
 	def index_result(self, word,freq_filter,face_filter,pattern_type,user_lang,date_range,xdata,ydata):
 		word=self.sql_word(word)
 		word=word.replace("''","'")#undo all double apostrophes used for SQL query
-		start_date=datetime.datetime.strptime(date_range[0], "%B %d, %Y, %H, %M")
-		end_date=datetime.datetime.strptime(date_range[1], "%B %d, %Y, %H, %M")
+		if date_range=='all':
+			daterange=[datetime.datetime.strptime('2016-03-23 12:00:00','%Y-%m-%d %H:%M:%S'),datetime.datetime.now()]
+		else:
+			start_date=datetime.datetime.strptime(date_range[0], "%B %d, %Y, %H, %M")
+			end_date=datetime.datetime.strptime(date_range[1], "%B %d, %Y, %H, %M")
+			daterange=[start_date,end_date]
 		self.cur.execute("INSERT INTO emoji_search (\
 		date,\
 		searchTerm ,\
@@ -68,15 +72,19 @@ class emoji_lib:
 		face_filter,\
 		pattern_type,\
 		user_lang,\
-		[start_date,end_date],\
+		daterange,\
 		))
 		self.conn.commit() #submit change to db
 		
 	def index_skin_result(self,word,user_lang,date_range,xdata,ydata):
 		word=self.sql_word(word)
 		word=word.replace("''","'")#undo all double apostrophes used for SQL query
-		start_date=datetime.datetime.strptime(date_range[0], "%B %d, %Y, %H, %M")
-		end_date=datetime.datetime.strptime(date_range[1], "%B %d, %Y, %H, %M")
+		if date_range=='all':
+			daterange=[datetime.datetime.strptime('2016-03-23 12:00:00','%Y-%m-%d %H:%M:%S'),datetime.datetime.now()]
+		else:
+			start_date=datetime.datetime.strptime(date_range[0], "%B %d, %Y, %H, %M")
+			end_date=datetime.datetime.strptime(date_range[1], "%B %d, %Y, %H, %M")
+			daterange=[start_date,end_date]
 		self.cur.execute("INSERT INTO emoji_skin_search (\
 		date,\
 		searchTerm ,\
@@ -93,7 +101,7 @@ class emoji_lib:
 		xdata,\
 		ydata,\
 		user_lang,\
-		[start_date,end_date],\
+		daterange,\
 		))
 		self.conn.commit() #submit change to db
 	
