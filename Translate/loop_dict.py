@@ -23,12 +23,12 @@ Emoji=emoji_lib()
 pattern_type = 'single'
 freq_filter = 'all'
 face_filter = 'off'
-user_lang = 'en'
+user_lang = 'es'
 date_range='all'
 #Add date range
 
 #for word in words.words(): #full list of 230k
-for word in top20k_en:
+for word in top20k_es:
     word = word.decode('utf-8')
     print(word)
     if freq_filter=='freq':
