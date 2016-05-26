@@ -252,7 +252,7 @@ def mine_tweets(conn,cur,tweet):
 	coordinates = checkNoneJSON(tweet.geo) #null anyway, storing the place info in geo
 	name = checkNone(tweet.user.name)
 	user_name = checkNone(tweet.user.screen_name)
-	print(date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
+	#print(date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
 	dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
 	
 def dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name):

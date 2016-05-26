@@ -102,7 +102,7 @@ li.dropdown {
        // $.getJSON('/_report_range', {
        //daterange:start.format('MMMM D, YYYY, HH') + ' - ' + end.format('MMMM D, YYYY, HH')});
     }
-    cb(moment().subtract(60, 'days'), moment());
+    cb(moment().subtract(31, 'days'), moment());
     $('#reportrange').daterangepicker({
         timePicker: true,
         timePickerIncrement: 30,
@@ -237,7 +237,7 @@ li.dropdown {
 
 <script>
 //initiallize search window to past 1 month
-window['range']=moment().subtract(60, 'days').format('MMMM D, YYYY, HH, mm') + ' - ' + moment().format('MMMM D, YYYY, HH, mm')
+window['range']=moment().subtract(31, 'days').format('MMMM D, YYYY, HH, mm') + ' - ' + moment().format('MMMM D, YYYY, HH, mm')
 
 // the table rows
     // column definitions
