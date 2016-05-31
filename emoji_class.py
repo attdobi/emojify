@@ -342,7 +342,7 @@ class emoji_lib:
 	########## Sample Art ##############################################################
 	def sample_art(self):
 		#self.cur.execute("SELECT b.text from emoji_tweet a join tweet_dump b on a.tweet_id=b.id WHERE (a.emojiCountSum > 30) order by random() limit 100;")
-		self.cur.execute("SELECT b.text from (SELECT * from emoji_tweet TABLESAMPLE SYSTEM ( 1)) as a join tweet_dump b on a.tweet_id=b.id WHERE (a.emojiCountSum > 30) limit 100;")
+		self.cur.execute("SELECT b.text from (SELECT * from emoji_tweet TABLESAMPLE SYSTEM ( 0.5)) as a join tweet_dump b on a.tweet_id=b.id WHERE (a.emojiCountSum > 30) limit 100;")
 		art=[_u(text[0]) for text in self.cur.fetchall()]
 		return '\n\n'.join(art)
 		

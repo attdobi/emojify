@@ -23,11 +23,11 @@ Emoji=emoji_lib()
 pattern_type = 'single'
 freq_filter = 'all'
 face_filter = 'off'
-user_lang = 'ko'
 date_range='all'
 #Add date range
 
 #for word in words.words(): #full list of 230k
+user_lang = 'ja'
 for word in top3k_ja:
     word = word.decode('utf-8')
     print(word)
