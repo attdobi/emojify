@@ -19,6 +19,9 @@ def index():
 @application.route("/skin")
 def skin():
     return render_template("skin.html")
+@application.route("/stats")
+def stats():
+    return render_template("stats.html")
 @application.route("/emojify")
 def emojify():
     return render_template("emojify.html")
@@ -88,10 +91,25 @@ def skin_data():
 	ystr=[locale.format("%d", val, grouping=True) for val in ydata]
 	return jsonify({"values":[{"rank":rank+1,"value":countstr,"percent":"{:0.2f}".format(count/ysum*100),"label":emoji} for rank,(countstr,count,emoji) in enumerate(zip(ystr,ydata,xdata))],"key": "Serie 1"})
 
+@application.route("/dbstats")
+def getstats():
+	word = request.args.get('word')
+	search_type = request.args.get('search_type')
+	sort_by = request.args.get('sort_type')
+	user_lang = request.args.get('user_lang')
+	timezone = ''
+	freq_filter = request.args.get('freq_filter')
+	face_filter = request.args.get('face_filter')
+	date_range=request.args.get('date_range').split(' - ') #split start,end
+	result=Emoji.emoji_stats_indexed(word,search_type,sort_by,user_lang,timezone,freq_filter,face_filter,date_range)
+	if result==0: #if not indexed then search (takes ~10-20 seconds each)
+		result=Emoji.emoji_stats(word,search_type,sort_by,user_lang,timezone,freq_filter,face_filter,date_range)
+	return jsonify(result)
+  
 @application.route("/_report_range")
 def report_range():
 	daterange=request.args.get('daterange')
-	print(daterange)
+	#print(daterange)
 	print_data()
 	return 0
 

@@ -102,7 +102,7 @@ li.dropdown {
        // $.getJSON('/_report_range', {
        //daterange:start.format('MMMM D, YYYY, HH') + ' - ' + end.format('MMMM D, YYYY, HH')});
     }
-    cb(moment().subtract(31, 'days'), moment());
+    cb(moment().subtract(60, 'days'), moment());
     $('#reportrange').daterangepicker({
         timePicker: true,
         timePickerIncrement: 30,
@@ -135,19 +135,35 @@ li.dropdown {
     		<span id ="dateinput"></span> <b class="caret"></b>
 			</div>
 </ul>
-        <h3 class="text-muted">Emoji Skins 🏼🏻🏾🏽🏿🖐🦄</h3>
-      </div>
+        <h3 class="text-muted">Emojisaurus 🦄  <font size="2">The Emoji Thesaurus </font></h3>
       <hr/>
       <p>
-       <label for="lang"
+       <label for="search word"
           style="display: inline-block; width: 146px; text-align: right">
-    Enter word or phrase:
-     </label>
+        Enter word or phrase:
+      </label>
     <input type = "text"
        id = "word"
-       value = "Summer"
-      onkeypress="if (event.keyCode==13){make_graph()};"
-      />
+       value = "All"
+      onkeypress="if (event.keyCode==13){make_graph()};"/>
+   <label for="emoji"
+          style="display: inline-block; width: 140px; text-align: right">
+        Type
+     </label>
+      <select id="search_type" onchange="update_url()">
+        <option value="emoji">Emoji</option>
+        <option value="skin">Skin</option>
+        <option value="string">Emoji Strings</option>
+        <option value="pattern">Emoji Patterns</option>
+      </select>
+   <label for="sort"
+          style="display: inline-block; width: 140px; text-align: right">
+        Sort By
+     </label>
+      <select id="sort_type" onchange="update_url()">
+        <option value="Zone">Zone</option>
+        <option value="Language">Language</option>
+      </select>
     <label for="lang"
           style="display: inline-block; width: 140px; text-align: right">
         Select Language
@@ -202,39 +218,68 @@ li.dropdown {
 		  <option value="ja">日本語 - Japanese</option>
 		  <option value="zh-cn">简体中文 - Simplified Chinese</option>
 		</select>
+    <label for="face_select"
+          style="display: inline-block; width: 140px; text-align: right">
+        Face Filter
+      </label>
+      <select id="face_filter" onchange="update_url()">
+        <option value="off">Include Faces</option>
+        <option value="on">Remove Faces</option>
+      </select>
+    <label for="freq_select"
+          style="display: inline-block; width: 140px; text-align: right">
+        Text Filter
+      </label>
+      <select id="freq_filter" onchange="update_url()">
+        <option value="all">All in Tweet</option>
+        <option value="freq">Most Frequent in Tweet</option>
+        <option value="surr">Surrounding Text</option>
+      </select>
+   <label><input type="checkbox" id="cbox1" value="none">Show Percent %</label>
      </p>
      
-    <div id="piechart" style="float:left;"><svg style="width:575px;height:575px;"></svg></div>
-    <div id="table" style="font-size:16pt"></div>
+    <div id="table" style="font-size:12pt; float:center;"></div>
 
 <script>
 //initiallize search window to past 1 month
-window['range']=moment().subtract(31, 'days').format('MMMM D, YYYY, HH, mm') + ' - ' + moment().format('MMMM D, YYYY, HH, mm')
-
-// the table rows
-    // column definitions
-    var columns = [
-        { head: 'Rank', cl: 'center', html: ƒ('rank') },
-        { head: 'Skin', cl: 'title', html: ƒ('label') },
-        { head: 'Count', cl: 'center', html: ƒ('value') },
-        { head: '%', cl: 'center', html: ƒ('percent') },
-    ];
+window['range']=moment().subtract(60, 'days').format('MMMM D, YYYY, HH, mm') + ' - ' + moment().format('MMMM D, YYYY, HH, mm')
 
         
-//Update and make pie chart 
+//Update and make table
 
-    //var URL_BASE = "http://localhost:5000/dbskin";
-    var URL_BASE = "/dbskin";
+    //var URL_BASE = "http://localhost:5000/db";
+    var URL_BASE = "/dbstats";
 // Update graph in response to inputs 
 //this updates continuously as text is entered
  //d3.select("#word").on("input", make_graph);
+ d3.select("#search_type").on("input", function(d) {
+  click_box(d);
+  make_graph(d);
+  });//call two functions
  d3.select("#user_lang").on("input", make_graph);
+ d3.select("#freq_filter").on("input", make_graph);
+ d3.select("#face_filter").on("input", make_graph);
+ d3.select("#sort_type").on("input", make_graph);
+ d3.select("#cbox1").on("click", make_graph);
+  //d3.select("#reportrange").on("click", make_graph);//doesn't work on menu click, function is called in JS at top
+	
+
+function click_box() {
+		if(document.getElementById("search_type").value=="skin"){
+		document.getElementById("cbox1").checked=1;}
+		else{
+		document.getElementById("cbox1").checked=0;}
+}
 
 // Return url to recieve csv data with query filled in from input fields
 function update_url() {
   return URL_BASE +"?word=" + document.getElementById("word").value +
-  			"&user_lang=" + document.getElementById("user_lang").value+
-  			"&date_range=" + window['range'] ;;
+  			"&search_type=" + document.getElementById("search_type").value +
+  			"&user_lang=" + document.getElementById("user_lang").value +
+  			"&freq_filter=" + document.getElementById("freq_filter").value + 
+  			"&face_filter=" + document.getElementById("face_filter").value +
+  			"&sort_type=" + document.getElementById("sort_type").value +
+  			"&date_range=" + window['range'] ;
 }
 
 function commaSeparateNumber(val){
@@ -243,71 +288,47 @@ function commaSeparateNumber(val){
     }
     return val;
   }
+  
 function add(a, b) {
     return a + b;
 }
 
+function defColumns() {
+// the table rows
+    // column definitions
+    var Group='zone';
+    if(document.getElementById("sort_type").value=="Language"){
+    	Group='lang'
+    }
+
+    
+    if(document.getElementById("cbox1").checked){
+    	var columns = [
+        	{ head: Group, cl: 'center', html: ƒ(Group) },
+        	{ head: 'Top Emojis', cl: 'title', html: ƒ('emojis') },
+        	//{ head: 'Count', cl: 'center', html: ƒ('value') },
+        	{ head: '%', cl: 'center', html: ƒ('percent') },
+    		];
+    }
+    else
+    {	var columns = [
+            { head: Group, cl: 'center', html: ƒ(Group) },
+            { head: 'Top Emojis', cl: 'title', html: ƒ('emojis') },
+        //{ head: 'Count', cl: 'center', html: ƒ('value') },
+        //{ head: '%', cl: 'center', html: ƒ('percent') },
+    	];
+    }
+    return columns
+}
+
 function make_graph() {
-  url = update_url()
-  
+  url = update_url();
+  columns=defColumns();
   d3.json(url, function(error, data) {
-    var fmt = d3.format("d");
-    nv.addGraph(function() {
-        var chart = nv.models.pieChart();
-        chart.margin({top: 30, right: 60, bottom: 20, left: 20});
-        
+    
         var datum = data.values;
         //var datum = data_piechart;
-
-        chart.color(d3.scale.category20c().range());
-
-    chart.tooltipContent(function(key, y, e, graph) {
-        var x = String(key);
-        var y =  String(y);
-        //var yy= +y.replace(/,/g, ''); //remove the comma and make yy an int with + 
-        //var perc = e.series.values[e.pointIndex];
-        //old: var yy= parseInt(y.replace(/,/g, ''))
-              
-              //tooltip_str = '<center><b>'+x+'</b></center>' +'<center>'+ commaSeparateNumber(yy)+'</center>' ;
-              tooltip_str = '<center><b>'+x+'</b></center>' +'<center>'+ y+'%'+'</center>' ;
-              return tooltip_str;
-              });
-        chart.showLabels(true);
-
-            chart.donut(false);
-
-       chart.showLegend(true);
-
-        chart
-            .x(function(d) { return d.label })
-            .y(function(d) { return d.percent });
-            //y data (count) is saved with commas at 1000 for the table format. Remove commas:
-            //.y(function(d) { return d.value.replace(/,/g, ''); });
-
-        chart.width(600);
-
-        chart.height(600);
-
-            d3.select('#piechart svg')
-            .datum(datum)
-            .transition().duration(500)
-            .attr('width', 600)
-            .attr('height', 600)
-            .style({"font-size": "50px"})
-            .call(chart);
-        
-            //increase fontsize
-            d3.selectAll(".nv-label text")
-            .attr("text-anchor", "middle")
-            .style({"font-family": 'Apple Color Emoji'});
-            //.style({"-webkit-transform": "scale(2)"});
-            //.style({"font-size": "50px"})
-            //.attr('transform', 'scale(1.5) translate(-5,0)');
-            
-            //select legend
-            d3.selectAll(".nv-legendWrap")
-            .style({"font-size": "20px"})
-            .style({"font-family": 'Apple Color Emoji'});
+  
         
 // create table
 	//Clear previous table
@@ -329,6 +350,7 @@ function make_graph() {
     // create table body
     var body = table.append("tbody")
         .selectAll('tr');
+        
         //body.data(data).exit().remove();
     
         body
@@ -348,24 +370,20 @@ function make_graph() {
         .append('td')
         .html(ƒ('html'))
         .attr('class', ƒ('cl'));
-		
-		//table.selectAll("td").style("border", "solid 1px")
+
 		table.selectAll("th").style("background-color", "#D8D8D8");
 		table.selectAll("tr").style("background-color", function(d, i){
      				if(i%2 == 1){
      					return "#D8D8D8";
      				}
      			})
+
         
         });
-    });
+   
 }
 make_graph();
-
-
-
 
 </script>
   </body>
 </html>
-
