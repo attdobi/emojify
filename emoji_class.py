@@ -357,7 +357,8 @@ class emoji_lib:
 		else:
 			lang="AND lang='{:s}'".format(user_lang)
 			
-		self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} ) order by random() DESC limit 1000;".format(_u(word),lang))
+		#self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} ) order by random() DESC limit 1000;".format(_u(word),lang))
+		self.cur.execute("SELECT text from emoji_tweet TABLESAMPLE SYSTEM ( 20) WHERE (LOWER(text) LIKE '%{:s}%' {:s} ) limit 1000;".format(_u(word),lang))
 		result=[_u(text[0]) for text in self.cur.fetchall()]
 		return '\n'.join(result)
 	######### emojify code: ################################################
