@@ -338,6 +338,20 @@ class emoji_lib:
 		self.cur.execute("SELECT mapjson from emoji_map WHERE (facefilter='on') order by id DESC limit 1;")
 		return self.cur.fetchall()
 		
+	########## emoji visual data ##########################################
+	def visual(self,word):
+		word=self.sql_word(word)
+		self.cur.execute("SELECT emojilabel from emoji_search where searchterm='{:s}' order by id DESC limit 1;".format(word))
+		result=self.cur.fetchall()
+		source_target=[]
+		for source in result[0][0]:
+			self.cur.execute("SELECT emojilabel from emoji_search where searchterm=%s order by id DESC limit 1;",(source,))
+			results=self.cur.fetchall()
+			for val in results[0][0]:
+				#print (source,val)
+				source_target.append((source.decode('utf-8'),val.decode('utf-8')))
+		return [{"source":src,"target":tar,"type":"blah"} for src,tar in source_target]
+		
 	########## emoji Stats ##############################################################
 	def emoji_stats2(self):
 		self.cur.execute("SELECT mapjson from emoji_map order by id DESC limit 1;")

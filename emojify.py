@@ -34,6 +34,16 @@ def emoji_context():
 @application.route('/map')
 def map():
 	return render_template("map.html")
+@application.route('/visual')
+def force():
+	return render_template("force.html")
+	
+@application.route('/_get_vis')
+def _get_vis():
+	word = request.args.get('word')
+	result=Emoji.visual(word)
+	#print(result)
+	return jsonify(result=result)
 
 @application.route('/_getArt')
 def getArt():
