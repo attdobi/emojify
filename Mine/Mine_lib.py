@@ -25,11 +25,6 @@ emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode'])
 #Not needed in Python 3
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
 
-#read emoji codes:
-emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
-emj_codes_skin=[code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']) if ('FITZPATRICK' in name)]
-emj_codes=[code for code in emoji_key['Unicode'] if code!="Browser" \
-           if (code not in emj_codes_skin) if sum([c=="*" for c in code])==0]
 #remove common face emojis
 face_index=range(69)
 emj_codes_noise=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]

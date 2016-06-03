@@ -31,6 +31,9 @@ def emoji_art():
 @application.route("/emoji_context")
 def emoji_context():
     return render_template("emoji_context.html")
+@application.route('/map')
+def map():
+	return render_template("map.html")
 
 @application.route('/_getArt')
 def getArt():

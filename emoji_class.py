@@ -332,6 +332,11 @@ class emoji_lib:
 			return 0
 		else:
 			return {'values':data[0][0]} #as json string
+			
+	########## emoji map data ##########################################
+	def map_data(self):
+		self.cur.execute("SELECT mapjson from emoji_map WHERE (facefilter='on') order by id DESC limit 1;")
+		return self.cur.fetchall()
 		
 	########## emoji Stats ##############################################################
 	def emoji_stats2(self):
