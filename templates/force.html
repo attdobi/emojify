@@ -62,6 +62,8 @@ d3.json(url, function(error, data) {
     var links = data.result;
 
  
+ 	//Clear previous table
+d3.select("svg").remove();
  
 //d3.json(url, function(links) {
 //    // code that uses the object 'root'
