@@ -9,7 +9,7 @@ locale.setlocale(locale.LC_ALL, 'en_US')
 
 #initialize emoji class
 Emoji=emoji_lib()
-#Tall=TallLabs_lib()
+Tall=TallLabs_lib()
 
 application = Flask(__name__)
 
@@ -35,9 +35,9 @@ def emoji_context():
 @application.route('/map')
 def map():
 	return render_template("map.html")
-@application.route('/visual')
-def force():
-	return render_template("force.html")
+@application.route('/web')
+def web():
+	return render_template("web.html")
 ####### Tall Labs Part ######################
 @application.route("/force")
 def force():
