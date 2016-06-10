@@ -22,7 +22,7 @@ class TallLabs_lib:
 		#setup
 		self.conn = psycopg2.connect("host=localhost port=5432 dbname=amazon user=postgres password=darkmatter")
 		self.cur = self.conn.cursor()
-		self.QmodelB=models.Word2Vec.load(base_dir+'/models/QmodelB')
+		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		
 	def clean_result(self,model_result):
 		return [item[0] for item in model_result],[item[1] for item in model_result]

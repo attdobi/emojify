@@ -9,7 +9,7 @@ locale.setlocale(locale.LC_ALL, 'en_US')
 
 #initialize emoji class
 Emoji=emoji_lib()
-#Tall=TallLabs_lib()
+Tall=TallLabs_lib()
 
 application = Flask(__name__)
 
