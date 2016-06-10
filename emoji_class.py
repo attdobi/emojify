@@ -117,8 +117,8 @@ class TallLabs_lib:
 		print(result)
 		yn=[result[6],result[8]]
 		oe=[result[7],result[9]]
-		label=['Data','BoW']
-		key=['Yes/No','Open Ended']
+		key=['Data','BoW']
+		label=['Yes/No','Open Ended']
 		#print(xx,yy,key)
 		return [{"values":[{"y":yn[0]*100,"x":label[0]},{"y":yn[1]*100,"x":label[1]}],"key":key[0],"yAxis":"1"},\
  {"values":[{"y":oe[0]*100,"x":label[0]},{"y":oe[1]*100,"x":label[1]}],"key":key[1],"yAxis":"1"}]

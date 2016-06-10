@@ -139,19 +139,22 @@ li.dropdown {
 </ul>
         <h3 class="text-muted">Q/A Training</h3>
       <hr/>
-      <pre class="box" id="result" style="font-size:12pt"> </pre>
+      <center><pre class="box" id="result" style="font-size:12pt"></center> </pre>
       <!<textarea id="result" rows="30" cols="70"><!</textarea>
       </div>
       
-      <h6> 
+      <h6> <center>
      <a class="btn btn-lg btn-success" id="YesNo" role="button">Yes/No</a>
      <a class="btn btn-lg btn-success" id="OE" role="button">open-ended</a>
-     <a class="btn btn-lg btn-success" id="unknown" role="button">¯\_(ツ)_/¯🦄 </a>   
+     <a class="btn btn-lg btn-success" id="unknown" role="button">¯\_(ツ)_/¯🦄 </a>
+     </center>
+     
 </h6>
+</br>
 <hr/>
 
-    <div id="multibarchart" style="float:left;"><svg style="width:800px;height:300"
-  preserveAspectRatio=""xMidYMid"></svg></div>
+    <div id="multibarchart" style="float:center;"><center><svg style="width:800px;height:300"
+  preserveAspectRatio=""xMidYMid"></center></svg></div>
     
    <script>
 
@@ -173,7 +176,8 @@ d3.json(URL_BASE, function(error, data) {
   data_multibarchart = data.result;
    
     nv.addGraph(function() {
-        var chart = nv.models.multiBarChart();
+        var chart = nv.models.multiBarChart()
+        .barColor(d3.scale.category10().range());
 
         chart.margin({top: 30, right: 60, bottom: 20, left: 60});
 
