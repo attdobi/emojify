@@ -76,8 +76,8 @@ def _train_plot():
 	return jsonify(result=result)
 ###### End Tall Labs Part ########################
 	
-@application.route('/_get_vis')
-def _get_vis():
+@application.route('/_get_web')
+def _get_web():
 	word = request.args.get('word')
 	result=Emoji.visual(word)
 	#print(result)
