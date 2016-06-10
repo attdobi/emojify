@@ -9,6 +9,7 @@ locale.setlocale(locale.LC_ALL, 'en_US')
 
 #initialize emoji class
 Emoji=emoji_lib()
+Tall=TallLabs_lib()
 
 application = Flask(__name__)
 
@@ -37,6 +38,43 @@ def map():
 @application.route('/visual')
 def force():
 	return render_template("force.html")
+####### Tall Labs Part ######################
+@application.route("/force")
+def force():
+	return render_template("force.html")	
+@application.route("/tree")
+def tree():
+	return render_template("tree.html")
+@application.route("/train")
+def train():
+	return render_template("train.html")
+	
+@application.route('/_get_vis')
+def _get_vis():
+	word = request.args.get('word')
+	result=Tall.visual(word)
+	return jsonify(result=result)
+	
+@application.route('/_get_tree')
+def _get_tree():
+	word = request.args.get('word')
+	result=Tall.tree(word)
+	return jsonify(result=result)
+	
+@application.route('/_train')
+def _train():
+	#word = request.args.get('word')
+	res=request.args.get('a')
+	print(res)
+	result=Tall.train(res)
+	return jsonify(result=result)
+	
+@application.route('/_train_plot')
+def _train_plot():
+	#word = request.args.get('word')
+	result=Tall.train_plot()
+	return jsonify(result=result)
+###### End Tall Labs Part ########################
 	
 @application.route('/_get_vis')
 def _get_vis():

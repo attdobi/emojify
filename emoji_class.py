@@ -11,12 +11,149 @@ from string import punctuation
 import re, collections, random, datetime
 import psycopg2
 import json
-
-#mongo query limit is currently set to 1000
+from gensim import corpora, models, similarities
 
 # guarantee unicode string... #no need in python3 (will cause an error)
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
 
+class TallLabs_lib:
+	"""Tall Labs Class"""
+	def __init__(self):
+		#setup
+		self.conn = psycopg2.connect("host=localhost port=5432 dbname=amazon user=postgres password=darkmatter")
+		self.cur = self.conn.cursor()
+		self.QmodelB=models.Word2Vec.load('models/QmodelB')
+		
+	def clean_result(self,model_result):
+		return [item[0] for item in model_result],[item[1] for item in model_result]
+		#topn=15
+	def visual(self,word):
+		#print(type(self.QmodelB))
+		word=word.lower()
+		results,counts=self.clean_result(self.QmodelB.most_similar(word,topn=5))
+		source_target=[]
+		for result_word in results:
+			#append source target, and search next layer
+			source_target.append((word,result_word,1))
+			results2,counts2=self.clean_result(self.QmodelB.most_similar(result_word,topn=5))
+			for result_word2 in results2:
+				source_target.append((result_word,result_word2,2))
+				results3,counts3=self.clean_result(self.QmodelB.most_similar(result_word2,topn=5))
+				for result_word3 in results3:
+					source_target.append((result_word2,result_word3,3))
+		return [{"source":src,"target":tar,"group":grp} for src,tar,grp in source_target]
+		
+	def tree(self, word):
+		word=word.lower()
+		results,counts=self.clean_result(self.QmodelB.most_similar(word))
+		target=[]
+		child_list=[]
+		for result_word in results:
+			target_child=[]
+			target.append(result_word)
+			results2,counts2=self.clean_result(self.QmodelB.most_similar(result_word))
+			for result_word2 in results2:
+				target_child.append(result_word2)
+			child_list.append(target_child)
+		return {"name":word,"children":[{"name":tar,"children":[{"name":child,"size":3} for child in child_l] }\
+		 for tar,child_l in zip(target,child_list)]}
+		 
+	def train(self,input):
+		self.cur.execute("SELECT qa_id from training order by id DESC limit 1;")
+		last_id=self.cur.fetchall()
+		self.cur.execute("SELECT id,question,questiontype from qa where id>%s limit 2;",last_id)
+		result=self.cur.fetchall()
+		qa_id=result[0][0]
+		sentence=result[0][1]
+		sentence2=result[1][1] #display this one if the current one is processed
+		qestion_type=result[0][2]
+		
+		if input != 'start':
+			self.cur.execute("SELECT data_corr_yn,data_corr_oe,human_corr_yn,human_corr_oe,count_yn,count_oe from training order by id DESC limit 1;")
+			result=self.cur.fetchall()[0]
+			data_corr_yn=result[0]
+			data_corr_oe=result[1]
+			human_corr_yn=result[2]
+			human_corr_oe=result[3]
+			count_yn=result[4]
+			count_oe=result[5]
+			#check if sentence is in bag of words
+			bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,shuold,are,would,do,did'.split(',')
+			if sentence.split()[0].lower() in bag_of_words_yn:
+				qestion_type_bow='yes/no'
+			else:
+				qestion_type_bow='open-ended'
+			
+			if (input == 'yes/no') & (qestion_type_bow =='yes/no'):
+				human_corr_yn= (human_corr_yn*count_yn+1)/(count_yn+1)
+			if (input == 'yes/no') & (qestion_type_bow !='yes/no'):
+				human_corr_yn= (human_corr_yn*count_yn+0)/(count_yn+1)
+			if (input == 'open-ended') & (qestion_type_bow =='open-ended'):
+				human_corr_oe= (human_corr_oe*count_oe+1)/(count_oe+1)
+			if (input == 'open-ended') & (qestion_type_bow !='open-ended'):
+				human_corr_oe= (human_corr_oe*count_oe+0)/(count_oe+1)
+				
+			if (input == 'yes/no') & (qestion_type =='yes/no'):
+				data_corr_yn= (data_corr_yn*count_yn+1)/(count_yn+1)
+			if (input == 'yes/no') & (qestion_type !='yes/no'):
+				data_corr_yn= (data_corr_yn*count_yn+0)/(count_yn+1)
+			if (input == 'open-ended') & (qestion_type =='open-ended'):
+				data_corr_oe= (data_corr_oe*count_oe+1)/(count_oe+1)
+			if (input == 'open-ended') & (qestion_type !='open-ended'):
+				data_corr_oe= (data_corr_oe*count_oe+0)/(count_oe+1)
+			
+				
+			if (input == 'open-ended'):
+				count_oe=count_oe+1
+			if (input == 'yes/no'):
+				count_yn=count_yn+1
+			self.insert_result(sentence,qestion_type,qestion_type_bow,input,qa_id,data_corr_yn,data_corr_oe,human_corr_yn,human_corr_oe,count_yn,count_oe)
+			sentence=sentence2 #return the next one to display
+		return(sentence)
+		 
+	def train_plot(self):
+		self.cur.execute("SELECT * from training order by id DESC limit 1;")
+		result=self.cur.fetchall()[0]
+		print(result)
+		yn=[result[6],result[8]]
+		oe=[result[7],result[9]]
+		label=['Data','BoW']
+		key=['Yes/No','Open Ended']
+		#print(xx,yy,key)
+		return [{"values":[{"y":yn[0]*100,"x":label[0]},{"y":yn[1]*100,"x":label[1]}],"key":key[0],"yAxis":"1"},\
+ {"values":[{"y":oe[0]*100,"x":label[0]},{"y":oe[1]*100,"x":label[1]}],"key":key[1],"yAxis":"1"}]
+ 
+ 	def insert_result(self,question,qestion_type,qestion_type_bow,qestion_type_human,qa_id,data_corr_yn,data_corr_oe,human_corr_yn,human_corr_oe,count_yn,count_oe):
+		self.cur.execute("INSERT INTO training (\
+		question,\
+		qestion_type,\
+		qestion_type_bow,\
+		qestion_type_human,\
+		qa_id,\
+		data_corr_yn,\
+		data_corr_oe,\
+		human_corr_yn,\
+		human_corr_oe,\
+		count_yn,\
+		count_oe\
+		)\
+		VALUES (\
+		%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\
+		)",(\
+		question,\
+		qestion_type,\
+		qestion_type_bow,\
+		qestion_type_human,\
+		qa_id,\
+		data_corr_yn,\
+		data_corr_oe,\
+		human_corr_yn,\
+		human_corr_oe,\
+		count_yn,\
+		count_oe\
+		))
+		self.conn.commit() #submit change to db
+		
 class emoji_lib:
 	"""Emoji Class"""
 	def __init__(self):
