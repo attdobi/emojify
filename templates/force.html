@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<script src="//d3js.org/d3.v3.min.js"></script>
 <style>
 
 .link {
   fill: none;
   stroke: #666;
   stroke-width: 1.5px;
+  stroke-opacity: .3;
 }
 
 #licensing {
@@ -40,7 +42,7 @@ text {
       </label>
     <input type = "text"
        id = "word"
-       value = "Summer"
+       value = "you"
       onkeypress="if (event.keyCode==13){make_graph()};"
       />
       
@@ -69,23 +71,26 @@ d3.select("svg").remove();
 //    // code that uses the object 'root'
 //});
 
+var color = d3.scale.category10();
+
 var nodes = {};
 
 // Compute the distinct nodes from the links.
 links.forEach(function(link) {
-  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
-  link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+      link.source = nodes[link.source] || (nodes[link.source] = {name: link.source, group: link.group});
+      link.target = nodes[link.target] || (nodes[link.target] = {name: link.target, group: link.group});
 });
 
-var width = 1050,
+var width = 1100,
     height = 600;
+
 
 var force = d3.layout.force()
     .nodes(d3.values(nodes))
     .links(links)
     .size([width, height])
-    .linkDistance(60)
-    .charge(-300)
+    .linkDistance(120)
+    .charge(-200)
     .on("tick", tick)
     .start();
 
@@ -110,14 +115,21 @@ svg.append("defs").selectAll("marker")
 var path = svg.append("g").selectAll("path")
     .data(force.links())
   .enter().append("path")
-    .attr("class", function(d) { return "link " + d.type; })
-    .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+    .attr("class", function(d) { return "link " + d.group; })
+    .attr("marker-end", function(d) { return "url(#" + d.group + ")"; })
+    .style("stroke-width", function(d) { return Math.sqrt(d.group); });
 
 var circle = svg.append("g").selectAll("circle")
     .data(force.nodes())
-  .enter().append("circle")
-    .attr("r", 6)
+    .enter().append("circle")
+    .style("fill", function(d) { return color(d.group); })
+    .attr("r", 4)
+    //.style("fill", function (d) { return '#1f77b4'; })
+    //
     .call(force.drag);
+    
+  // You define here your nodes and the color will be d.group
+
 
 var text = svg.append("g").selectAll("text")
     .data(force.nodes())
@@ -125,8 +137,9 @@ var text = svg.append("g").selectAll("text")
     .attr("x", 8)
     .attr("y", ".31em")
     .text(function(d) { return d.name; })
-    .style({"font-size": "35px"});
-
+    .style({"font-size": "17px"})
+    .style("fill", function(d) { return color(d.group); });
+    
 // Use elliptical arc path segments to doubly-encode directionality.
 function tick() {
   path.attr("d", linkArc);
