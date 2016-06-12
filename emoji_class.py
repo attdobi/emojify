@@ -115,11 +115,11 @@ class TallLabs_lib:
 		return(sentence)
 		 
 	def train_plot(self):
-		self.cur.execute("SELECT * from training order by id DESC limit 1;")
+		self.cur.execute("SELECT data_corr_yn,data_corr_oe,bow_corr_yn,bow_corr_oe from training order by id DESC limit 1;")
 		result=self.cur.fetchall()[0]
 		print(result)
-		yn=[result[6],result[8]]
-		oe=[result[7],result[9]]
+		yn=[result[0],result[2]]
+		oe=[result[1],result[3]]
 		key=['Data','BoW']
 		label=['Yes/No','Open Ended']
 		#print(xx,yy,key)
