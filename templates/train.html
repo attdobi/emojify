@@ -101,28 +101,34 @@ li.dropdown {
     $(function() {
       $('#YesNo').bind('click', function() {
         $.getJSON('/_train', {
-           a: 'yes/no'
+           a: 'yes/no',
+           name: $('input[name="name_in"]').val()
         }, function(data) {
           $("#result").text(data.result);
           make_graph();
+          make_table();
         });
         return false;
       });
     $('#OE').bind('click', function() {
         $.getJSON('/_train', {
-           a: 'open-ended'
+           a: 'open-ended',
+           name: $('input[name="name_in"]').val()
         }, function(data) {
           $("#result").text(data.result);
           make_graph();
+          make_table();
         });
         return false;
       });
     $('#unknown').bind('click', function() {
         $.getJSON('/_train', {
-           a: 'unknown'
+           a: 'unknown',
+           name: $('input[name="name_in"]').val()
         }, function(data) {
           $("#result").text(data.result);
           make_graph();
+          make_table();
         });
         return false;
       });
@@ -133,32 +139,45 @@ li.dropdown {
     <div class="container">
       <div class="header">
 <ul>
-  <li><a class="active" href="/force">Force Diagram</a></li>
+  <li><a class="active" href="/">Force Diagram</a></li>
   <li><a href="/tree">Tree Diagram</a></li>
   <li><a href="/train">Training</a></li>
 </ul>
-        <h3 class="text-muted">Q/A Training</h3>
+        <h3 class="text-muted">Q/A Training
+      </h3> 
+        
       <hr/>
       <center><pre class="box" id="result" style="font-size:12pt"></center> </pre>
       <!<textarea id="result" rows="30" cols="70"><!</textarea>
       </div>
-      
+      <h6> <center> What type of question is this? </center></h6>
       <h6> <center>
      <a class="btn btn-lg btn-success" id="YesNo" role="button">Yes/No</a>
      <a class="btn btn-lg btn-success" id="OE" role="button">open-ended</a>
      <a class="btn btn-lg btn-success" id="unknown" role="button">¯\_(ツ)_/¯🦄 </a>
-     </center>
+       </center>
+      <input type = "text" name= "name_in" value = "" style="float:right;" />
+             <font size="3"><label for="name"
+          style="display: inline-block; width: 50px; float:right;">
+        Name:
+      </label></fontsize>
      
 </h6>
-</br>
 <hr/>
-
-    <div id="multibarchart" style="float:center;"><center><svg style="width:800px;height:300"
-  preserveAspectRatio=""xMidYMid"></center></svg></div>
+    
+    <div id="multibarchart" style="float:left; margin: 20px;"><svg style="width:800px;height:300"
+  preserveAspectRatio=""xMidYMid"></svg></div>
+   <div id="table" style="font-size:16pt; float:right;"></div></div>
     
    <script>
 
-//data_multibarchart=[{"values": [{"y": 6, "x": "\ud83c\udf46"}, {"y": 12, "x": "\ud83d\ude02"}, {"y": 9, "x": "\ud83d\udc36"}, {"y": 16, "x": "\u2764\ufe0f"}], "key": "Serie 1", "yAxis": "1"}, {"values": [{"y": 8, "x": "\ud83c\udf46"}, {"y": 14, "x": "\ud83d\ude02"}, {"y": 7, "x": "\ud83d\udc36"}, {"y": 11, "x": "\u2764\ufe0f"}], "key": "Serie 2", "yAxis": "1"}];
+// the table rows
+    // column definitions
+    var columns = [
+        { head: 'Rank', cl: 'center', html: ƒ('rank') },
+        { head: 'Name', cl: 'title', html: ƒ('label') },
+        { head: 'Count', cl: 'center', html: ƒ('value') },
+    ];
 
 
 function initiallize() {
@@ -179,12 +198,14 @@ d3.json(URL_BASE, function(error, data) {
         var chart = nv.models.multiBarChart()
         .barColor(d3.scale.category10().range());
 
-        chart.margin({top: 30, right: 60, bottom: 20, left: 60});
-
+        chart.margin({top: 5, right: 60, bottom: 20, left: 60})
+        .forceY(0,100);
+        
         var datum = data_multibarchart;
 
             chart.yAxis
                 .tickFormat(d3.format(',.2f'));
+                
 
 
       chart.showLegend(true);
@@ -193,16 +214,76 @@ d3.json(URL_BASE, function(error, data) {
             .datum(datum)
             .transition().duration(500)
             .attr('width', 800)
-            .attr('height', 400)
+            .attr('height', 300)
             .call(chart);
 
     });
 
 });//end get data
 
-}
+}//end make graph
+
+function make_table() {
+   var URL_BASE = "/_train_table";
+  
+  d3.json(URL_BASE, function(error, data) {
+    var fmt = d3.format("d");
+    var datum = data.values;
+    
+    nv.addGraph(function() {
+// create table
+	//Clear previous table
+	d3.selectAll("#table > *").remove();
+    var table = d3.select('#table');
+     
+    // create table header
+    var header=table.append("thead")
+        .selectAll('th');
+        
+        //header.data(data).exit().remove();
+    
+        header
+        .data(columns).enter()
+        .append('th')
+        .attr('class', ƒ('cl'))
+        .text(ƒ('head'));
+
+    // create table body
+    var body = table.append("tbody")
+        .selectAll('tr');
+    
+        body
+        .data(datum).enter()
+        .append('tr')
+        .selectAll('td')
+        .data(function(row, i) {
+            return columns.map(function(c) {
+                // compute cell values for this specific row
+                var cell = {};
+                d3.keys(c).forEach(function(k) {
+                    cell[k] = typeof c[k] == 'function' ? c[k](row,i) : c[k];
+                });
+                return cell;
+            });
+        }).enter()
+        .append('td')
+        .html(ƒ('html'))
+        .attr('class', ƒ('cl'));
+
+		table.selectAll("th").style("background-color", "#D8D8D8");
+		table.selectAll("tr").style("background-color", function(d, i){
+     				if(i%2 == 1){
+     					return "#D8D8D8";
+     				}
+     			})
+
+        
+        });
+    });
+}//end make table
 
 make_graph()
+make_table()
 initiallize()
 
         

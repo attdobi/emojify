@@ -65,15 +65,21 @@ def _get_tree():
 def _train():
 	#word = request.args.get('word')
 	res=request.args.get('a')
-	print(res)
-	result=Tall.train(res)
+	name=request.args.get('name')
+	result=Tall.train(res,name)
 	return jsonify(result=result)
 	
 @application.route('/_train_plot')
 def _train_plot():
-	#word = request.args.get('word')
 	result=Tall.train_plot()
 	return jsonify(result=result)
+	
+@application.route('/_train_table')
+def _train_table():
+	result=Tall.leader_board()
+	print(result)
+	return jsonify(result)
+	
 ###### End Tall Labs Part ########################
 	
 @application.route('/_get_web')

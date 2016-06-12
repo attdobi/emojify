@@ -58,40 +58,43 @@ class TallLabs_lib:
 		return {"name":word,"children":[{"name":tar,"children":[{"name":child,"size":3} for child in child_l] }\
 		 for tar,child_l in zip(target,child_list)]}
 		 
-	def train(self,input):
+	def train(self,input,name):
 		self.cur.execute("SELECT qa_id from training order by id DESC limit 1;")
 		last_id=self.cur.fetchall()
 		self.cur.execute("SELECT id,question,questiontype from qa where id>%s limit 2;",last_id)
 		result=self.cur.fetchall()
 		qa_id=result[0][0]
-		sentence=result[0][1]
+		sentence=result[0][1] #returns sentence as a string (could be multiple from one query)
+		sentence,first_word = self.process_line(sentence) #returns the first sentence and first word
 		sentence2=result[1][1] #display this one if the current one is processed
+		sentence2,first_word2 = self.process_line(sentence2)
 		qestion_type=result[0][2]
 		
 		if input != 'start':
-			self.cur.execute("SELECT data_corr_yn,data_corr_oe,human_corr_yn,human_corr_oe,count_yn,count_oe from training order by id DESC limit 1;")
+			self.cur.execute("SELECT data_corr_yn,data_corr_oe,bow_corr_yn,bow_corr_oe,count_yn,count_oe from training order by id DESC limit 1;")
 			result=self.cur.fetchall()[0]
 			data_corr_yn=result[0]
 			data_corr_oe=result[1]
-			human_corr_yn=result[2]
-			human_corr_oe=result[3]
+			bow_corr_yn=result[2]
+			bow_corr_oe=result[3]
 			count_yn=result[4]
 			count_oe=result[5]
 			#check if sentence is in bag of words
-			bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,shuold,are,would,do,did'.split(',')
-			if sentence.split()[0].lower() in bag_of_words_yn:
+			print(self.first_word_in_bag(first_word))
+			if self.first_word_in_bag(first_word):
 				qestion_type_bow='yes/no'
 			else:
 				qestion_type_bow='open-ended'
 			
+			
 			if (input == 'yes/no') & (qestion_type_bow =='yes/no'):
-				human_corr_yn= (human_corr_yn*count_yn+1)/(count_yn+1)
+				bow_corr_yn= (bow_corr_yn*count_yn+1)/(count_yn+1)
 			if (input == 'yes/no') & (qestion_type_bow !='yes/no'):
-				human_corr_yn= (human_corr_yn*count_yn+0)/(count_yn+1)
+				bow_corr_yn= (bow_corr_yn*count_yn+0)/(count_yn+1)
 			if (input == 'open-ended') & (qestion_type_bow =='open-ended'):
-				human_corr_oe= (human_corr_oe*count_oe+1)/(count_oe+1)
+				bow_corr_oe= (bow_corr_oe*count_oe+1)/(count_oe+1)
 			if (input == 'open-ended') & (qestion_type_bow !='open-ended'):
-				human_corr_oe= (human_corr_oe*count_oe+0)/(count_oe+1)
+				bow_corr_oe= (bow_corr_oe*count_oe+0)/(count_oe+1)
 				
 			if (input == 'yes/no') & (qestion_type =='yes/no'):
 				data_corr_yn= (data_corr_yn*count_yn+1)/(count_yn+1)
@@ -101,13 +104,12 @@ class TallLabs_lib:
 				data_corr_oe= (data_corr_oe*count_oe+1)/(count_oe+1)
 			if (input == 'open-ended') & (qestion_type !='open-ended'):
 				data_corr_oe= (data_corr_oe*count_oe+0)/(count_oe+1)
-			
 				
 			if (input == 'open-ended'):
 				count_oe=count_oe+1
 			if (input == 'yes/no'):
 				count_yn=count_yn+1
-			self.insert_result(sentence,qestion_type,qestion_type_bow,input,qa_id,data_corr_yn,data_corr_oe,human_corr_yn,human_corr_oe,count_yn,count_oe)
+			self.insert_result(sentence,qestion_type,qestion_type_bow,input,qa_id,data_corr_yn,data_corr_oe,bow_corr_yn,bow_corr_oe,count_yn,count_oe,name)
 			sentence=sentence2 #return the next one to display
 		return(sentence)
 		 
@@ -120,10 +122,19 @@ class TallLabs_lib:
 		key=['Data','BoW']
 		label=['Yes/No','Open Ended']
 		#print(xx,yy,key)
-		return [{"values":[{"y":yn[0]*100,"x":label[0]},{"y":yn[1]*100,"x":label[1]}],"key":key[0],"yAxis":"1"},\
- {"values":[{"y":oe[0]*100,"x":label[0]},{"y":oe[1]*100,"x":label[1]}],"key":key[1],"yAxis":"1"}]
- 
- 	def insert_result(self,question,qestion_type,qestion_type_bow,qestion_type_human,qa_id,data_corr_yn,data_corr_oe,human_corr_yn,human_corr_oe,count_yn,count_oe):
+		return [{"values":[{"y":yn[0]*100,"x":label[0]},{"y":oe[0]*100,"x":label[1]}],"key":key[0],"yAxis":"1"},\
+ {"values":[{"y":yn[1]*100,"x":label[0]},{"y":oe[1]*100,"x":label[1]}],"key":key[1],"yAxis":"1"}]
+	
+	
+	def leader_board(self):
+		self.cur.execute("SELECT name, count(*) from training group by name order by count DESC;")
+		result=self.cur.fetchall()
+		#print(result)
+		#names = [val[0] for val in result]
+		#counts = [val[1] for val in result]
+		return {"values":[{"rank":rank+1,"value":count,"label":name} for rank,(name,count) in enumerate(result)],"key": "Serie 1"}
+		
+	def insert_result(self,question,qestion_type,qestion_type_bow,qestion_type_human,qa_id,data_corr_yn,data_corr_oe,bow_corr_yn,bow_corr_oe,count_yn,count_oe,name):
 		self.cur.execute("INSERT INTO training (\
 		question,\
 		qestion_type,\
@@ -132,13 +143,15 @@ class TallLabs_lib:
 		qa_id,\
 		data_corr_yn,\
 		data_corr_oe,\
-		human_corr_yn,\
-		human_corr_oe,\
+		bow_corr_yn,\
+		bow_corr_oe,\
 		count_yn,\
-		count_oe\
+		count_oe,\
+		name,\
+		time\
 		)\
 		VALUES (\
-		%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\
+		%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\
 		)",(\
 		question,\
 		qestion_type,\
@@ -147,12 +160,31 @@ class TallLabs_lib:
 		qa_id,\
 		data_corr_yn,\
 		data_corr_oe,\
-		human_corr_yn,\
-		human_corr_oe,\
+		bow_corr_yn,\
+		bow_corr_oe,\
 		count_yn,\
-		count_oe\
+		count_oe,\
+		name,\
+		datetime.datetime.now()\
 		))
 		self.conn.commit() #submit change to db
+		
+	def process_line(self,sentence):
+		#step 1, split
+		sentences=re.split(r'[;:!?.-]\s*', sentence)
+		result= [re.findall("[0-9a-z']+", sent.lower()) for sent in sentences if \
+			   re.findall("[0-9a-z']+", sent.lower())!=[]]
+		if result==[]:
+			result=['']
+		#return first sentence and first word
+		return ' '.join(result[0])+'?',result[0][0]
+		
+	def first_word_in_bag(self,first_word):
+		try:
+			is_in_bag=({first_word}|{item[0] for item in self.QmodelB.most_similar(first_word)})&set(self.bag_of_words_yn)!=set()
+		except KeyError:
+			is_in_bag=False
+		return is_in_bag
 		
 class emoji_lib:
 	"""Emoji Class"""
