@@ -63,7 +63,6 @@ def _get_tree():
 	
 @application.route('/_train')
 def _train():
-	#word = request.args.get('word')
 	res=request.args.get('a')
 	name=request.args.get('name')
 	result=Tall.train(res,name)

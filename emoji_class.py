@@ -23,6 +23,7 @@ class TallLabs_lib:
 		self.conn = psycopg2.connect("host=localhost port=5432 dbname=amazon user=postgres password=darkmatter")
 		self.cur = self.conn.cursor()
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
+		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
 		
 	def clean_result(self,model_result):
 		return [item[0] for item in model_result],[item[1] for item in model_result]
