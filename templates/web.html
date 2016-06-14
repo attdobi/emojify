@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js"></script>
+    <script src="https://rawgit.com/gka/d3-jetpack/master/d3-jetpack.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
+          rel="stylesheet">
 <style>
 
 .link {
@@ -34,6 +41,18 @@ text {
 
 </style>
 <body>
+<div class="container">
+<div class="header">
+<ul>
+  <li><a class="active" href="/">Emojisaurus</a></li>
+  <li><a href="/skin">Emoji Skins</a></li>
+  <li><a href="/stats">Emoji Stats</a></li>
+  <li><a href="/emoji_context">Emoji Context</a></li>
+  <li><a href="/emojify">Emojify</a></li>
+  <li><a href="/web">Emoji Web</a></li>
+  <li><a href="/emoji_art">Emoji Art</a></li>
+</ul>
+    <hr/>
        <label for="Enter Word"
           style="display: inline-block; width: 146px; text-align: right">
         Enter word or phrase:
@@ -43,7 +62,7 @@ text {
        value = "Summer"
       onkeypress="if (event.keyCode==13){make_graph()};"
       />
-      
+      </div>
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script>
 

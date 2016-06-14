@@ -176,7 +176,7 @@ class TallLabs_lib:
 		result= [re.findall("[0-9a-z']+", sent.lower()) for sent in sentences if \
 			   re.findall("[0-9a-z']+", sent.lower())!=[]]
 		if result==[]:
-			result=['']
+			result=[['']]
 		#return first sentence and first word
 		return ' '.join(result[0])+'?',result[0][0]
 		
