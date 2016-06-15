@@ -91,8 +91,7 @@ def _update_item():
 @application.route('/_process_question')
 def _process_question():
 	question = request.args.get('question')
-	print(question)
-	return jsonify(result='Hey there!')
+	return jsonify(result=question)
 	
 ###### End Tall Labs Part ########################
 	
