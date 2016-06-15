@@ -88,6 +88,12 @@ def _update_item():
 	image,title,description=Tall.getMeta(asin)
 	return jsonify(image=image,title=title,desc=description)
 	
+@application.route('/_process_question')
+def _process_question():
+	question = request.args.get('question')
+	print(question)
+	return jsonify(result='Hey there!')
+	
 ###### End Tall Labs Part ########################
 	
 @application.route('/_get_web')
