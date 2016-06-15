@@ -48,8 +48,8 @@ def tree():
 @application.route("/train")
 def train():
 	return render_template("train.html")
-@application.route("/search")
-def search():
+@application.route("/demo")
+def demo():
 	return render_template("search.html")
 	
 @application.route('/_get_vis')
