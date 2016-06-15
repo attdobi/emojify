@@ -48,6 +48,9 @@ def tree():
 @application.route("/train")
 def train():
 	return render_template("train.html")
+@application.route("/search")
+def search():
+	return render_template("search.html")
 	
 @application.route('/_get_vis')
 def _get_vis():
@@ -78,6 +81,12 @@ def _train_table():
 	result=Tall.leader_board()
 	print(result)
 	return jsonify(result)
+	
+@application.route('/_update_item')
+def _update_item():
+	asin = request.args.get('asin')
+	image,title,description=Tall.getMeta(asin)
+	return jsonify(image=image,title=title,desc=description)
 	
 ###### End Tall Labs Part ########################
 	
