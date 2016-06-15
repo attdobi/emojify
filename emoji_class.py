@@ -189,12 +189,12 @@ class TallLabs_lib:
 		
 	def getMeta(self,asin):
 		self.cur.execute("select metajson->'imUrl', metajson->'description', title from metadata where asin=%s and id >1000000 limit 1;",(asin,))
-		self.result=cur.fetchall()[0]
+		result=self.cur.fetchall()[0]
 		image=result[0]
 		description=result[1]
 		title=result[2]
-		return image,description,title
-		################################################################################
+		return image,title,description
+		########################################################################################################
 		
 class emoji_lib:
 	"""Emoji Class"""
