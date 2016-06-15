@@ -112,7 +112,8 @@ li.dropdown {
         }, function(data) {
           $("#img_path").attr("src", data.image),
           $("#title").text(data.title),
-          $("#desc").text(data.desc);
+          $("#desc").text(data.desc).
+          $("#prod_title").text(data.title)
         });
         return false;
       });
@@ -161,7 +162,7 @@ li.dropdown {
     <pre class="box" id="title" style="font-size:12pt"></pre>
     </br>
     <h3> Product Description</h3>
-    <center><pre class="box" id="desc" style="font-size:12pt"></pre>
+    <center><pre class="box" id="prod_desc" style="font-size:12pt"></pre>
     </center>
    </div>
   </div><!-- end row -->
@@ -169,9 +170,8 @@ li.dropdown {
  
  <div class="row">
  <div class="col-md-12">
-  <p class="description">
-   Classic film camera. Uses 620 roll film.
-   Has a 2&frac14; x 3&frac14; inch image size.
+  <p class="description" id="prod_desc">
+   
   </p>
  </div>
 </div><!-- end row -->
