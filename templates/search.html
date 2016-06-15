@@ -117,6 +117,14 @@ li.dropdown {
         });
         return false;
       });
+    $('#Go').bind('click', function() {
+        $.getJSON('/_process_question', {
+           question: $('textarea[name="q_text"]').val()
+        }, function(data) {
+         $("#result").text(data.result)
+        });
+        return false;
+      });
     });
   </script>
   </head>
@@ -162,8 +170,10 @@ li.dropdown {
         <label  style="display: inline-block; width: 20; text-align: right; font-size:12pt;">
         Search:
      </label></br>
-        <textarea name="a" rows="2" cols="42"> </textarea>
+        <textarea name="q_text" rows="2" cols="42"> </textarea>
      <a class="btn btn-lg btn-success" id="Go" role="button">Go</a>
+     </br>
+     <pre class="box" id="result" style="font-size:10pt"></pre>
 
    </div>
   </div><!-- end row -->
