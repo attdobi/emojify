@@ -112,8 +112,8 @@ li.dropdown {
         }, function(data) {
           $("#img_path").attr("src", data.image),
           $("#title").text(data.title),
-          $("#desc").text(data.desc).
-          $("#prod_title").text(data.title)
+          $("#desc").text(data.desc),
+          $("#prod_title").text(data.title);
         });
         return false;
       });
