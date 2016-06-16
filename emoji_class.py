@@ -78,9 +78,9 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		result=self.cur.fetchall()
 		qa_id=result[0][0]
 		sentence=result[0][1] #returns sentence as a string (could be multiple from one query)
-		sentence,first_word = self.process_line(sentence) #returns the first sentence and first word
+		sentence,first_word = self.process_line_question(sentence) #returns the first sentence and first word
 		sentence2=result[1][1] #display this one if the current one is processed
-		sentence2,first_word2 = self.process_line(sentence2)
+		sentence2,first_word2 = self.process_line_question(sentence2)
 		qestion_type=result[0][2]
 		
 		if input != 'start':
@@ -183,17 +183,16 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		self.conn.commit() #submit change to db
 		
 	def process_line(self,sentence):
-		#step 1, split
-		sentences=re.split(r'[;:!?.-]\s*', sentence)
-		result= [re.findall("[0-9a-z']+", sent.lower()) for sent in sentences if \
-			   re.findall("[0-9a-z']+", sent.lower())!=[]]
+		#step 1 split if we need to
+		sentences=re.split(r'[;:.!?]\s*', sentence)
+		result= [re.findall("[a-z-.'0-9]+", sent.lower()) for sent in sentences if \
+				re.findall("[a-z-.'0-9]+", sent.lower())!=[]]
 		if result==[]:
 			result=[['']]
-		#return first sentence and first word
-		return ' '.join(result[0])+'?',result[0][0]
+		return result
 		
 	def process_line_question(self,sentence):
-		#step 1, split
+		#step 1, split on question. Use for QA training page
 		sentences=re.split(r'[;:.!?]\s*', sentence)
 		result= [re.findall("[a-z-.'0-9]+", sent.lower()) for sent in sentences if \
 			re.findall("[a-z-.'0-9]+", sent.lower())!=[]]
@@ -223,16 +222,15 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		
 	def processQuestion(self,asin,question):
 		key_words, key_words_action = self.return_key_words(question)
-		#similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7] for word in key_words],[])
+		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7] for word in key_words],[])
 		### pull review data
 		self.cur.execute("select reviewtext from reviews_cell_phones_and_accessories where asin=%s;",(asin,))
 		result=self.cur.fetchall()
-		#good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)
+		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)
+		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
 		
-		#sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
-		
-		#return '\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
-		return key_words
+		return '\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
+		#return key_words
 		
 	###### Support functions for porcessQuetion ########################################################################
 	def q_filter(self,sentence):
