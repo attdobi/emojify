@@ -24,7 +24,7 @@ class TallLabs_lib:
 		self.cur = self.conn.cursor()
 		self.stoplist = set('a an for of the and to in rt'.split())
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
-		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB')
+		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
 		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
 		self.bag_of_words='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,need,take,out,how,would,am,at,\
 anyone,has,have,off,that,which,who,please,thank,you,that,fit,these,they,many,work,with,time,turn,fit,fitt,\
@@ -222,8 +222,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		return image,title,description,question
 		
 	def processQuestion(self,asin,question):
-		#key_words, key_words_action = self.return_key_words(question)
-		#print(key_words,key_words_action)
+		key_words, key_words_action = self.return_key_words(question)
 		#similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7]\
 		#for word in key_words],[])
 		### pull review data
