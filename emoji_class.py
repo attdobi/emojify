@@ -287,7 +287,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 				return [['']]
 		elif model=='review':
 			try:
-				return self.RmodelB.most_similar(word,topn=5)
+				return self.QmodelB.most_similar(word,topn=5)
 			except KeyError:
 				return [['']]
 		else:
