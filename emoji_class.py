@@ -234,8 +234,13 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
 		
-		return '\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
-		#return key_words
+		formatted_answer='\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
+		
+		about_text='Question Type: '+'Yes/No' + '\n'+\
+		'Key Words = '+ ' '.join(key_words) + '\n'+\
+		'Similar Keys = '+ ' '.join(similar_keys)
+		
+		return formatted_answer, about_text
 		
 	###### Support functions for porcessQuetion ########################################################################
 	def q_filter(self,sentence):

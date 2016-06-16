@@ -92,9 +92,8 @@ def _update_item():
 def _process_question():
 	question = request.args.get('question')
 	asin = request.args.get('asin')
-	#print(question,asin)
-	answers=Tall.processQuestion(asin,question)
-	return jsonify(result=answers)
+	answers,about_text=Tall.processQuestion(asin,question)
+	return jsonify(result=answers,about=about_text)
 	
 	
 ###### End Tall Labs Part ########################

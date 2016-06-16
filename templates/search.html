@@ -115,6 +115,8 @@ li.dropdown {
           $("#desc").text(data.desc),
           $("#revs").text(data.revs),
           $("#prod_title").text(data.title),
+          $("#result").text(""),
+          $("#about").text(""),
           document.getElementById('ques').value = data.ques;
         });
         return false;
@@ -124,7 +126,8 @@ li.dropdown {
            question: $('textarea[name="q_text"]').val(),
            asin: $('select[id="item_select"]').val()
         }, function(data) {
-          $("#result").text(data.result)
+          $("#result").text(data.result),
+          $("#about").text(data.about)
         });
         return false;
       });
@@ -177,6 +180,8 @@ li.dropdown {
      <a class="btn btn-lg btn-success" id="Go" role="button">Go</a>
      </br>
      <pre class="box" id="result" style="font-size:10pt"></pre>
+    </br>
+     <pre class="box" id="about" style="font-size:10pt"></pre>
 
    </div>
   </div><!-- end row -->
