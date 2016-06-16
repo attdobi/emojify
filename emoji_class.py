@@ -215,11 +215,11 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		title=result[2]
 		
 		#get the question, only use for demo
-		self.cur.execute("SELECT question from qa where asin=%s limit 1;",(asin,))
-		result=self.cur.fetchall()[0]
-		question=result[0]
+		#self.cur.execute("SELECT question from qa where asin=%s limit 1;",(asin,))
+		#result=self.cur.fetchall()[0]
+		#question=result[0]
 		
-		return image,description,title,question
+		return image,description,title,'hello'
 		
 	def processQuestion(self,asin,question):
 		key_words, key_words_action = self.return_key_words(question)
