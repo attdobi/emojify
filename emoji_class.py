@@ -170,7 +170,6 @@ class TallLabs_lib:
 		))
 		self.conn.commit() #submit change to db
 		
-	####### DEMO SITE FUNCTIONS ######################################################
 	def process_line(self,sentence):
 		#step 1, split
 		sentences=re.split(r'[;:!?.-]\s*', sentence)
