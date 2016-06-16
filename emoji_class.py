@@ -192,6 +192,14 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		#return first sentence and first word
 		return ' '.join(result[0])+'?',result[0][0]
 		
+	def process_line_question(self,sentence):
+		#step 1, split
+		sentences=re.split(r'[;:.!?]\s*', sentence)
+		result= [re.findall("[a-z-.'0-9]+", sent.lower()) for sent in sentences if \
+			re.findall("[a-z-.'0-9]+", sent.lower())!=[]]
+		#return first sentence and first word
+		return ' '.join(result[0])+'?',result[0][0]
+		
 	def first_word_in_bag(self,first_word):
 		try:
 			is_in_bag=({first_word}|{item[0] for item in self.QmodelB.most_similar(first_word)})&set(self.bag_of_words_yn)!=set()
@@ -212,6 +220,81 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		question=result[0]
 		
 		return image,title,description,question
+		
+	def processQuestion(self,asin,question):
+		key_words, key_words_action = self.return_key_words(question)
+		print(key_words,key_words_action)
+		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7]\
+		for word in key_words],[])
+		### pull review data
+		self.cur.execute("select reviewtext from reviews_cell_phones_and_accessories where asin=%s;",(asin,))
+		result=self.cur.fetchall()
+
+		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)
+		print(good_qual_val)
+		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
+		print(sorted_index)
+		return '\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
+		
+	###### Support functions for porcessQuetion ########################################################################
+	def q_filter(self,sentence):
+		#filter the question text
+		return [word.lower() for word in sum(self.process_line(sentence),[]) if word not in self.complete_bag]
+		
+	def q_filter_verb(self,sentence):
+		return [word.lower() for word in sum(self.process_line(sentence),[]) if word not in self.complete_bag_verbs]
+		
+	def find_bigrams(self,key_words):
+		ii=0
+		while ii < len(key_words)-1:
+			if key_words[ii]+'_'+key_words[ii+1] in self.QmodelB:
+				key_words.insert(ii,key_words[ii]+' '+key_words[ii+1])
+				key_words.pop(ii+1)
+				key_words.pop(ii+1)
+			ii+=1
+		return key_words
+		
+	def return_key_words(self,question):
+		question=question.lower()
+		key_words_action= self.find_bigrams(self.q_filter_verb(question))
+		key_words=self.find_bigrams(self.q_filter(question))
+		[key_words_action.remove(word) for word in key_words]
+		return key_words, key_words_action
+		
+	def find_relevent_sentence(self,text,key_words):
+		text=text.lower()
+		text=text.replace('/',' / ').replace('(',' ( ').replace(')',' ) ')
+		good_sen=[]
+		good_qual=[]
+		good_qual_val=[]
+		sentences = re.split(r"(?<![0-9])[.?!;](?![0-9])",text) #whatever delimiters you will need
+		for sen in sentences:
+			if(set(key_words) & set(sen.split())): #find the intersection/union
+				good_sen.append(sen)
+				good_qual.append(str(len(set(key_words) & set(sen.split())))+'/'+str(len(set(key_words))))
+				good_qual_val.append(len(set(key_words) & set(sen.split()))/len(set(key_words)))
+		return good_sen,good_qual,good_qual_val
+		
+	def merge_review(self,sql_result):
+		reviews=[]
+		[reviews.append(review[0]) for review in sql_result]
+		return' '.join(reviews)
+		
+	def check_key(self,word,model='question'):
+		#return similar words based on the Question Bigram Model
+		if model=='question':
+			try:
+				return self.QmodelB.most_similar(word,topn=5)
+			except KeyError:
+				return [['']]
+		elif model=='review':
+			try:
+				return self.RmodelB.most_similar(word,topn=5)
+			except KeyError:
+				return [['']]
+		else:
+			return [['']]
+	######### END SUPPORT FUNTIONS ####################################
 		########################################################################################################
 		
 class emoji_lib:
