@@ -223,7 +223,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		
 	def processQuestion(self,asin,question):
 		key_words, key_words_action = self.return_key_words(question)
-		print(key_words,key_words_action)
+		#print(key_words,key_words_action)
 		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7]\
 		for word in key_words],[])
 		### pull review data
@@ -231,10 +231,10 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		result=self.cur.fetchall()
 
 		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)
-		print(good_qual_val)
+		
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
-		print(sorted_index)
-		return '\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
+		
+		return '\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index])
 		
 	###### Support functions for porcessQuetion ########################################################################
 	def q_filter(self,sentence):
