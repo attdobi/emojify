@@ -24,18 +24,6 @@ class TallLabs_lib:
 		self.cur = self.conn.cursor()
 		self.stoplist = set('a an for of the and to in rt'.split())
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
-		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB')
-		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
-		self.bag_of_words='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,need,take,out,how,would,am,at,\
-anyone,has,have,off,that,which,who,please,thank,you,that,fit,these,they,many,work,with,time,turn,fit,fitt,\
-from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,find,make,hot,be,as,well,there,\
-son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,newest,or'.split(',')
-		self.bag_of_words_verbs='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,take,out,would,\
-anyone,off,that,which,who,please,thank,you,that,these,they,many,time,turn,newest,there,am,at,\
-from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,\
-son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any'.split(',')
-		self.complete_bag=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words],[]))|self.stoplist|set(self.bag_of_words)
-		self.complete_bag_verbs=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words_verbs],[]))|self.stoplist|set(self.bag_of_words_verbs)
 		
 	def clean_result(self,model_result):
 		return [item[0] for item in model_result],[item[1] for item in model_result]
