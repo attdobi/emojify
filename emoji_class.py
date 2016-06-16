@@ -193,7 +193,13 @@ class TallLabs_lib:
 		image=result[0]
 		description=result[1]
 		title=result[2]
-		return image,title,description
+		
+		#get the question, only use for demo
+		self.cur.execute("SELECT question from qa where asin=%s limit 1;",(asin,))
+		result=self.cur.fetchall()[0]
+		question=result[0]
+		
+		return image,title,description,question
 		########################################################################################################
 		
 class emoji_lib:
