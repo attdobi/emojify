@@ -113,15 +113,17 @@ li.dropdown {
           $("#img_path").attr("src", data.image),
           $("#title").text(data.title),
           $("#desc").text(data.desc),
-          $("#prod_title").text(data.title)
+          $("#prod_title").text(data.title),
+          document.getElementById('ques').value = data.ques;
         });
         return false;
       });
     $('#Go').bind('click', function() {
         $.getJSON('/_process_question', {
-           question: $('textarea[name="q_text"]').val()
+           question: $('textarea[name="q_text"]').val(),
+           asin: $('select[id="item_select"]').val()
         }, function(data) {
-         $("#result").text(data.result)
+          $("#result").text(data.result)
         });
         return false;
       });
@@ -170,7 +172,7 @@ li.dropdown {
         <label  style="display: inline-block; width: 20; text-align: right; font-size:12pt;">
         Search:
      </label></br>
-        <textarea name="q_text" rows="2" cols="42"> </textarea>
+        <textarea id="ques" name="q_text" rows="2" cols="42"> </textarea>
      <a class="btn btn-lg btn-success" id="Go" role="button">Go</a>
      </br>
      <pre class="box" id="result" style="font-size:10pt"></pre>
@@ -190,4 +192,7 @@ li.dropdown {
 
 </body>
 </html>
-
+<script>
+window.onload = function(){
+document.getElementsByName("item_sel")[0].click();}
+</script>
