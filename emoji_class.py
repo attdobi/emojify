@@ -231,7 +231,8 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
 		
-		return '\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
+		#return '\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
+		return key_words
 		
 	###### Support functions for porcessQuetion ########################################################################
 	def q_filter(self,sentence):
