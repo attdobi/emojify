@@ -222,10 +222,10 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		return image,title,description,question
 		
 	def processQuestion(self,asin,question):
-		key_words, key_words_action = self.return_key_words(question)
+		#key_words, key_words_action = self.return_key_words(question)
 		#print(key_words,key_words_action)
-		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7]\
-		for word in key_words],[])
+		#similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7]\
+		#for word in key_words],[])
 		### pull review data
 		self.cur.execute("select reviewtext from reviews_cell_phones_and_accessories where asin=%s;",(asin,))
 		result=self.cur.fetchall()
