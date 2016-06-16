@@ -229,12 +229,12 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		### pull review data
 		self.cur.execute("select reviewtext from reviews_cell_phones_and_accessories where asin=%s;",(asin,))
 		result=self.cur.fetchall()
-
-		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)
+		#good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)
 		
-		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
+		#sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
 		
-		return '\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index])
+		#return '\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
+		return result
 		
 	###### Support functions for porcessQuetion ########################################################################
 	def q_filter(self,sentence):
