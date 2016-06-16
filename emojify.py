@@ -85,8 +85,8 @@ def _train_table():
 @application.route('/_update_item')
 def _update_item():
 	asin = request.args.get('asin')
-	image,title,description,ques=Tall.getMeta(asin)
-	return jsonify(image=image,title=title,desc=description,ques=ques)
+	image,title,description,ques,revs=Tall.getMeta(asin)
+	return jsonify(image=image,title=title,desc=description,ques=ques,revs=revs)
 	
 @application.route('/_process_question')
 def _process_question():

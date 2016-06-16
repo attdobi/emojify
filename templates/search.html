@@ -113,6 +113,7 @@ li.dropdown {
           $("#img_path").attr("src", data.image),
           $("#title").text(data.title),
           $("#desc").text(data.desc),
+          $("#revs").text(data.revs),
           $("#prod_title").text(data.title),
           document.getElementById('ques').value = data.ques;
         });
@@ -185,8 +186,10 @@ li.dropdown {
  <div class="col-md-12">
   <p class="description" id="prod_title">
    </p>
-    <h5> Product Description</h5>
+    <h4> Product Description</h4>
    <pre class="box" id="desc" style="font-size:10pt"></pre>
+    <h4> Product Reviews</h4>
+   <pre class="box" id="revs" style="font-size:10pt"></pre>
  </div>
 </div><!-- end row -->
 

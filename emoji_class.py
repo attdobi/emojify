@@ -218,7 +218,12 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		result=self.cur.fetchall()[0]
 		question=result[0]
 		
-		return image,title,description,question
+		#get reviews
+		self.cur.execute("select reviewtext from reviews_cell_phones_and_accessories where asin=%s;",(asin,))
+		result=self.cur.fetchall()
+		formated_reviews='\n\n'.join([val[0] for val in result])
+		
+		return image,title,description,question,formated_reviews
 		
 	def processQuestion(self,asin,question):
 		key_words, key_words_action = self.return_key_words(question)
@@ -229,7 +234,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
 		
-		return '\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
+		return '\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
 		#return key_words
 		
 	###### Support functions for porcessQuetion ########################################################################
