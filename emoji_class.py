@@ -22,8 +22,20 @@ class TallLabs_lib:
 		#setup
 		self.conn = psycopg2.connect("host=localhost port=5432 dbname=amazon user=postgres password=darkmatter")
 		self.cur = self.conn.cursor()
+		self.stoplist = set('a an for of the and to in rt'.split())
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
+		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB')
 		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
+		self.bag_of_words='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,need,take,out,how,would,am,at,\
+anyone,has,have,off,that,which,who,please,thank,you,that,fit,these,they,many,work,with,time,turn,fit,fitt,\
+from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,find,make,hot,be,as,well,there,\
+son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,newest,or'.split(',')
+		self.bag_of_words_verbs='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,take,out,would,\
+anyone,off,that,which,who,please,thank,you,that,these,they,many,time,turn,newest,there,am,at,\
+from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,\
+son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any'.split(',')
+		self.complete_bag=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words],[]))|self.stoplist|set(self.bag_of_words)
+		self.complete_bag_verbs=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words_verbs],[]))|self.stoplist|set(self.bag_of_words_verbs)
 		
 	def clean_result(self,model_result):
 		return [item[0] for item in model_result],[item[1] for item in model_result]
@@ -170,13 +182,21 @@ class TallLabs_lib:
 		))
 		self.conn.commit() #submit change to db
 		
+	####### DEMO SITE FUNCTIONS ######################################################
 	def process_line(self,sentence):
-		#step 1, split
-		sentences=re.split(r'[;:!?.-]\s*', sentence)
-		result= [re.findall("[0-9a-z']+", sent.lower()) for sent in sentences if \
-			   re.findall("[0-9a-z']+", sent.lower())!=[]]
+		#step 1 split if we need to
+		sentences=re.split(r'[;:.!?]\s*', sentence)
+		result= [re.findall("[a-z-.'0-9]+", sent.lower()) for sent in sentences if \
+				re.findall("[a-z-.'0-9]+", sent.lower())!=[]]
 		if result==[]:
 			result=[['']]
+		return result
+		
+	def process_line_question(self,sentence):
+		#step 1, split
+		sentences=re.split(r'[;:.!?]\s*', sentence)
+		result= [re.findall("[a-z-.'0-9]+", sent.lower()) for sent in sentences if \
+			re.findall("[a-z-.'0-9]+", sent.lower())!=[]]
 		#return first sentence and first word
 		return ' '.join(result[0])+'?',result[0][0]
 		
@@ -189,12 +209,93 @@ class TallLabs_lib:
 		
 	def getMeta(self,asin):
 		self.cur.execute("select metajson->'imUrl', metajson->'description', title from metadata where asin=%s and id >1000000 limit 1;",(asin,))
-		result=self.cur.fetchall()[0]
+		self.result=cur.fetchall()[0]
 		image=result[0]
 		description=result[1]
 		title=result[2]
-		return image,title,description
-		########################################################################################################
+		
+		#get the question, only use for demo
+		self.cur.execute("SELECT question from qa where asin=%s limit 1;",(asin,))
+		result=self.cur.fetchall()[0]
+		question=result[0]
+		
+		return image,description,title,question
+		
+	def processQuestion(self,asin,question):
+		key_words, key_words_action = self.return_key_words(question)
+		print(key_words,key_words_action)
+		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7]\
+		for word in key_words],[])
+		### pull review data
+		self.cur.execute("select reviewtext from reviews_cell_phones_and_accessories where asin=%s;",(asin,))
+		result=self.cur.fetchall()
+
+		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)
+		print(good_qual_val)
+		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
+		print(sorted_index)
+		return '\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
+		
+	###### Support functions ########################################################################
+	def q_filter(self,sentence):
+		#filter the question text
+		return [word.lower() for word in sum(self.process_line(sentence),[]) if word not in self.complete_bag]
+		
+	def q_filter_verb(self,sentence):
+		return [word.lower() for word in sum(self.process_line(sentence),[]) if word not in self.complete_bag_verbs]
+		
+	def find_bigrams(self,key_words):
+		ii=0
+		while ii < len(key_words)-1:
+			if key_words[ii]+'_'+key_words[ii+1] in self.QmodelB:
+				key_words.insert(ii,key_words[ii]+' '+key_words[ii+1])
+				key_words.pop(ii+1)
+				key_words.pop(ii+1)
+			ii+=1
+		return key_words
+		
+	def return_key_words(self,question):
+		question=question.lower()
+		key_words_action= self.find_bigrams(self.q_filter_verb(question))
+		key_words=self.find_bigrams(self.q_filter(question))
+		[key_words_action.remove(word) for word in key_words]
+		return key_words, key_words_action
+		
+	def find_relevent_sentence(self,text,key_words):
+		text=text.lower()
+		text=text.replace('/',' / ').replace('(',' ( ').replace(')',' ) ')
+		good_sen=[]
+		good_qual=[]
+		good_qual_val=[]
+		sentences = re.split(r"(?<![0-9])[.?!;](?![0-9])",text) #whatever delimiters you will need
+		for sen in sentences:
+			if(set(key_words) & set(sen.split())): #find the intersection/union
+				good_sen.append(sen)
+				good_qual.append(str(len(set(key_words) & set(sen.split())))+'/'+str(len(set(key_words))))
+				good_qual_val.append(len(set(key_words) & set(sen.split()))/len(set(key_words)))
+		return good_sen,good_qual,good_qual_val
+		
+	def merge_review(self,sql_result):
+		reviews=[]
+		[reviews.append(review[0]) for review in sql_result]
+		return' '.join(reviews)
+		
+	def check_key(self,word,model='question'):
+		#return similar words based on the Question Bigram Model
+		if model=='question':
+			try:
+				return self.QmodelB.most_similar(word,topn=5)
+			except KeyError:
+				return [['']]
+		elif model=='review':
+			try:
+				return self.RmodelB.most_similar(word,topn=5)
+			except KeyError:
+				return [['']]
+		else:
+			return [['']]
+	######### END SUPPORT FUNTIONS/ TALL LABS FUNCTIONS ####################################
+	########################################################################################################
 		
 class emoji_lib:
 	"""Emoji Class"""

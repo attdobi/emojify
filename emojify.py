@@ -85,13 +85,16 @@ def _train_table():
 @application.route('/_update_item')
 def _update_item():
 	asin = request.args.get('asin')
-	image,title,description=Tall.getMeta(asin)
-	return jsonify(image=image,title=title,desc=description)
+	image,title,descriptionques,ques=Tall.getMeta(asin)
+	return jsonify(image=image,title=title,desc=description,ques=ques)
 	
 @application.route('/_process_question')
 def _process_question():
 	question = request.args.get('question')
-	return jsonify(result=question)
+	asin = request.args.get('asin')
+	#print(question,asin)
+	answers=Tall.processQuestion(asin,question)
+	return jsonify(result=answers)
 	
 ###### End Tall Labs Part ########################
 	
