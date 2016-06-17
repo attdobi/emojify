@@ -246,7 +246,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		
 		#get question type prediction:
 		words=question.split()
-		if self.clf.predict(1*self.QmodelB[words[0]]+self.QmodelB[words[1]]+self.QmodelB[words[2]])==1:
+		if (self.clf.predict(1*self.QmodelB[words[0]]+self.QmodelB[words[1]]+self.QmodelB[words[2]])==1):
 			qType='Yes/No'
 		else:
 			qType='Open-Ended'
