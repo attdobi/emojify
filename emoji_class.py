@@ -43,18 +43,24 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 	def clean_result(self,model_result):
 		return [item[0] for item in model_result],[item[1] for item in model_result]
 		#topn=15
-	def visual(self,word):
-		#print(type(self.QmodelB))
+	def visual(self,word,model):
+		if model=='reviews':
+			modelB=self.RmodelB
+		elif model=='questions':
+			modelB=self.QmodelB
+		else:
+			modelB=self.QmodelB
+			
 		word=word.lower()
-		results,counts=self.clean_result(self.QmodelB.most_similar(word,topn=5))
+		results,counts=self.clean_result(modelB.most_similar(word,topn=5))
 		source_target=[]
 		for result_word in results:
 			#append source target, and search next layer
 			source_target.append((word,result_word,1))
-			results2,counts2=self.clean_result(self.QmodelB.most_similar(result_word,topn=5))
+			results2,counts2=self.clean_result(modelB.most_similar(result_word,topn=5))
 			for result_word2 in results2:
 				source_target.append((result_word,result_word2,2))
-				results3,counts3=self.clean_result(self.QmodelB.most_similar(result_word2,topn=5))
+				results3,counts3=self.clean_result(modelB.most_similar(result_word2,topn=5))
 				for result_word3 in results3:
 					source_target.append((result_word2,result_word3,3))
 		return [{"source":src,"target":tar,"group":grp} for src,tar,grp in source_target]

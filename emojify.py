@@ -55,7 +55,8 @@ def demo():
 @application.route('/_get_vis')
 def _get_vis():
 	word = request.args.get('word')
-	result=Tall.visual(word)
+	model = request.args.get('model')
+	result=Tall.visual(word,model)
 	return jsonify(result=result)
 	
 @application.route('/_get_tree')
