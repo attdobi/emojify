@@ -32,11 +32,11 @@ class TallLabs_lib:
 		self.bag_of_words='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,need,take,out,how,would,am,at,\
 anyone,has,have,off,that,which,who,please,thank,you,that,fit,these,they,many,work,with,time,turn,fit,fitt,\
 from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,find,make,hot,be,as,well,there,\
-son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,newest,or,come,hi'.split(',')
+son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,newest,or,come,hi,-'.split(',')
 		self.bag_of_words_verbs='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,take,out,would,\
 anyone,off,that,which,who,please,thank,you,that,these,they,many,time,turn,newest,there,am,at,\
 from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,\
-son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,hi'.split(',')
+son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,hi,-'.split(',')
 		self.complete_bag=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words],[]))|self.stoplist|set(self.bag_of_words)
 		self.complete_bag_verbs=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words_verbs],[]))|self.stoplist|set(self.bag_of_words_verbs)
 		
@@ -215,7 +215,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		return is_in_bag
 		
 	def getMeta(self,asin):
-		self.cur.execute("select metajson->'imUrl', metajson->'description', title from metadata where asin=%s and id >1000000 limit 1;",(asin,))
+		self.cur.execute("select metajson->'imUrl', metajson->'description', title from metadata_demo where asin=%s limit 1;",(asin,))
 		result=self.cur.fetchall()[0]
 		image=result[0]
 		description=result[1]
