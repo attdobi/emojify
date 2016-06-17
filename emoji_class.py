@@ -245,8 +245,8 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		formatted_answer='\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
 		
 		#get question type prediction:
-		words=question.split()
-		if self.clf.predict(1*self.QmodelB[words[0]]+self.QmodelB[words[1]]+self.QmodelB[words[2]])==1:
+		words=question.lower().split()
+		if self.clf.predict(1*self.QmodelB[words[0]]+self.QmodelB[words[1]]+self.QmodelB[words[2]])[0]==1:
 			qType='Yes/No'
 		else:
 			qType='Open-Ended'
