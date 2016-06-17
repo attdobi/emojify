@@ -12,6 +12,7 @@ import re, collections, random, datetime
 import psycopg2
 import json
 from gensim import corpora, models, similarities
+from sklearn.externals import joblib
 
 # guarantee unicode string... #no need in python3 (will cause an error)
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
@@ -23,6 +24,7 @@ class TallLabs_lib:
 		self.conn = psycopg2.connect("host=localhost port=5432 dbname=amazon user=postgres password=darkmatter")
 		self.cur = self.conn.cursor()
 		self.stoplist = set('a an for of the and to in rt'.split())
+		self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg.pkl') 
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
 		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
@@ -242,7 +244,14 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		
 		formatted_answer='\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
 		
-		about_text='Question Type: '+'Yes/No' + '\n'+\
+		#get question type prediction:
+		words=question.split()
+		if self.clf.predict(1*self.QmodelB[words[0]]+self.QmodelB[words[1]]+self.QmodelB[words[2]])==1:
+			qType='Yes/No'
+		else:
+			qType='Open-Ended'
+		
+		about_text='Question Type: '+qType + '\n'+\
 		'Key Words = '+ ' '.join(key_words) + '\n'+\
 		'Action Words = '+ ', '.join(key_words_action) + '\n'+\
 		'Similar Keys = '+ ' '.join(similar_keys)
