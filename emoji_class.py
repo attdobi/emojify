@@ -59,7 +59,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 					source_target.append((result_word2,result_word3,3))
 		return [{"source":src,"target":tar,"group":grp} for src,tar,grp in source_target]
 		
-	def tree(self, word,model):
+	def tree(self,word,model):
 		if model=='reviews':
 			modelB=self.RmodelB
 		elif model=='questions':
