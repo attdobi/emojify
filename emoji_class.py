@@ -32,7 +32,7 @@ class TallLabs_lib:
 		self.bag_of_words='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,need,take,out,how,would,am,at,\
 anyone,has,have,off,that,which,who,please,thank,you,that,fit,these,they,many,work,with,time,turn,fit,fitt,\
 from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,find,make,hot,be,as,well,there,\
-son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,newest,or'.split(',')
+son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,newest,or,come'.split(',')
 		self.bag_of_words_verbs='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,take,out,would,\
 anyone,off,that,which,who,please,thank,you,that,these,they,many,time,turn,newest,there,am,at,\
 from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,\
@@ -245,16 +245,16 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		formatted_answer='\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
 		
 		#get question type prediction:
-		words=question.lower().split()
+		words=re.findall("[a-z'0-9]+", question.lower())
 		if self.clf.predict(1*self.QmodelB[words[0]]+self.QmodelB[words[1]]+self.QmodelB[words[2]])[0]==1:
 			qType='Yes/No'
 		else:
 			qType='Open-Ended'
 		
 		about_text='Question Type: '+qType + '\n'+\
-		'Key Words = '+ ' '.join(key_words) + '\n'+\
+		'Key Words = '+ ', '.join(key_words) + '\n'+\
 		'Action Words = '+ ', '.join(key_words_action) + '\n'+\
-		'Similar Keys = '+ ' '.join(similar_keys)
+		'Similar Keys = '+ ', '.join(similar_keys)
 		
 		return formatted_answer, about_text
 		
