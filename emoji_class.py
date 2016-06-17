@@ -26,6 +26,7 @@ class TallLabs_lib:
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
 		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
+		self.bag_of_words_oe="what,what's,where".split(',')
 		self.bag_of_words='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,need,take,out,how,would,am,at,\
 anyone,has,have,off,that,which,who,please,thank,you,that,fit,these,they,many,work,with,time,turn,fit,fitt,\
 from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,find,make,hot,be,as,well,there,\
@@ -204,6 +205,11 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 			is_in_bag=({first_word}|{item[0] for item in self.QmodelB.most_similar(first_word)})&set(self.bag_of_words_yn)!=set()
 		except KeyError:
 			is_in_bag=False
+			
+		#remove open ended question
+		if first_word in self.bag_of_words_oe:
+			is_in_bag=False
+			
 		return is_in_bag
 		
 	def getMeta(self,asin):
@@ -238,6 +244,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		
 		about_text='Question Type: '+'Yes/No' + '\n'+\
 		'Key Words = '+ ' '.join(key_words) + '\n'+\
+		'Action Words = '+ ', '.join(key_words_action) + '\n'+\
 		'Similar Keys = '+ ' '.join(similar_keys)
 		
 		return formatted_answer, about_text
