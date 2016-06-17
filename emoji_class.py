@@ -12,7 +12,7 @@ import re, collections, random, datetime
 import psycopg2
 import json
 from gensim import corpora, models, similarities
-#from sklearn.externals import joblib
+from sklearn.externals import joblib
 
 # guarantee unicode string... #no need in python3 (will cause an error)
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
@@ -24,7 +24,7 @@ class TallLabs_lib:
 		self.conn = psycopg2.connect("host=localhost port=5432 dbname=amazon user=postgres password=darkmatter")
 		self.cur = self.conn.cursor()
 		self.stoplist = set('a an for of the and to in rt'.split())
-		#self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg_py2.pkl') 
+		self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg_py2.pkl') 
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
 		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
@@ -36,7 +36,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		self.bag_of_words_verbs='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,take,out,would,\
 anyone,off,that,which,who,please,thank,you,that,these,they,many,time,turn,newest,there,am,at,\
 from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,\
-son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,hi,-'.split(',')
+son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,hi'.split(',')
 		self.complete_bag=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words],[]))|self.stoplist|set(self.bag_of_words)
 		self.complete_bag_verbs=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words_verbs],[]))|self.stoplist|set(self.bag_of_words_verbs)
 		
@@ -215,7 +215,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		return is_in_bag
 		
 	def getMeta(self,asin):
-		self.cur.execute("select metajson->'imUrl', metajson->'description', title from metadata_demo where asin=%s limit 1;",(asin,))
+		self.cur.execute("select metajson->'imUrl', metajson->'description', title from metadata where asin=%s and id >1000000 limit 1;",(asin,))
 		result=self.cur.fetchall()[0]
 		image=result[0]
 		description=result[1]
