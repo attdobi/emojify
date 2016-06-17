@@ -24,7 +24,7 @@ class TallLabs_lib:
 		self.conn = psycopg2.connect("host=localhost port=5432 dbname=amazon user=postgres password=darkmatter")
 		self.cur = self.conn.cursor()
 		self.stoplist = set('a an for of the and to in rt'.split())
-		#self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg.pkl') 
+		self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg.pkl') 
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
 		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
@@ -246,7 +246,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		
 		#get question type prediction:
 		words=question.split()
-		if (self.clf.predict(1*self.QmodelB[words[0]]+self.QmodelB[words[1]]+self.QmodelB[words[2]])==1):
+		if self.clf.predict(1*self.QmodelB[words[0]]+self.QmodelB[words[1]]+self.QmodelB[words[2]])==1:
 			qType='Yes/No'
 		else:
 			qType='Open-Ended'
