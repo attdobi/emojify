@@ -12,7 +12,7 @@ import re, collections, random, datetime
 import psycopg2
 import json
 from gensim import corpora, models, similarities
-#from sklearn.externals import joblib
+from sklearn.externals import joblib
 
 # guarantee unicode string... #no need in python3 (will cause an error)
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
@@ -24,7 +24,7 @@ class TallLabs_lib:
 		self.conn = psycopg2.connect("host=localhost port=5432 dbname=amazon user=postgres password=darkmatter")
 		self.cur = self.conn.cursor()
 		self.stoplist = set('a an for of the and to in rt'.split())
-		#self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg.pkl') 
+		self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg_py2.pkl') 
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
 		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
