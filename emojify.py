@@ -41,7 +41,7 @@ def web():
 ####### Tall Labs Part ######################
 @application.route("/force")
 def force():
-	return render_template("force.html")	
+	return render_template("force.html")
 @application.route("/tree")
 def tree():
 	return render_template("tree.html")
@@ -61,7 +61,8 @@ def _get_vis():
 @application.route('/_get_tree')
 def _get_tree():
 	word = request.args.get('word')
-	result=Tall.tree(word)
+	model = request.args.get('model')
+	result=Tall.tree(word,model)
 	return jsonify(result=result)
 	
 @application.route('/_train')

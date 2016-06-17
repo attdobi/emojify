@@ -99,6 +99,14 @@ li.dropdown {
        value = "you"
       onkeypress="if (event.keyCode==13){make_graph()};"
       />
+      	<label style="float:right;">
+        Select word2vec model: 
+     </label>
+      		<select id="item_select" name="item_sel" style="color:white;background-color:green;font-size:11pt;float:right;">
+		  <option value="questions">Questions</option>
+		  <option value="reviews">Reviews</option>
+		</select>
+
       
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script>
@@ -107,7 +115,8 @@ li.dropdown {
  
 // Return url to recieve csv data with query filled in from input fields
 function update_url() {
-  return URL_BASE +"?word=" + document.getElementById("word").value ;
+  return URL_BASE +"?word=" + document.getElementById("word").value + 
+  					+"?model=" + document.getElementById("item_select").value ;
 }
 
 var margin = {top: 20, right: 120, bottom: 20, left: 200},

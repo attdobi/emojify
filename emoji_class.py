@@ -59,15 +59,22 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 					source_target.append((result_word2,result_word3,3))
 		return [{"source":src,"target":tar,"group":grp} for src,tar,grp in source_target]
 		
-	def tree(self, word):
+	def tree(self, word,model):
+		if model=='reviews':
+			modelB=self.RmodelB
+		elif model=='questions':
+			modelB=self.QmodelB
+		else:
+			modelB=self.QmodelB
+			
 		word=word.lower()
-		results,counts=self.clean_result(self.QmodelB.most_similar(word))
+		results,counts=self.clean_result(modelB.most_similar(word))
 		target=[]
 		child_list=[]
 		for result_word in results:
 			target_child=[]
 			target.append(result_word)
-			results2,counts2=self.clean_result(self.QmodelB.most_similar(result_word))
+			results2,counts2=self.clean_result(modelB.most_similar(result_word))
 			for result_word2 in results2:
 				target_child.append(result_word2)
 			child_list.append(target_child)
