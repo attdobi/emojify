@@ -267,7 +267,8 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		key_words, key_words_action = self.return_key_words(question)
 		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7] for word in key_words],[])
 		
-		topic_text=self.findTopic(key_words,similar_keys)
+		#topic_text=self.findTopic(key_words,similar_keys)
+		topic_text='hello'
 		
 		### pull review data
 		self.cur.execute("select reviewtext from reviews_cell_phones_and_accessories where asin=%s;",(asin,))
