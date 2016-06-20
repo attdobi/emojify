@@ -27,8 +27,8 @@ class TallLabs_lib:
 		self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg_py2.pkl') 
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
-		self.lda=models.LdaModel.load('/home/ubuntu/TallLabs/models/lda_cell')
-		self.corpora.Dictionary.load('/home/ubuntu/TallLabs/models/lda_cell_dict_15')
+		self.lda=models.LdaModel.load(base_dir+'/TallLabs/models/lda_cell')
+		self.dictionary=corpora.Dictionary.load(base_dir+'/TallLabs/models/lda_cell_dict_15')
 		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
 		self.bag_of_words_oe="what,what's,where".split(',')
 		self.bag_of_words='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,need,take,out,how,would,am,at,\
@@ -43,9 +43,10 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		self.complete_bag_verbs=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words_verbs],[]))|self.stoplist|set(self.bag_of_words_verbs)
 		#LDA categories
 		self.LDAcategories={0:'Clips, Mounts, Holsters ',1:'Cables, Chargers, Adapters',2:'Batters, Battery Life',3:'Product Description',\
-  4:'USB, Ports, Power',5:'Protective Covers',6:'Prices, Quality',7:'Product Size',\
-  8:'Car Accessories, GPS',9:'Screen Protector',10:'Refunds',11:'Bluetooth, Headsets, Sound',12:'WaterProof',\
-  13:'Camera,Apps',14:'Brands, Models'}
+		4:'USB, Ports, Power',5:'Protective Covers',6:'Prices, Quality',7:'Product Size',\
+		8:'Car Accessories, GPS',9:'Screen Protector',10:'Refunds',11:'Bluetooth, Headsets, Sound',12:'WaterProof',\
+		13:'Camera,Apps',14:'Brands, Models'}
+		
 	def clean_result(self,model_result):
 		return [item[0] for item in model_result],[item[1] for item in model_result]
 		#topn=15
