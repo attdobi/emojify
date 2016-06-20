@@ -27,10 +27,12 @@ class TallLabs_lib:
 		self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg_py2.pkl') 
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
+		self.lda=models.LdaModel.load('/home/ubuntu/TallLabs/models/lda_cell')
+		self.corpora.Dictionary.load('/home/ubuntu/TallLabs/models/lda_cell_dict_15')
 		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
 		self.bag_of_words_oe="what,what's,where".split(',')
 		self.bag_of_words='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,need,take,out,how,would,am,at,\
-anyone,has,have,off,that,which,who,please,thank,you,that,fit,these,they,many,work,with,time,turn,fit,fitt,\
+anyone,has,have,off,that,which,who,please,thank,you,that,fit,these,they,many,work,with,time,turn,fit,fitt,going,\
 from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,find,make,hot,be,as,well,there,\
 son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,newest,or,come,hi'.split(',')
 		self.bag_of_words_verbs='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,take,out,would,\
@@ -39,7 +41,11 @@ from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,\
 son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,hi'.split(',')
 		self.complete_bag=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words],[]))|self.stoplist|set(self.bag_of_words)
 		self.complete_bag_verbs=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words_verbs],[]))|self.stoplist|set(self.bag_of_words_verbs)
-		
+		#LDA categories
+		self.LDAcategories={0:'Clips, Mounts, Holsters ',1:'Cables, Chargers, Adapters',2:'Batters, Battery Life',3:'Product Description',\
+  4:'USB, Ports, Power',5:'Protective Covers',6:'Prices, Quality',7:'Product Size',\
+  8:'Car Accessories, GPS',9:'Screen Protector',10:'Refunds',11:'Bluetooth, Headsets, Sound',12:'WaterProof',\
+  13:'Camera,Apps',14:'Brands, Models'}
 	def clean_result(self,model_result):
 		return [item[0] for item in model_result],[item[1] for item in model_result]
 		#topn=15
@@ -246,10 +252,22 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		
 		return image,title,description,question,formated_reviews
 		
+	def findTopic(self,key_words):
+		key_words=[words.replace(' ','_') for words in key_words] #add back for bigram search
+		#using the review model
+		similar_keys=sum([[val[0] for val in self.RmodelB.most_similar(word) if val[1]>0.7] for word in key_words],[])
+		bow_vector = self.dictionary.doc2bow(key_words+similar_keys)
+		lda_np=np.array(self.lda[bow_vector]) #find nearest lda vector topic
+		lda_np=lda_np[lda_np[:,1].argsort()[::-1]] #sort by percentage 
+		return '\n'.join(['{:.1f}%: '.format(val[1]*100)+S[val[0]] for val in lda_np][:3])
+
 	def processQuestion(self,asin,question):
 		question.replace("- "," ").replace(" -"," ") #remove - in questions
 		key_words, key_words_action = self.return_key_words(question)
 		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7] for word in key_words],[])
+		
+		topic_text=self.findTopic(key_words)
+		
 		### pull review data
 		self.cur.execute("select reviewtext from reviews_cell_phones_and_accessories where asin=%s;",(asin,))
 		result=self.cur.fetchall()
@@ -268,7 +286,8 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		about_text='Question Type: '+qType + '\n'+\
 		'Key Words = '+ ', '.join(key_words) + '\n'+\
 		'Action Words = '+ ', '.join(key_words_action) + '\n'+\
-		'Similar Keys = '+ ', '.join(similar_keys)
+		'Similar Keys = '+ ', '.join(similar_keys) +'\n'+\
+		'SubTopics ='+ topic_text
 		
 		return formatted_answer, about_text
 		
