@@ -42,9 +42,9 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		self.complete_bag=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words],[]))|self.stoplist|set(self.bag_of_words)
 		self.complete_bag_verbs=set(sum([[item[0] for item in self.QmodelB.most_similar(word)] for word in self.bag_of_words_verbs],[]))|self.stoplist|set(self.bag_of_words_verbs)
 		#LDA categories
-		self.LDAcategories={0:'Clips, Mounts, Holsters ',1:'Cables, Chargers, Adapters',2:'Batters, Battery Life',3:'Product Description',\
+		self.LDAcategories={0:'Clips, Mounts, Holsters ',1:'Cables, Chargers, Adapters',2:'Batteries, Battery Life',3:'Product Description',\
 		4:'USB, Ports, Power',5:'Protective Covers',6:'Prices, Quality',7:'Product Size',\
-		8:'Car Accessories, GPS',9:'Screen Protector',10:'Refunds',11:'Bluetooth, Headsets, Sound',12:'WaterProof',\
+		8:'Car Accessories, GPS',9:'Screen Protector',10:'Refunds',11:'Bluetooth, Headsets',12:'WaterProof',\
 		13:'Camera,Apps',14:'Brands, Models'}
 		
 	def clean_result(self,model_result):
@@ -284,11 +284,11 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		else:
 			qType='Open-Ended'
 		
-		about_text='Question Type: '+qType + '\n'+\
-		'Key Words = '+ ', '.join(key_words) + '\n'+\
-		'Action Words = '+ ', '.join(key_words_action) + '\n'+\
-		'Similar Keys = '+ ', '.join(similar_keys) +'\n'+\
-		'SubTopics ='+ topic_text
+		about_text='Question Type: '+qType + '\n\n'+\
+		'Key Words: '+ ', '.join(key_words) + '\n'+\
+		'Action Words: '+ ', '.join(key_words_action) + '\n'+\
+		'Similar Keys: '+ ', '.join(similar_keys) +'\n\n'+\
+		'SubTopics: \n'+ topic_text
 		
 		return formatted_answer, about_text
 		
