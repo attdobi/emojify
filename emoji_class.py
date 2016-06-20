@@ -260,15 +260,14 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		bow_vector = self.dictionary.doc2bow(key_words+similar_keys)
 		lda_np=np.array(self.lda[bow_vector]) #find nearest lda vector topic
 		lda_np=lda_np[lda_np[:,1].argsort()[::-1]] #sort by percentage 
-		return '\n'.join(['{:.1f}%: '.format(val[1]*100)+self.S[val[0]] for val in lda_np][:3])
+		return '\n'.join(['{:.1f}%: '.format(val[1]*100)+self.LDAcategories[val[0]] for val in lda_np][:3])
 
 	def processQuestion(self,asin,question):
 		question.replace("- "," ").replace(" -"," ") #remove - in questions
 		key_words, key_words_action = self.return_key_words(question)
 		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7] for word in key_words],[])
 		
-		#topic_text=self.findTopic(key_words,similar_keys)
-		topic_text='hello'
+		topic_text=self.findTopic(key_words,similar_keys)
 		
 		### pull review data
 		self.cur.execute("select reviewtext from reviews_cell_phones_and_accessories where asin=%s;",(asin,))
