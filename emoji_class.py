@@ -27,7 +27,7 @@ class TallLabs_lib:
 		self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg_py2.pkl') 
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
-		self.lda=models.LdaModel.load(base_dir+'/TallLabs/models/lda_cell')
+		self.lda=models.LdaModel.load(base_dir+'/TallLabs/models/lda_cell_15')
 		self.dictionary=corpora.Dictionary.load(base_dir+'/TallLabs/models/lda_cell_dict_15')
 		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
 		self.bag_of_words_oe="what,what's,where".split(',')
