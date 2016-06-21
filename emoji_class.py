@@ -276,7 +276,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
 		
 		#formatted_answer='\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
-		formatted_answer='\n\n'.join([good_sen[index] for index in sorted_index][0:5])
+		formatted_answer='\n\n'.join([str(ii)+': 'good_sen[index] for ii,index in enumerate(sorted_index)][0:5])
 		
 		#get question type prediction:
 		words=re.findall("[a-z'0-9]+", question.lower())
