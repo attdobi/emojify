@@ -175,16 +175,22 @@ li.dropdown {
    </div>
    
    <div class="col-md-8">
-   
-        <label  style="display: inline-block; width: 20; text-align: right; font-size:12pt;">
+      <label  style="display: inline-block; width: 20; text-align: right; font-size:12pt;">
         Search:
      </label></br>
         <textarea id="ques" name="q_text" rows="2" cols="50"> </textarea>
      <a class="btn btn-lg btn-success" id="Go" role="button">Go</a>
      </br>
-     <pre class="box" id="result" style="font-size:12pt;background-color: #efffe0;"></pre>
-    </br>
-     <pre class="box" id="about" style="font-size:12pt; background-color:#ffffe0;"></pre>
+    <label  id="result_label" style="display: inline-block; width: 20; text-align: right; font-size:12pt;">
+        Most Relavent Responce:
+     </label>
+     <pre class="box" id="result" style="font-size:10pt;background-color: #efffe0;"></pre>
+     <label style="font-size:14px;"><input type="checkbox" id="cbox1" value="none" onclick="check_box_click();" >Show Algorithm Info</label>
+     </br>
+    <label  id="about_label" style="display: inline-block; width: 20; text-align: right; font-size:12pt;">
+        Under The Hood:
+     </label>
+     <pre class="box" id="about" style="font-size:10pt; background-color:#ffffe0;"></pre>
 
    </div>
   </div><!-- end row -->
@@ -203,7 +209,20 @@ li.dropdown {
 
 </body>
 </html>
+
 <script>
+function check_box_click(){
+    if(document.getElementById("cbox1").checked){
+    	document.getElementById("about").style.visibility = "visible";
+    	document.getElementById("about_label").style.visibility = "visible";
+    }
+    else
+    {	
+    document.getElementById("about").style.visibility = "hidden";
+    document.getElementById("about_label").style.visibility = "hidden";
+    }
+}
 window.onload = function(){
+check_box_click()
 document.getElementsByName("item_sel")[0].click();}
 </script>
