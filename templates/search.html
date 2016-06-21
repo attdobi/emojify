@@ -214,14 +214,17 @@ li.dropdown {
 function check_box_click(){
     if(document.getElementById("cbox1").checked){
     	document.getElementById("about").style.visibility = "visible";
+    	document.getElementById("about").style.display = "block";
     	document.getElementById("about_label").style.visibility = "visible";
     }
     else
     {	
-    document.getElementById("about").style.visibility = "collapse";
-    document.getElementById("about_label").style.visibility = "collapse";
+    document.getElementById("about").style.visibility = "hidden";
+    document.getElementById("about").style.display = "none";
+    document.getElementById("about_label").style.visibility = "hidden";
     }
 }
+
 window.onload = function(){
 check_box_click()
 document.getElementsByName("item_sel")[0].click();}
