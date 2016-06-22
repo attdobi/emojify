@@ -48,6 +48,9 @@ def tree():
 @application.route("/train")
 def train():
 	return render_template("train.html")
+@application.route("/slides")
+def slides():
+	return render_template("slides.html")
 @application.route("/demo")
 def demo():
 	return render_template("search.html")
