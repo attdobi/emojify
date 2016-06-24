@@ -25,7 +25,7 @@ class TallLabs_lib:
 		self.cur = self.conn.cursor()
 		self.stoplist = set('a an for of the and to in rt'.split())
 		self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg_py2.pkl') 
-		self.clf_1 = joblib.load(base_dir+'/TallLabs/models/first_word_logreg_py2.pkl') 
+		self.clf_1 = joblib.load(base_dir+'/TallLabs/models/first_word_logreg_py.pkl') 
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
 		self.lda=models.LdaModel.load(base_dir+'/TallLabs/models/lda_cell_15')
