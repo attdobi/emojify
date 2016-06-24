@@ -25,6 +25,7 @@ class TallLabs_lib:
 		self.cur = self.conn.cursor()
 		self.stoplist = set('a an for of the and to in rt'.split())
 		self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg_py2.pkl') 
+		self.clf_1 = joblib.load(base_dir+'/TallLabs/models/first_word_logreg_py2.pkl') 
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
 		self.lda=models.LdaModel.load(base_dir+'/TallLabs/models/lda_cell_15')
@@ -280,10 +281,24 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		
 		#get question type prediction:
 		words=re.findall("[a-z'0-9]+", question.lower())
-		if self.clf.predict(1*self.QmodelB[words[0]]+self.QmodelB[words[1]]+self.QmodelB[words[2]])[0]==1:
+		if len(words)>=3:
+			try:
+				prediction=self.clf.predict(1*self.QmodelB[words[0]]+self.QmodelB[words[1]]+self.QmodelB[words[2]])[0]
+			except KeyError:
+				preduction=1
+		elif (len(words)<3) & (len(words)>0):
+			try:
+				prediction=self.clf_1.predict(self.QmodelB[words[0]])[0]
+			except KeyError:
+				preduction=1
+		else:
+			prediction=1
+			
+		if prediction==1:
 			qType='Yes/No'
 		else:
 			qType='Open-Ended'
+		###### End predict question type ##############################
 		
 		about_text='Question Type: '+qType + '\n\n'+\
 		'Key Words: '+ ', '.join(key_words) + '\n'+\
