@@ -258,14 +258,17 @@ function check_box_click2(){
     if(document.getElementById("cbox2").checked){
     	document.getElementById("sim").style.visibility = "visible";
     	document.getElementById("sim").style.display = "block";
-    	document.getElementById('img_path2').img.style.visibility = 'visible';
+    	document.getElementById("img_path2").style.visibility = "visible";
+    	document.getElementById("img_path2").style.display = "block";
+    	idocument.getElementById('img_path2').img.style.visibility = 'visible';
     	document.getElementById("sim_label").style.visibility = "visible";
     }
     else
     {	
     document.getElementById("sim").style.visibility = "hidden";
     document.getElementById("sim").style.display = "none";
-    idocument.getElementById('img_path2').img.style.visibility = 'hidden';
+    document.getElementById("img_path2").style.visibility = "visible";
+    document.getElementById("img_path2").style.display = "block";
     document.getElementById("sim_label").style.visibility = "hidden";
     }
 }
