@@ -111,8 +111,8 @@ li.dropdown {
            asin: $('select[id="item_select"]').val()
         }, function(data) {
           $("#img_path").attr("src", data.image),
-          $("#img_path2").attr("src", ""),
           hide_image(),
+          $("#img_path2").attr("src", ""),
           $("#sim").text(""),
           $("#title").text(data.title),
           $("#prod_title2").text(""),
