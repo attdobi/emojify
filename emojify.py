@@ -125,7 +125,7 @@ def _update_item():
 def _process_question():
 	question = request.args.get('question')
 	asin = request.args.get('asin')
-	answers,about_text=Tall.processQuestion(asin,question)
+	answers,about_text,answers_sim=Tall.processQuestion(asin,question)
 	return jsonify(result=answers,about=about_text)
 	
 	
