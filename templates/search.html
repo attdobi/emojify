@@ -129,7 +129,7 @@ li.dropdown {
           $("#result").text(data.result),
           $("#about").text(data.about),
           $("#sim").text(data.similar),
-          $("#img_path2").attr("src", data.image2)
+          $("#sim").attr("src", data.image2)
         });
         return false;
       });
@@ -205,14 +205,8 @@ li.dropdown {
         Similar Product Reviews:
      </label>
      <pre class="box" id="sim" style="font-size:14pt; background-color:#ffffe0;">
-     	<img
-		  id="img_path2"
-		  src=""
-		  alt="Kodak Brownie Flash B Camera"
-		  class="image-responsive"
-		  height= "100%;"
-		  width= "100%;"
-		 /></pre>
+     	<img src="" />
+     	</pre>
 
    </div>
   </div><!-- end row -->
