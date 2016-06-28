@@ -316,7 +316,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		'Similar Keys: '+ ', '.join(similar_keys) +'\n\n'+\
 		'SubTopics: \n'+ topic_text
 		
-		return formatted_answer, about_text, formatted_answer_sim
+		return formatted_answer, about_text, formatted_answer_sim,sim_images[0]
 		
 	###### Support functions for porcessQuetion ########################################################################
 	def similarReviews(self,asin,N=2):
