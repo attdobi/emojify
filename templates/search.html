@@ -112,6 +112,7 @@ li.dropdown {
         }, function(data) {
           $("#img_path").attr("src", data.image),
           $("#img_path2").attr("src", ""),
+          $("#img_path2").style.display = "none";
           $("#sim").text(""),
           $("#title").text(data.title),
           $("#prod_title2").text(""),
