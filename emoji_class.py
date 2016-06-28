@@ -28,6 +28,7 @@ class TallLabs_lib:
 		self.clf_1 = joblib.load(base_dir+'/TallLabs/models/first_word_logreg_py.pkl') 
 		self.QmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/QmodelB')
 		self.RmodelB=models.Word2Vec.load(base_dir+'/TallLabs/models/RmodelB_cell')
+		self.Rmodel_D2V=models.Doc2Vec.load('/home/ubuntu/TallLabs/models/Rmodel_Doc2vec_cell')
 		self.lda=models.LdaModel.load(base_dir+'/TallLabs/models/lda_cell_15')
 		self.dictionary=corpora.Dictionary.load(base_dir+'/TallLabs/models/lda_cell_dict_15')
 		self.bag_of_words_yn='is,will,wil,may,might,does,dose,doe,dos,do,can,could,must,should,are,would,do,did'.split(',')
@@ -255,6 +256,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		return image,title,description,question,formated_reviews
 		
 	def findTopic(self,key_words,similar_keys):
+		'''Return the LDA vector composition of the topics based on the key words in the search'''
 		key_words=[words.replace(' ','_') for words in key_words] #add back for bigram search
 		similar_keys=[words.replace(' ','_') for words in similar_keys] #add back for bigram search
 		#using the review model
@@ -264,22 +266,30 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		return '\n'.join(['{:.1f}%: '.format(val[1]*100)+self.LDAcategories[val[0]] for val in lda_np][:3])
 
 	def processQuestion(self,asin,question):
+		'''Find key words and return the most relevent answer from the review text.
+		Using Doc2Vec find the most similar reviews and search for answers there also'''
 		question.replace("- "," ").replace(" -"," ") #remove - in questions
 		key_words, key_words_action = self.return_key_words(question)
 		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7] for word in key_words],[])
 		
-		topic_text=self.findTopic(key_words,similar_keys)
+		topic_text=self.findTopic(key_words,similar_keys)#find LDA topic based on search keys
 		
-		### pull review data
+		### pull review data on the asin of the product
 		self.cur.execute("select reviewtext from reviews_cell_phones_and_accessories where asin=%s;",(asin,))
-		result=self.cur.fetchall()
+		result=self.cur.fetchall() #there are multiple reviews per asin, merge them next
+		'''Next find the relavent lines in the review text sorted by number of keyword matches'''
 		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
-		
 		#formatted_answer='\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
 		formatted_answer='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:5])
 		
-		#get question type prediction:
+		'''Find similar reviews based on the nearest review document vecor (can cross check with amazon 'similar items' in meta data)'''
+		similar_asins,sim_reviews,sim_images,sim_titles,sim_descriptions=self.similarReviews(asin,2)
+		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(sim_reviews[0],key_words)
+		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
+		formatted_answer_sim='Most similar review'+sim_titles[0]+'\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:5])
+		
+		'''get question type prediction based on logistic regresion model:'''
 		words=re.findall("[a-z'0-9]+", question.lower())
 		if len(words)>=3:
 			try:
@@ -306,9 +316,27 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		'Similar Keys: '+ ', '.join(similar_keys) +'\n\n'+\
 		'SubTopics: \n'+ topic_text
 		
-		return formatted_answer, about_text
+		return formatted_answer, about_text, formatted_answer_sim
 		
 	###### Support functions for porcessQuetion ########################################################################
+	def similarReviews(self,asin,N=2):
+		'''Return asin and review text of the the N most reviews based on Doc2vec model'''
+		#Doc2Vec model trained on the cell phone and accessory review category
+		most_sim=self.Rmodel_D2V.docvecs.most_similar('R_'+asin)[:N]
+		similar_asins=[val[0].split('R_')[1] for val in most_sim]
+		# get the reviewtext and metadata based on the similar asin
+		sim_images,sim_descriptions,sim_titles,sim_reviews=[],[],[],[]
+		for asin in similar_asins:
+			self.cur.execute("select a.metajson->'imUrl', a.metajson->'description', a.title, b.reviewCat from metadata_demo a\
+			join (SELECT asin,string_agg(reviewText,'. ') as reviewCat FROM reviews_cell_phones_and_accessories group by \
+			asin) b on a.asin=b.asin where a.asin=%s limit 1;",(asin,))
+			result=self.cur.fetchall()[0]
+			sim_images.append(result[0])
+			sim_descriptions.append(result[1])
+			sim_titles.append(result[2])
+			sim_reviews.append(result[3])
+		return similar_asins,sim_reviews,sim_images,sim_titles,sim_descriptions
+		
 	def q_filter(self,sentence):
 		#filter the question text
 		return [word.lower() for word in sum(self.process_line(sentence),[]) if word not in self.complete_bag]
