@@ -112,7 +112,7 @@ li.dropdown {
         }, function(data) {
           $("#img_path").attr("src", data.image),
           $("#img_path2").attr("src", ""),
-          $("#img_path2").style.display = "none";
+          hide_image(),
           $("#sim").text(""),
           $("#title").text(data.title),
           $("#prod_title2").text(""),
@@ -274,6 +274,11 @@ function check_box_click2(){
     document.getElementById("prod_title2").style.visibility = "hidden";
     }
 }
+
+function hide_image(){
+    	document.getElementById('img_path2').style.visibility = 'visible';
+    	document.getElementById('img_path2').style.display = "block";
+    	}
 
 window.onload = function(){
 document.getElementsByName("item_sel")[0].click();
