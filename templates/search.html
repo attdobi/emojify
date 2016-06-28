@@ -111,7 +111,10 @@ li.dropdown {
            asin: $('select[id="item_select"]').val()
         }, function(data) {
           $("#img_path").attr("src", data.image),
+          $("#img_path2").attr("src", ""),
+          $("#sim").text(""),
           $("#title").text(data.title),
+          $("#prod_title2").text(""),
           $("#desc").text(data.desc),
           $("#revs").text(data.revs),
           $("#prod_title").text(data.title),
@@ -210,10 +213,9 @@ li.dropdown {
          <img
   id="img_path2"
   src=""
-  alt="Kodak Brownie Flash B Camera"
   class="image-responsive"
-  height= "75%;"
-  width= "75%;"
+  height= "50%;"
+  width= "50%;"
  />    
    <p class="description" id="prod_title2">
    </p>
