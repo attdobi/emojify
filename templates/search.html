@@ -130,6 +130,7 @@ li.dropdown {
            question: $('textarea[name="q_text"]').val(),
            asin: $('select[id="item_select"]').val()
         }, function(data) {
+          check_box_click2(),
           $("#result").text(data.result),
           $("#about").text(data.about),
           $("#sim").text(data.similar),
