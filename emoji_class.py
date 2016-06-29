@@ -499,7 +499,7 @@ class emoji_lib:
 			lang="AND lang='{:s}'".format(user_lang)
 		date_sel = self.parse_date(date_range)
 		
-		self.cur.execute("SELECT Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiSkinLabel) as Label, unnest(emojiSkinCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM ( 0.5) WHERE (emojiSkinCountSum>0 AND LOWER(text) LIKE '%{:s}%' {:s} {:s} )) as T group by Label order by TFreq DESC;".format(word,lang,date_sel))
+		self.cur.execute("SELECT Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiSkinLabel) as Label, unnest(emojiSkinCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM ( 10) WHERE (emojiSkinCountSum>0 AND LOWER(text) LIKE '%{:s}%' {:s} {:s} )) as T group by Label order by TFreq DESC;".format(word,lang,date_sel))
 		result=self.cur.fetchall()
 		xdata=[val[0] for val in result]
 		ydata=[val[1] for val in result]
@@ -515,22 +515,22 @@ class emoji_lib:
 		
 		if face_filter=='off':########## If the face filter is OFF: ################
 			if pattern_type=='single':
-				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiLabel) as Label, unnest(emojiCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (25) WHERE (LOWER(text) LIKE '%{:s}%' {:s} {:s} )) as T group by T.Label order by TFreq DESC limit 15;".format(word,lang,date_sel))
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiLabel) as Label, unnest(emojiCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (10) WHERE (LOWER(text) LIKE '%{:s}%' {:s} {:s} )) as T group by T.Label order by TFreq DESC limit 15;".format(word,lang,date_sel))
 			elif pattern_type=='string':
-				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojistrLabel) as Label, unnest(emojistrCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (25) WHERE (emojistrTypes>0 AND LOWER(text) LIKE '%{:s}%' {:s} {:s} )) as T group by T.Label order by TFreq DESC limit 10;".format(word,lang,date_sel))
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojistrLabel) as Label, unnest(emojistrCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (10) WHERE (emojistrTypes>0 AND LOWER(text) LIKE '%{:s}%' {:s} {:s} )) as T group by T.Label order by TFreq DESC limit 10;".format(word,lang,date_sel))
 			elif pattern_type=='pattern':
-				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiPatternLabel) as Label, unnest(emojiPatternCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (25) WHERE (emojiPatternTypes>0 AND LOWER(text) LIKE '%{:s}%' {:s} {:s})) as T group by T.Label order by TFreq DESC limit 10;".format(word,lang,date_sel))
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiPatternLabel) as Label, unnest(emojiPatternCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (10) WHERE (emojiPatternTypes>0 AND LOWER(text) LIKE '%{:s}%' {:s} {:s})) as T group by T.Label order by TFreq DESC limit 10;".format(word,lang,date_sel))
 			else:#return all
-				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(array_cat(emojiLabel,array_cat(emojistrLabel,emojiPatternLabel))) as Label, unnest(array_cat(emojiCount,array_cat(emojistrCount,emojiPatternCount))) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (25) WHERE (LOWER(text) LIKE '%{:s}%' {:s} {:s})) as T group by T.Label order by TFreq DESC limit 15;".format(word,lang,date_sel))
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(array_cat(emojiLabel,array_cat(emojistrLabel,emojiPatternLabel))) as Label, unnest(array_cat(emojiCount,array_cat(emojistrCount,emojiPatternCount))) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (10) WHERE (LOWER(text) LIKE '%{:s}%' {:s} {:s})) as T group by T.Label order by TFreq DESC limit 15;".format(word,lang,date_sel))
 		else:############## If the face filter is ON: ####################
 			if pattern_type=='single':
-				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiLabel) as Label, unnest(emojiCount) as Freq, unnest(emojiLabelFaceFilter) as FF FROM emoji_tweet TABLESAMPLE SYSTEM (25) WHERE (LOWER(text) LIKE '%{:s}%' {:s} {:s} )) as T WHERE(T.FF is True) group by T.Label order by TFreq DESC limit 15;".format(word,lang,date_sel))
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiLabel) as Label, unnest(emojiCount) as Freq, unnest(emojiLabelFaceFilter) as FF FROM emoji_tweet TABLESAMPLE SYSTEM (10) WHERE (LOWER(text) LIKE '%{:s}%' {:s} {:s} )) as T WHERE(T.FF is True) group by T.Label order by TFreq DESC limit 15;".format(word,lang,date_sel))
 			elif pattern_type=='string':
-				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojistrLabel) as Label, unnest(emojistrCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (25) WHERE (emojistrTypes>0 AND LOWER(text) LIKE '%{:s}%' {:s} {:s} AND NOT(emojiLabelFaceFilter @> ARRAY[False]))) as T group by T.Label order by TFreq DESC limit 10;".format(word,lang,date_sel))
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojistrLabel) as Label, unnest(emojistrCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (10) WHERE (emojistrTypes>0 AND LOWER(text) LIKE '%{:s}%' {:s} {:s} AND NOT(emojiLabelFaceFilter @> ARRAY[False]))) as T group by T.Label order by TFreq DESC limit 10;".format(word,lang,date_sel))
 			elif pattern_type=='pattern':
-				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiPatternLabel) as Label, unnest(emojiPatternCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (25) WHERE (emojiPatternTypes>0 AND LOWER(text) LIKE '%{:s}%' {:s} {:s} AND NOT(emojiLabelFaceFilter @> ARRAY[False]))) as T group by T.Label order by TFreq DESC limit 10;".format(word,lang,date_sel))
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(emojiPatternLabel) as Label, unnest(emojiPatternCount) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (10) WHERE (emojiPatternTypes>0 AND LOWER(text) LIKE '%{:s}%' {:s} {:s} AND NOT(emojiLabelFaceFilter @> ARRAY[False]))) as T group by T.Label order by TFreq DESC limit 10;".format(word,lang,date_sel))
 			else:#return all
-				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(array_cat(emojiLabel,array_cat(emojistrLabel,emojiPatternLabel))) as Label, unnest(array_cat(emojiCount,array_cat(emojistrCount,emojiPatternCount))) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (25) WHERE (LOWER(text) LIKE '%{:s}%' {:s} {:s} AND NOT(emojiLabelFaceFilter @> ARRAY[False]) )) as T group by T.Label order by TFreq DESC limit 15;".format(word,lang,date_sel))
+				self.cur.execute("SELECT T.Label,SUM(T.Freq) as TFreq From (SELECT unnest(array_cat(emojiLabel,array_cat(emojistrLabel,emojiPatternLabel))) as Label, unnest(array_cat(emojiCount,array_cat(emojistrCount,emojiPatternCount))) as Freq FROM emoji_tweet TABLESAMPLE SYSTEM (10) WHERE (LOWER(text) LIKE '%{:s}%' {:s} {:s} AND NOT(emojiLabelFaceFilter @> ARRAY[False]) )) as T group by T.Label order by TFreq DESC limit 15;".format(word,lang,date_sel))
 		#### Calculate and return the result #####################
 		result=self.cur.fetchall()
 		xdata=[val[0] for val in result]
@@ -757,7 +757,7 @@ class emoji_lib:
 			lang="AND lang='{:s}'".format(user_lang)
 			
 		#self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} ) order by random() DESC limit 1000;".format(_u(word),lang))
-		self.cur.execute("SELECT text from emoji_tweet TABLESAMPLE SYSTEM ( 10) WHERE (LOWER(text) LIKE '%{:s}%' {:s} );".format(_u(word),lang))
+		self.cur.execute("SELECT text from emoji_tweet TABLESAMPLE SYSTEM ( 10) WHERE (LOWER(text) LIKE '%{:s}%' {:s} ) limit 1000;".format(_u(word),lang))
 		result=[_u(text[0]) for text in self.cur.fetchall()]
 		return '\n'.join(result)
 	######### emojify code: ################################################
