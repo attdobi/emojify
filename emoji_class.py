@@ -377,7 +377,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		#		good_qual.append(str(len(set(key_words) & set(sen.split())))+'/'+str(len(set(key_words))))
 		#		good_qual_val.append(len(set(key_words) & set(sen.split()))/len(set(key_words)))
 		#########use regular expression to find the key words###############
-			num_key_matches=len([re.findall(' '+word,sen) for word in key_words]) #number of key words matcheds
+			num_key_matches=len([re.findall(' '+word,sen) for word in key_words if len(re.findall(' '+word,sen))>0]) #number of key words matcheds
 			if num_key_matches>0:
 				good_sen.append(sen)
 				good_qual.append(str(num_key_matches)+'/'+str(len(set(key_words))))
