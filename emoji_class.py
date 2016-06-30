@@ -282,7 +282,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)#+similar keys if nothing is found
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
 		#formatted_answer='\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
-		formatted_answer='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:7])
+		formatted_answer='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:5])
 		
 		'''Find similar reviews based on the nearest review document vecor and question keys(can cross check with amazon 'similar items' in meta data)'''
 		similar_asins,sim_reviews,sim_images,sim_titles,sim_descriptions=self.similarReviews(asin,key_words+similar_keys,1)
@@ -377,7 +377,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		#		good_qual.append(str(len(set(key_words) & set(sen.split())))+'/'+str(len(set(key_words))))
 		#		good_qual_val.append(len(set(key_words) & set(sen.split()))/len(set(key_words)))
 		#########use regular expression to find the key words###############
-			num_key_matches=len(sum([re.findall(word,sen) for word in key_words],[]))
+			num_key_matches=len(sum([re.findall(' '+word,sen) for word in key_words],[]))
 			if num_key_matches>0:
 				good_sen.append(sen)
 				good_qual.append(str(num_key_matches)+'/'+str(len(set(key_words))))
