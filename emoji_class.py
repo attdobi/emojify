@@ -36,7 +36,7 @@ class TallLabs_lib:
 		self.bag_of_words='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,need,take,out,how,would,am,at,\
 anyone,has,have,off,that,which,who,please,thank,you,that,fit,these,they,many,work,with,time,turn,fit,fitt,going,\
 from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,find,make,hot,be,as,well,there,\
-son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,newest,or,come,hi,lot'.split(',')
+son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,newest,or,come,hi'.split(',')
 		self.bag_of_words_verbs='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,take,out,would,\
 anyone,off,that,which,who,please,thank,you,that,these,they,many,time,turn,newest,there,am,at,\
 from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,\
@@ -377,7 +377,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		#		good_qual.append(str(len(set(key_words) & set(sen.split())))+'/'+str(len(set(key_words))))
 		#		good_qual_val.append(len(set(key_words) & set(sen.split()))/len(set(key_words)))
 		#########use regular expression to find the key words###############
-			num_key_matches=len(sum([re.findall(' '+word,sen) for word in key_words],[]))
+			num_key_matches=len([re.findall(' '+word,sen) for word in key_words]) #number of key words matcheds
 			if num_key_matches>0:
 				good_sen.append(sen)
 				good_qual.append(str(num_key_matches)+'/'+str(len(set(key_words))))
