@@ -372,11 +372,16 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		good_qual_val=[]
 		sentences = re.split(r"(?<![0-9])[.?!;](?![0-9])",text) #whatever delimiters you will need
 		for sen in sentences: #this could also be done with regular expression
+		#	if(set(key_words) & set(sen.split())): #find the intersection/union
+		#		good_sen.append(sen)
+		#		good_qual.append(str(len(set(key_words) & set(sen.split())))+'/'+str(len(set(key_words))))
+		#		good_qual_val.append(len(set(key_words) & set(sen.split()))/len(set(key_words)))
+		#########use regular expression to find the key words###############
 			num_key_matches=len(sum([re.findall(word,sen) for word in key_words],[]))
 			if num_key_matches>0:
 				good_sen.append(sen)
 				good_qual.append(str(num_key_matches)+'/'+str(len(set(key_words))))
-				good_qual_val.append(len(num_key_matches)/len(set(key_words)))
+				good_qual_val.append(num_key_matches/len(set(key_words)))
 			
 		return good_sen,good_qual,good_qual_val
 		
