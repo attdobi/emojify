@@ -284,8 +284,8 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		#formatted_answer='\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
 		formatted_answer='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:5])
 		
-		'''Find similar reviews based on the nearest review document vecor (can cross check with amazon 'similar items' in meta data)'''
-		similar_asins,sim_reviews,sim_images,sim_titles,sim_descriptions=self.similarReviews(asin,2)
+		'''Find similar reviews based on the nearest review document vecor and question keys(can cross check with amazon 'similar items' in meta data)'''
+		similar_asins,sim_reviews,sim_images,sim_titles,sim_descriptions=self.similarReviews(asin,key_words+similar_keys,1)
 		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(sim_reviews[0],key_words)
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
 		formatted_answer_sim='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:5])
@@ -320,10 +320,12 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		return formatted_answer, about_text, formatted_answer_sim,sim_titles[0],sim_images[0]
 		
 	###### Support functions for porcessQuetion ########################################################################
-	def similarReviews(self,asin,N=2):
-		'''Return asin and review text of the the N most reviews based on Doc2vec model'''
+	def similarReviews(self,key_words,asin,N=1):
+		'''Return asin and review text of the the N most reviews based on Doc2vec model
+		search for most similar review which also includes Keys and Similar Keys from user's search'''
 		#Doc2Vec model trained on the cell phone and accessory review category
-		most_sim=self.Rmodel_D2V.docvecs.most_similar('R_'+asin)[:N]
+		search_key_vector=self.Rmodel_D2V.infer_vector(key_words)
+		most_sim=self.Rmodel_D2V.docvecs.most_similar(['R_'+asin,search_key_vector])[:N]
 		similar_asins=[val[0].split('R_')[1] for val in most_sim]
 		# get the reviewtext and metadata based on the similar asin
 		sim_images,sim_descriptions,sim_titles,sim_reviews=[],[],[],[]
