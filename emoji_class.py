@@ -270,7 +270,8 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		Using Doc2Vec find the most similar reviews and search for answers there also'''
 		question.replace("- "," ").replace(" -"," ") #remove - in questions
 		key_words, key_words_action = self.return_key_words(question)
-		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7] for word in key_words],[])
+		key_words_bigram=[word.replace(' ','_') for word in key_words]
+		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7] for word in key_words_bigram],[])
 		
 		topic_text=self.findTopic(key_words,similar_keys)#find LDA topic based on search keys
 		
@@ -278,7 +279,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		self.cur.execute("select reviewtext from reviews_cell_phones_and_accessories where asin=%s;",(asin,))
 		result=self.cur.fetchall() #there are multiple reviews per asin, merge them next
 		'''Next find the relavent lines in the review text sorted by number of keyword matches'''
-		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)
+		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)#+similar keys if nothing is found
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
 		#formatted_answer='\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
 		formatted_answer='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:5])
