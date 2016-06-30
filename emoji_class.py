@@ -36,7 +36,7 @@ class TallLabs_lib:
 		self.bag_of_words='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,need,take,out,how,would,am,at,\
 anyone,has,have,off,that,which,who,please,thank,you,that,fit,these,they,many,work,with,time,turn,fit,fitt,going,\
 from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,find,make,hot,be,as,well,there,\
-son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,newest,or,come,hi'.split(',')
+son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,item,any,newest,or,come,hi,lot'.split(',')
 		self.bag_of_words_verbs='is,will,wil,may,might,does,do,can,could,must,should,are,would,did,take,out,would,\
 anyone,off,that,which,who,please,thank,you,that,these,they,many,time,turn,newest,there,am,at,\
 from,hard,use,your,not,into,non,hold,say,from,one,two,like,than,same,thanks,\
@@ -282,13 +282,13 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(self.merge_review(result),key_words)#+similar keys if nothing is found
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
 		#formatted_answer='\n\n'.join([good_qual[index]+':'+good_sen[index] for index in sorted_index][0:5])
-		formatted_answer='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:5])
+		formatted_answer='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:7])
 		
 		'''Find similar reviews based on the nearest review document vecor and question keys(can cross check with amazon 'similar items' in meta data)'''
 		similar_asins,sim_reviews,sim_images,sim_titles,sim_descriptions=self.similarReviews(asin,key_words+similar_keys,1)
 		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(sim_reviews[0],key_words)
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
-		formatted_answer_sim='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:7])
+		formatted_answer_sim='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:5])
 		
 		'''get question type prediction based on logistic regresion model:'''
 		words=re.findall("[a-z'0-9]+", question.lower())
