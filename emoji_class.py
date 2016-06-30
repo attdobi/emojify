@@ -320,7 +320,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		return formatted_answer, about_text, formatted_answer_sim,sim_titles[0],sim_images[0]
 		
 	###### Support functions for porcessQuetion ########################################################################
-	def similarReviews(self,key_words,asin,N=1):
+	def similarReviews(self,asin,key_words,N=1):
 		'''Return asin and review text of the the N most reviews based on Doc2vec model
 		search for most similar review which also includes Keys and Similar Keys from user's search'''
 		#Doc2Vec model trained on the cell phone and accessory review category
