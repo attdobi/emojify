@@ -237,7 +237,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		return is_in_bag
 		
 	def getMeta(self,asin):
-		self.cur.execute("select metajson->'imUrl', metajson->'description', title from metadata_demo where asin=%s limit 1;",(asin,))
+		self.cur.execute("select metajson->'imUrl', metajson->'description', title from metadata_cell_phones_and_accessories where asin=%s limit 1;",(asin,))
 		result=self.cur.fetchall()[0]
 		image=result[0]
 		description=result[1]
@@ -330,7 +330,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		# get the reviewtext and metadata based on the similar asin
 		sim_images,sim_descriptions,sim_titles,sim_reviews=[],[],[],[]
 		for asin in similar_asins:
-			self.cur.execute("select a.metajson->'imUrl', a.metajson->'description', a.title, b.reviewCat from metadata_demo a\
+			self.cur.execute("select a.metajson->'imUrl', a.metajson->'description', a.title, b.reviewCat from metadata_cell_phones_and_accessories a\
 			join (SELECT asin,string_agg(reviewText,'. ') as reviewCat FROM reviews_cell_phones_and_accessories group by \
 			asin) b on a.asin=b.asin where a.asin=%s limit 1;",(asin,))
 			result=self.cur.fetchall()[0]
