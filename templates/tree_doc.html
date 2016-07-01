@@ -215,15 +215,15 @@ function update(source) {
 	  .attr("text-anchor", "middle")
 	  //.text(function(d) { return d.name; })
 	  .style("fill-opacity", 1)
-	  .style("font-size", "12pt")
+	  .style("font-size", "14pt")
 	   .each(function (d) {
        if (d.name!=undefined) {
           var lines = splitoncomma(d.name)
           for (var i = 0; i < lines.length; i++) {
              d3.select(this).append("tspan")
-                 .attr("dy",13)
+                 .attr("dy",25)
                  .attr("x",function(d) { 
-                      return d.children || d._children ? -0 : 50; })
+                      return d.children || d._children ? -0 : 0; })
                   .text(lines[i])
            }
         }
