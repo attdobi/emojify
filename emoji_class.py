@@ -356,11 +356,11 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		similar_asins=[val[0].split('R_')[1] for val in most_sim]
 		#now get the reviewtext and metadata based on the similar asin
 		sim_images,sim_descriptions,sim_titles,sim_reviews=[],[],[],[]
-		for asin in similar_asins:
+		for sim_asin in similar_asins:
 			#Note, change metadata_demo to metadata to get the full set, may be slower
 			self.cur.execute("select a.metajson->'imUrl', a.metajson->'description', a.title, b.reviewCat from metadata_cell_phones_and_accessories a\
-			left join (SELECT asin,string_agg(reviewText,'. ') as reviewCat FROM reviews_cell_phones_and_accessories group by \
-			asin) b on a.asin=b.asin where a.asin='{:s}' limit 1;".format(asin))
+			join (SELECT asin,string_agg(reviewText,'. ') as reviewCat FROM reviews_cell_phones_and_accessories group by \
+			asin) b on a.asin=b.asin where a.asin=%s limit 1;",(sim_asin,))
 			result=self.cur.fetchall()[0]
 			sim_images.append(result[0])
 			sim_descriptions.append(result[1])
