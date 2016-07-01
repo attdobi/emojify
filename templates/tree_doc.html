@@ -166,6 +166,14 @@ function splitoncomma(text) {
    return lines
 }
 
+function elbow(d, i) {
+
+  console.log(d)
+  return "M" + d.source.x + "," + d.source.y
+       + "V" + d.target.y + "H" + d.target.x 
+       + (d.target.children ? "" : ("v" + margin.bottom))
+}
+
   root.children.forEach(collapse);
   update(root);
 });
@@ -211,7 +219,7 @@ function update(source) {
 		  return d.children || d._children ? -18 : 18; })
 	  .attr("dy", ".35em")
 	  .attr("text-anchor", "middle")
-	  .text(function(d) { return d.name.split(","); })
+	  .text(function(d) { return d.name; })
 	  .style("fill-opacity", 1)
 	  .style("font-size", "12pt"); ;
 	  
@@ -239,8 +247,14 @@ function update(source) {
 
   nodeExit.select("text")
       .style("fill-opacity", 1e-6);
+      
+    var link = svg.selectAll(".link")
+      .data(tree.links(nodes))
+      .enter().append("path")
+      .attr("class", "link")
+      .attr("d", elbow);
 
-  // Update the links…
+  // Update the links….attr("d", elbow);
   var link = svg.selectAll("path.link")
       .data(links, function(d) { return d.target.id; });
 
