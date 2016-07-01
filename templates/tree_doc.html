@@ -201,19 +201,6 @@ function update(source) {
       .style("fill-opacity", 1e-6)
       .style("font-size", "12pt");
       
-      label.append("div")
-          .attr("class", "class_name")
-          .each(function (d) {
-            if (textValue(d)!==undefined) {
-              var lines = splitoncomma(textValue(d))
-              for (var i = 0; i < lines.length; i++) {
-                d3.select(this)
-                .append("text")
-                .append("tspan")
-                .style("float","left")// the float:left avoids default inline positioning
-                .text(lines[i])
-       }
-    }
 
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
