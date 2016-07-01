@@ -95,7 +95,7 @@ li.dropdown {
 
 </ul>
 		<h3 class="text-muted"> Doc2vec Model Tree Diagram for Cellphones and Accessories</h3>
-		<h4 class="text-muted"> Items Matched by Review Topic Similarity and User's Search Key Words</h4>
+		<h5 class="text-muted"> Items Matched by Review Topic Similarity and User's Search Key Words</h5>
       <hr/>
       
        <label for="Enter asin"
@@ -105,6 +105,15 @@ li.dropdown {
     <input type = "text"
        id = "asin"
        value = "8288878881"
+      onkeypress="if (event.keyCode==13){make_graph()};"
+      />
+   <label for="Enter search key words"
+          style="display: inline-block; width: 146px; text-align: right">
+        Enter search key words:
+      </label>
+    <input type = "text"
+       id = "keys"
+       value = "long, cord"
       onkeypress="if (event.keyCode==13){make_graph()};"
       />
 
@@ -117,7 +126,7 @@ li.dropdown {
 // Return url to recieve csv data with query filled in from input fields
 function update_url() {
   return URL_BASE +"?asin=" + document.getElementById("asin").value ;
-  					//+"&model=" + document.getElementById("item_select").value ;
+  					+"&keys=" + document.getElementById("keys").value ;
 }
 
 

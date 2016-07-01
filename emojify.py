@@ -103,7 +103,8 @@ def _get_tree():
 @application.route('/_get_tree_doc')
 def _get_tree_doc():
 	asin = request.args.get('asin')
-	result=Tall.tree_Doc(asin)
+	keys = request.args.get('keys')
+	result=Tall.tree_Doc(asin,keys)
 	return jsonify(result=result)
 	
 @application.route('/_train')
