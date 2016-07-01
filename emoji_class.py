@@ -107,16 +107,16 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		 
 	def tree_Doc(self,head_asin,keys):
 		modelDoc2vec=self.Rmodel_D2V
-		key_words=keys.lower().split(',')*50# form into an array
+		key_words=keys.lower().split(',')# form into an array
 		search_key_vector=modelDoc2vec.infer_vector(key_words,alpha=0) #set alpha to 0 to prevent random permutation
 		key='R_'+head_asin
-		similar_asins,similarity=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar([key,search_key_vector]))
+		similar_asins,similarity=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar([key,75*search_key_vector]))
 		target=[]
 		child_list=[]
 		for asin in similar_asins[:5]:
 			target_child=[]
 			target.append(asin+' , '+self.return_title(asin))
-			similar_asins2,similarity2=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar(['R_'+asin,search_key_vector]))
+			similar_asins2,similarity2=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar(['R_'+asin,75*search_key_vector]))
 			for asin2 in similar_asins2[:5]:
 				target_child.append(asin2+' , '+self.return_title(asin2))
 			child_list.append(target_child)
