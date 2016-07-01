@@ -110,7 +110,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		key_words=keys.lower().split(',')# form into an array
 		search_key_vector=modelDoc2vec.infer_vector(key_words,alpha=0) #set alpha to 0 to prevent random permutation
 		key='R_'+head_asin
-		similar_asins,similarity=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar([key,75*search_key_vector]))
+		similar_asins,similarity=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar([key,10*search_key_vector]))
 		target=[]
 		child_list=[]
 		for asin in similar_asins[:5]:
