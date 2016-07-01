@@ -352,7 +352,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		search for most similar review which also includes Keys and Similar Keys from user's search'''
 		#Doc2Vec model trained on the cell phone and accessory review category
 		search_key_vector=self.Rmodel_D2V.infer_vector(key_words,alpha=0) #set alpha=0 to prevent random permutation of vector
-		most_sim=self.Rmodel_D2V.docvecs.most_similar(['R_'+asin,10*search_key_vector])[:N] #add search_key_vector to list
+		most_sim=self.Rmodel_D2V.docvecs.most_similar(['R_'+asin,1*search_key_vector])[:N] #add search_key_vector to list
 		similar_asins=[val[0].split('R_')[1] for val in most_sim]
 		# get the reviewtext and metadata based on the similar asin
 		sim_images,sim_descriptions,sim_titles,sim_reviews=[],[],[],[]
