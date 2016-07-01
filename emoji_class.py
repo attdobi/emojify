@@ -359,7 +359,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		for asin in similar_asins:
 			#Note, change metadata_demo to metadata to get the full set, may be slower
 			self.cur.execute("select a.metajson->'imUrl', a.metajson->'description', a.title, b.reviewCat from metadata_cell_phones_and_accessories a\
-			join (SELECT asin,string_agg(reviewText,'. ') as reviewCat FROM reviews_cell_phones_and_accessories group by \
+			left join (SELECT asin,string_agg(reviewText,'. ') as reviewCat FROM reviews_cell_phones_and_accessories group by \
 			asin) b on a.asin=b.asin where a.asin='{:s}' limit 1;".format(asin))
 			result=self.cur.fetchall()[0]
 			sim_images.append(result[0])
