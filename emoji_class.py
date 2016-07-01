@@ -105,9 +105,9 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		return {"name":word,"children":[{"name":tar,"children":[{"name":child,"size":3} for child in child_l] }\
 		 for tar,child_l in zip(target,child_list)]}
 		 
-	def tree_Doc(self,head_asin,key_words='charger'):
+	def tree_Doc(self,head_asin,keys='charger'):
 		modelDoc2vec=self.Rmodel_D2V
-		key_words=key_words.split(',') # form into an array
+		key_words=keys.split(',') # form into an array
 		search_key_vector=modelDoc2vec.infer_vector(key_words,alpha=0) #set alpha to 0 to prevent random permutation
 		key='R_'+head_asin
 		similar_asins,similarity=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar([key,search_key_vector]))
