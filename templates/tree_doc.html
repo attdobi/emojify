@@ -121,7 +121,7 @@ function update_url() {
 
 
 var margin = {top: 20, right: 20, bottom: 20, left: 150},
-    width = 1100 - margin.right - margin.left,
+    width = 1200 - margin.right - margin.left,
     height = 580 - margin.top - margin.bottom;
 
 var i = 0,
@@ -183,7 +183,7 @@ function update(source) {
       links = tree.links(nodes);
 
   // Normalize for fixed-depth.
-  nodes.forEach(function(d) { d.y = d.depth * 350; });
+  nodes.forEach(function(d) { d.y = d.depth * 400; });
 
   // Update the nodes…
   var node = svg.selectAll("g.node")
