@@ -217,8 +217,8 @@ function update(source) {
 	  .style("fill-opacity", 1)
 	  .style("font-size", "12pt")
 	   .each(function (d) {
-       if (d.name!=undefined) {
-          var lines = splitoncomma(d.name)
+       if (d.children!=undefined) {
+          var lines = splitoncomma(d.children)
           for (var i = 0; i < lines.length; i++) {
              d3.select(this).append("tspan")
                  .attr("dy",13)
