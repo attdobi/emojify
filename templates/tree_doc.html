@@ -119,10 +119,6 @@ function update_url() {
   					//+"&model=" + document.getElementById("item_select").value ;
 }
 
- function splitoncomma(text) {
-   var lines=text.split(",") //splits text on comma
-   return lines
-}
 
 var margin = {top: 20, right: 20, bottom: 20, left: 200},
     width = 960 - margin.right - margin.left,
@@ -161,6 +157,11 @@ d3.json(url, function(error, data) {
       d.children = null;
     }
   }
+  
+function splitoncomma(text) {
+   var lines=text.split(",") //splits text on comma
+   return lines
+}
 
   root.children.forEach(collapse);
   update(root);
@@ -201,13 +202,13 @@ function update(source) {
       .style("fill-opacity", 1e-6)
       .style("font-size", "12pt")
       .each(function (d) {
-       if (d.NickName!=undefined) {
-          var lines = wordwrap2(d.NickName)
+       if (d.children!=undefined) {
+          var lines = splitoncomma(d.children)
           for (var i = 0; i < lines.length; i++) {
              d3.select(this).append("tspan")
                  .attr("dy",13)
                  .attr("x",function(d) { 
-                      return d.children1 || d._children1 ? -10 : 10; })
+                      return d.children || d._children ? -10 : 10; })
                   .text(lines[i])
            }
         }
