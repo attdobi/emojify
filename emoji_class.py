@@ -350,17 +350,18 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 	def similarReviews(self,asin,key_words,N=1):
 		'''Return asin and review text of the the N most reviews based on Doc2vec model
 		search for most similar review which also includes Keys and Similar Keys from user's search'''
-		#Doc2Vec model trained on the cell phone and accessory review category
-		search_key_vector=self.Rmodel_D2V.infer_vector(key_words,alpha=0) #set alpha=0 to prevent random permutation of vector
-		most_sim=self.Rmodel_D2V.docvecs.most_similar(['R_'+asin,10*search_key_vector])[:N] #add search_key_vector to list
+		model=self.Rmodel_D2V #Doc2Vec model trained on the cell phone and accessory review category
+		search_key_vector=model.infer_vector(key_words,alpha=0) #set alpha to 0 to prevent random permutation
+		most_sim=model.docvecs.most_similar(['R_'+asin,10*search_key_vector])[:N]
 		similar_asins=[val[0].split('R_')[1] for val in most_sim]
-		# get the reviewtext and metadata based on the similar asin
+		#now get the reviewtext and metadata based on the similar asin
 		sim_images,sim_descriptions,sim_titles,sim_reviews=[],[],[],[]
 		for asin in similar_asins:
-			self.cur.execute("select a.metajson->'imUrl', a.metajson->'description', a.title, b.reviewCat from metadata_cell_phones_and_accessories a\
+			#Note, change metadata_demo to metadata to get the full set, may be slower
+			cur.execute("select a.metajson->'imUrl', a.metajson->'description', a.title, b.reviewCat from metadata_cell_phones_and_accessories a\
 			join (SELECT asin,string_agg(reviewText,'. ') as reviewCat FROM reviews_cell_phones_and_accessories group by \
 			asin) b on a.asin=b.asin where a.asin=%s limit 1;",(asin,))
-			result=self.cur.fetchall()[0]
+			result=cur.fetchall()[0]
 			sim_images.append(result[0])
 			sim_descriptions.append(result[1])
 			sim_titles.append(result[2])
