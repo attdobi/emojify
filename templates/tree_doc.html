@@ -206,7 +206,7 @@ function update(source) {
           var lines = splitoncomma(d.children)
           for (var i = 0; i < lines.length; i++) {
              d3.select(this).append("tspan")
-                 .attr("dy",13)
+                 .attr("y",13)
                  .attr("x",function(d) { 
                       return d.children || d._children ? -10 : 10; })
                   .text(lines[i])
