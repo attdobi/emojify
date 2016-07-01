@@ -178,7 +178,7 @@ function update(source) {
       links = tree.links(nodes);
 
   // Normalize for fixed-depth.
-  nodes.forEach(function(d) { d.y = d.depth * 400; });
+  nodes.forEach(function(d) { d.y = d.depth * 300; });
 
   // Update the nodes…
   var node = svg.selectAll("g.node")
@@ -201,6 +201,24 @@ function update(source) {
       .text(function(d) { return d.name; })
       .style("fill-opacity", 1e-6)
       .style("font-size", "12pt"); 
+      
+    nodeEnter.append("text")
+  .attr("x", function(d) { return d.children1 || d._children1 ? -10 : 10; })
+  .attr("dy", ".35em")
+  .attr("text-anchor", function(d) { return d.children1 || d._children1 ? "end" : "start"; })
+   .style("fill-opacity", 1e-6)
+   .each(function (d) {
+       if (d.NickName!=undefined) {
+          var lines = splitoncomma(d.NickName)
+          for (var i = 0; i < lines.length; i++) {
+             d3.select(this).append("tspan")
+                 .attr("dy",13)
+                 .attr("x",function(d) { 
+                      return d.children1 || d._children1 ? -10 : 10; })
+                  .text(lines[i])
+           }
+        }
+});   
 
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
