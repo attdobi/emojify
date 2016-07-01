@@ -120,7 +120,7 @@ function update_url() {
 }
 
 
-var margin = {top: 20, right: 20, bottom: 20, left: 20},
+var margin = {top: 20, right: 20, bottom: 20, left: 150},
     width = 1100 - margin.right - margin.left,
     height = 580 - margin.top - margin.bottom;
 
@@ -183,7 +183,7 @@ function update(source) {
       links = tree.links(nodes);
 
   // Normalize for fixed-depth.
-  nodes.forEach(function(d) { d.y = d.depth * 300; });
+  nodes.forEach(function(d) { d.y = d.depth * 350; });
 
   // Update the nodes…
   var node = svg.selectAll("g.node")
@@ -223,7 +223,7 @@ function update(source) {
              d3.select(this).append("tspan")
                  .attr("dy",13)
                  .attr("x",function(d) { 
-                      return d.children || d._children ? -50 : 50; })
+                      return d.children || d._children ? -0 : 50; })
                   .text(lines[i])
            }
         }
