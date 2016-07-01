@@ -341,7 +341,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		###### End predict question type ##############################
 		
 		about_text='Question Type: '+qType + '\n\n'+\
-		'Key Words: '+ ', '.join(key_words) + '\n'+\
+		'Keywords: '+ ', '.join(key_words) + '\n'+\
 		'Action Words: '+ ', '.join(key_words_action) + '\n'+\
 		'Similar Keys: '+ ', '.join(similar_keys) +'\n\n'+\
 		'SubTopics: \n'+ topic_text
