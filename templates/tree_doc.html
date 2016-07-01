@@ -223,7 +223,7 @@ function update(source) {
              d3.select(this).append("tspan")
                  .attr("dy",13)
                  .attr("x",function(d) { 
-                      return d.children || d._children ? -5 : 5; })
+                      return d.children || d._children ? -50 : 50; })
                   .text(lines[i])
            }
         }
