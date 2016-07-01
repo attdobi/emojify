@@ -72,6 +72,9 @@ def force():
 @application.route("/tree")
 def tree():
 	return render_template("tree.html")
+@application.route("/tree_doc")
+def tree_doc():
+	return render_template("tree_doc.html")
 @application.route("/train")
 def train():
 	return render_template("train.html")
@@ -95,6 +98,12 @@ def _get_tree():
 	word = request.args.get('word')
 	model = request.args.get('model')
 	result=Tall.tree(word,model)
+	return jsonify(result=result)
+	
+@application.route('/_get_tree_doc')
+def _get_tree_doc():
+	asin = request.args.get('asin')
+	result=Tall.tree_Doc(asin)
 	return jsonify(result=result)
 	
 @application.route('/_train')
