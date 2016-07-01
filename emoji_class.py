@@ -59,7 +59,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		
 	def return_title(self,asin):
 		self.cur.execute("SELECT title FROM metadata_cell_phones_and_accessories WHERE asin=%s limit 1;",(asin,))
-		return self.cur.fetchall()[0][0]
+		return ' '.join(self.cur.fetchall()[0][0].split()[:5])
 		
 	def visual(self,word,model):
 		if model=='reviews':
