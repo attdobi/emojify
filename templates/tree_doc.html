@@ -208,8 +208,8 @@ function update(source) {
   .attr("text-anchor", function(d) { return d.children1 || d._children1 ? "end" : "start"; })
    .style("fill-opacity", 1e-6)
    .each(function (d) {
-       if (d.NickName!=undefined) {
-          var lines = splitoncomma(d.NickName)
+       if (d.name!=undefined) {
+          var lines = splitoncomma(d.name)
           for (var i = 0; i < lines.length; i++) {
              d3.select(this).append("tspan")
                  .attr("dy",13)
