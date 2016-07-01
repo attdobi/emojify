@@ -312,7 +312,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		formatted_answer='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:5])
 		
 		'''Find similar reviews based on the nearest review document vecor and question keys(can cross check with amazon 'similar items' in meta data)'''
-		similar_asins,sim_reviews,sim_images,sim_titles,sim_descriptions=self.similarReviews(asin,key_words+similar_keys,1)
+		similar_asins,sim_reviews,sim_images,sim_titles,sim_descriptions=self.similarReviews(asin,key_words,1)
 		good_sen,good_qual,good_qual_val=self.find_relevent_sentence(sim_reviews[0],key_words)
 		sorted_index=sorted(range(len(good_qual_val)),key=lambda x:good_qual_val[x])[::-1]
 		formatted_answer_sim='\n\n'.join([str(ii+1)+':'+good_sen[index] for ii,index in enumerate(sorted_index)][0:5])
