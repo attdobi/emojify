@@ -351,7 +351,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		'''Return asin and review text of the the N most reviews based on Doc2vec model
 		search for most similar review which also includes Keys and Similar Keys from user's search'''
 		model=self.Rmodel_D2V #Doc2Vec model trained on the cell phone and accessory review category
-		search_key_vector=model.infer_vector(key_words,alpha=0) #set alpha to 0 to prevent random permutation
+		search_key_vector=model.infer_vector(['long','cord'],alpha=0) #set alpha to 0 to prevent random permutation
 		most_sim=model.docvecs.most_similar(['R_'+asin,10*search_key_vector])[:N]
 		similar_asins=[val[0].split('R_')[1] for val in most_sim]
 		#now get the reviewtext and metadata based on the similar asin
