@@ -203,9 +203,9 @@ function update(source) {
       .style("font-size", "12pt"); 
       
     nodeEnter.append("text")
-  .attr("x", function(d) { return d.children1 || d._children1 ? -10 : 10; })
+  .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
   .attr("dy", ".35em")
-  .attr("text-anchor", function(d) { return d.children1 || d._children1 ? "end" : "start"; })
+  .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
    .style("fill-opacity", 1e-6)
    .each(function (d) {
        if (d.name!=undefined) {
@@ -214,7 +214,7 @@ function update(source) {
              d3.select(this).append("tspan")
                  .attr("dy",13)
                  .attr("x",function(d) { 
-                      return d.children1 || d._children1 ? -10 : 10; })
+                      return d.children || d._children ? -10 : 10; })
                   .text(lines[i])
            }
         }
