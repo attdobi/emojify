@@ -112,13 +112,13 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		similar_keys=sum([[' '.join(item[0].split('_')) for item in self.check_key(word,'review') if item!=[''] and item[1]>0.7] for word in key_words_bigram],[])
 		search_key_vector=modelDoc2vec.infer_vector(key_words+similar_keys,alpha=0) #set alpha to 0 to prevent random permutation
 		key='R_'+head_asin
-		similar_asins,similarity=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar([key,5*search_key_vector]))
+		similar_asins,similarity=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar([key,7*search_key_vector]))
 		target=[]
 		child_list=[]
 		for asin in similar_asins[:5]:
 			target_child=[]
 			target.append(asin+' , '+self.return_title(asin))
-			similar_asins2,similarity2=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar(['R_'+asin,5*search_key_vector]))
+			similar_asins2,similarity2=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar(['R_'+asin,7*search_key_vector]))
 			for asin2 in similar_asins2[:5]:
 				target_child.append(asin2+' , '+self.return_title(asin2))
 			child_list.append(target_child)
@@ -354,7 +354,7 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		search for most similar review which also includes Keys and Similar Keys from user's search'''
 		model=self.Rmodel_D2V #Doc2Vec model trained on the cell phone and accessory review category
 		search_key_vector=model.infer_vector(key_words,alpha=0) #set alpha to 0 to prevent random permutation
-		most_sim=model.docvecs.most_similar(['R_'+asin,5*search_key_vector])[:N]
+		most_sim=model.docvecs.most_similar(['R_'+asin,7*search_key_vector])[:N]
 		similar_asins=[val[0].split('R_')[1] for val in most_sim]
 		#now get the reviewtext and metadata based on the similar asin
 		sim_images,sim_descriptions,sim_titles,sim_reviews=[],[],[],[]
