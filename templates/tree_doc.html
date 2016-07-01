@@ -213,12 +213,12 @@ function update(source) {
 		  return d.children || d._children ? -18 : 18; })
 	  .attr("dy", ".35em")
 	  .attr("text-anchor", "middle")
-	  .text(function(d) { return d.name; })
+	  //.text(function(d) { return d.name; })
 	  .style("fill-opacity", 1)
 	  .style("font-size", "12pt")
 	   .each(function (d) {
-       if (d.children!=undefined) {
-          var lines = splitoncomma(d.children)
+       if (d.name!=undefined) {
+          var lines = splitoncomma(d.name)
           for (var i = 0; i < lines.length; i++) {
              d3.select(this).append("tspan")
                  .attr("dy",13)
