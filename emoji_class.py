@@ -52,6 +52,11 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 	def clean_result(self,model_result):
 		return [item[0] for item in model_result],[item[1] for item in model_result]
 		#topn=15
+	def clean_result_Doc(self,most_sim):
+		similar_asins=[val[0].split('R_')[1] for val in most_sim]
+		similarity=[val[1] for val in most_sim]
+		return similar_asins,similarity
+		
 	def visual(self,word,model):
 		if model=='reviews':
 			modelB=self.RmodelB
@@ -94,6 +99,22 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 				target_child.append(result_word2)
 			child_list.append(target_child)
 		return {"name":word,"children":[{"name":tar,"children":[{"name":child,"size":3} for child in child_l] }\
+		 for tar,child_l in zip(target,child_list)]}
+		 
+	def tree_Doc(self,head_asin):
+		modelDoc2vec=self.Rmodel_D2V
+		key='R_'+head_asin
+		similar_asins,similarity=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar(key))
+		target=[]
+		child_list=[]
+		for asin in similar_asins:
+			target_child=[]
+			target.append(asin)
+			similar_asins2,similarity2=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar('R_'+asin))
+			for asin2 in similar_asins2:
+				target_child.append(asin2)
+			child_list.append(target_child)
+		return {"name":head_asin,"children":[{"name":tar,"children":[{"name":child,"size":3} for child in child_l] }\
 		 for tar,child_l in zip(target,child_list)]}
 		 
 	def train(self,input,name):
