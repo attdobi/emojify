@@ -202,11 +202,11 @@ function update(source) {
       .style("fill-opacity", 1e-6)
       .style("font-size", "12pt")
       .each(function (d) {
-       if (d.children!=undefined) {
-          var lines = splitoncomma(d.children)
+       if (d.name!=undefined) {
+          var lines = splitoncomma(d.name)
           for (var i = 0; i < lines.length; i++) {
              d3.select(this).append("tspan")
-                 .attr("y",13)
+                 .attr("dy",13)
                  .attr("x",function(d) { 
                       return d.children || d._children ? -10 : 10; })
                   .text(lines[i])
