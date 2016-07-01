@@ -111,14 +111,14 @@ son,daughter,amazon,when,after,change,both,ask,know,help,me,recently,purchased,i
 		similar_asins,similarity=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar(key))
 		target=[]
 		child_list=[]
-		for asin in similar_asins:
+		for asin in similar_asins[:5]:
 			target_child=[]
-			target.append(asin+'\n'+self.return_title(asin))
+			target.append(asin+'/n'+self.return_title(asin))
 			similar_asins2,similarity2=self.clean_result_Doc(modelDoc2vec.docvecs.most_similar('R_'+asin))
-			for asin2 in similar_asins2:
-				target_child.append(asin2+'\n'+self.return_title(asin2))
+			for asin2 in similar_asins2[:5]
+				target_child.append(asin2+'/n'+self.return_title(asin2))
 			child_list.append(target_child)
-		return {"name":head_asin+'\n'+self.return_title(head_asin),"children":[{"name":tar,"children":[{"name":child,"size":3} for child in child_l] }\
+		return {"name":head_asin+'/n'+self.return_title(head_asin),"children":[{"name":tar,"children":[{"name":child,"size":3} for child in child_l] }\
 		 for tar,child_l in zip(target,child_list)]}
 		 
 	def train(self,input,name):
