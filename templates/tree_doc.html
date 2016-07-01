@@ -209,8 +209,8 @@ function update(source) {
       .style("font-size", "12pt"); 
    */   
     nodeEnter.append("text")
-	  .attr("y", function(d) { 
-		  return d.children || d._children ? -18 : 18; })
+	  //.attr("y", function(d) { 
+	//	  return d.children || d._children ? -18 : 18; })
 	  .attr("dy", ".35em")
 	  .attr("text-anchor", "middle")
 	  //.text(function(d) { return d.name; })
