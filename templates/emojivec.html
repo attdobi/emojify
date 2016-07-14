@@ -163,7 +163,7 @@ window['range']=moment().subtract(60, 'days').format('MMMM D, YYYY, HH, mm') + '
     var columns = [
         { head: 'Rank', cl: 'center', html: ƒ('rank') },
         { head: 'Emoji', cl: 'title', html: ƒ('label') },
-        { head: 'Cosine Similarity', cl: 'center', html: ƒ('value') },
+        { head: 'Cosine Similarity', cl: 'center', html: d3.format(".3f")ƒ('value') },
     ];
 
         
