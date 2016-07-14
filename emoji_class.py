@@ -448,7 +448,7 @@ class emoji_lib:
 		#load emoji keys for cuts, only need to do once
 		self.emjDict=self.buildDict()
 		self.S=self.langDict()
-		self.Emoji2vec=models.Word2Vec.load(base_dir+'/data/Emoji2vec') #load Emoji2vec model
+		self.Emoji2vec=models.Word2Vec.load(base_dir+'/emojify/data/Emoji2vec') #load Emoji2vec model
 	def sql_word(self,word):
 		word=word.lower()
 		word=word.replace("'","''")#replace all apostrophes with double for SQL query
