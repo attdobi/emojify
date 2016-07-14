@@ -40,11 +40,11 @@ def requires_auth(f):
 
 application = Flask(__name__)
 
-@application.route("/")
+@application.route("/emojisaurus") #was "/"
 def index():
     return render_template("index.html")
 #    #return "<h1 style='color:blue'>Hello There!</h1>"
-@application.route("/emojivec")
+@application.route("/") #was emojivec
 def emojivec():
     return render_template("emojivec.html")
 @application.route("/skin")

@@ -124,19 +124,16 @@ li.dropdown {
     <div class="container">
       <div class="header">
 <ul>
-  <li><a class="active" href="/">Emojisaurus</a></li>
+  <li><a class="active" href="/">Emojivec</a></li>
+  <li><a class="active" href="/emojisaurus">Emojisaurus</a></li>
   <li><a href="/skin">Emoji Skins</a></li>
   <li><a href="/stats">Emoji Stats</a></li>
   <li><a href="/emoji_context">Emoji Context</a></li>
   <li><a href="/emojify">Emojify</a></li>
   <li><a href="/web">Emoji Web</a></li>
   <li><a href="/emoji_art">Emoji Art</a></li>
-  <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 13px 13px; border: 1px solid #ccc; width: 36%">
-    		<b>Time Range: </b> <i id="range" class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
-    		<span id ="dateinput"></span> <b class="caret"></b>
-			</div>
 </ul>
-        <h3 class="text-muted">Emojisaurus 🦄  <font size="2">The Emoji Thesaurus </font></h3>
+        <h3 class="text-muted">Emojivec 🦄  <font size="2"> Emoji Vector </font></h3>
       <hr/>
       <p>
        <label for="pattern_type"
@@ -163,7 +160,7 @@ window['range']=moment().subtract(60, 'days').format('MMMM D, YYYY, HH, mm') + '
     var columns = [
         { head: 'Rank', cl: 'center', html: ƒ('rank') },
         { head: 'Emoji', cl: 'title', html: ƒ('label') },
-        { head: 'Cosine Similarity', cl: 'center', html: ƒ('str_value') },
+        { head: 'Cosine Sim', cl: 'center', html: ƒ('str_value') },
     ];
 
         
