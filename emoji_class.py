@@ -448,13 +448,14 @@ class emoji_lib:
 		#load emoji keys for cuts, only need to do once
 		self.emjDict=self.buildDict()
 		self.S=self.langDict()
+		self.Emoji2vec=models.Word2Vec.load(base_dir+'/data/Emoji2vec') #load Emoji2vec model
 	def sql_word(self,word):
 		word=word.lower()
 		word=word.replace("'","''")#replace all apostrophes with double for SQL query
 		if (re.findall("[a-z]",word) == []) or len(word.split())>1:
 			return word
 		else:
-			return ' '+word #text is already saved with words split from emojis. potential punctuation afterwards
+			return ' '+word #text is already saved with words split from emojis. potential punctuation afterwards. force regex to match ' '+word in sentence
 	def parse_date(self,date_range):
 		if date_range=='all':
 			start_date='2016-03-20 12:00:00'
@@ -871,6 +872,21 @@ class emoji_lib:
 	
 	def emojifyText(self, a):
 		return('\n'.join([self.emoji_fy(line) for line in a.split('\n')]))
+		
+	#################### Emoji2vec Functions ####################################
+	def most_sim_emj(self,most_sim):
+		sim_emj=[val for val in most_sim if re.findall('[a-z,0-9]',val[0])==[]]
+		xdata=[val[0] for val in sim_emj]
+		ydata=[val[1] for val in sim_emj]
+		return xdata,ydata
+		
+	def emoji2vec_lookup(self,word='dog',face_filter='off',pattern_type='single',user_lang='en',date_range='all'):
+		word=word.lower()
+		try:
+			xdata,ydata = self.most_sim_emj(self.Emoji2vec.most_similar(word,topn=100))
+		except KeyError:
+			xdata,ydata =[],[]
+		return xdata[:15],ydata[:15]
 	
 	def langDict(self):
 		S=dict()

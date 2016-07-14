@@ -44,6 +44,9 @@ application = Flask(__name__)
 def index():
     return render_template("index.html")
 #    #return "<h1 style='color:blue'>Hello There!</h1>"
+@application.route("/emojivec")
+def emojivec():
+    return render_template("emojivec.html")
 @application.route("/skin")
 def skin():
     return render_template("skin.html")
@@ -172,6 +175,12 @@ def context():
     text=Emoji.get_context(a,user_lang)
     return jsonify(result=text)
 
+@application.route("/_emojivec")
+def emojivec():
+	word = request.args.get('word')
+	xdata, ydata=Emoji.emoji2vec_lookup(word=word)
+	return jsonify({"values":[{"rank":rank+1,"value":sim,"label":emoji} for rank,(sim,emoji) in enumerate(zip(ydata,xdata))],"key": "Serie 1"})
+	
 @application.route("/db")
 def print_data():
 	word = request.args.get('word')
