@@ -180,7 +180,7 @@ def get_emojivec():
 	word = request.args.get('word')
 	xdata, ydata=Emoji.emoji2vec_lookup(word=word)
 	ystr=['{0.3f}'.format(val) for val in ydata]#format str here, not in json
-	return jsonify({"values":[{"rank":rank+1,"str_value":str_sim,"value":sim,"label":emoji} for rank,(str_sim,sim,emoji) in enumerate(zip(ystr,ydata,xdata))],"key": "Serie 1"})
+	return jsonify({"values":[{"rank":rank+1,"value":sim,"label":emoji} for rank,(sim,emoji) in enumerate(zip(ydata,xdata))],"key": "Serie 1"})
 	
 @application.route("/db")
 def print_data():
