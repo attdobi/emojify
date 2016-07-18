@@ -885,7 +885,7 @@ class emoji_lib:
 	def emoji2vec_lookup(self,word='dog',face_filter='off',pattern_type='single',user_lang='en',date_range='all'):
 		word=word.lower()
 		try:
-			xdata,ydata = self.most_sim_emj(self.Emoji2vec.most_similar(word,topn=100))
+			xdata,ydata = self.most_sim_emj(self.Emoji2vec.most_similar(word,topn=1000))
 		except KeyError:
 			xdata,ydata =[],[]
 		return xdata[:15],ydata[:15]
