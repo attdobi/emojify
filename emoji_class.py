@@ -533,7 +533,7 @@ class emoji_lib:
 	######### query SQL code: ################################################
 	
 	##### search in indexed result ###########################################
-	def emoji_indexed(self,word='dog',freq_filter='off',face_filter='off',pattern_type='single',user_lang='all',date_range='all'):
+	def emoji_indexed(self,word='dog',freq_filter='all',face_filter='off',pattern_type='single',user_lang='all',date_range='all'):
 		word=self.sql_word(word)
 		#search user_lang='%%' to ignore lang requirement
 		self.cur.execute("SELECT emojilabel,emojicount FROM emoji_search WHERE (searchterm='{:s}' AND freqfilter='{:s}' AND facefilter='{:s}' AND patterntype='{:s}' AND lang LIKE '{:s}') ORDER BY coalesce(emojicount[1],0) DESC LIMIT 1;".format(word,freq_filter,face_filter,pattern_type,user_lang))
@@ -847,7 +847,7 @@ class emoji_lib:
 		if word in self.emjDict:
 			return self.emjDict[word]
 		elif lyric==False:
-			xdata,ydata=self.emoji_indexed(word=word,freq_filter='off',face_filter='on',pattern_type='single',user_lang='en')#no lang option yet, do all
+			xdata,ydata=self.emoji_indexed(word=word,freq_filter='all',face_filter='on',pattern_type='single',user_lang='%%')#no lang option yet, do all
 			if xdata==[]: #If not found use word2vec
 				xdata,ydata=self.emoji2vec_lookup(word=word,face_filter='on')
 				if xdata==[]: #If not found in word2vec lookup frequency in tweet (this may be slow)
