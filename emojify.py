@@ -204,6 +204,21 @@ def print_data():
 	ystr=[locale.format("%d", val, grouping=True) for val in ydata]
 	return jsonify({"values":[{"rank":rank+1,"value":countstr,"percent":"{:0.2f}".format(count/ysum*100),"label":emoji} for rank,(countstr,count,emoji) in enumerate(zip(ystr,ydata,xdata))],"key": "Serie 1"})
 
+@application.route("/db_indexed")
+def print_indexed_data():
+	word = request.args.get('word')
+	pattern_type = request.args.get('pattern_type')
+	freq_filter = request.args.get('freq_filter')
+	face_filter = request.args.get('face_filter')
+	user_lang = request.args.get('user_lang')
+	date_range=request.args.get('date_range')
+	date_range=date_range.split(' - ') #split start,end
+	xdata, ydata = Emoji.emoji_indexed(word,freq_filter,face_filter,pattern_type,user_lang,date_range)
+	ysum=sum(ydata)
+	#save y data as comma separated 1000s string and return JSON
+	ystr=[locale.format("%d", val, grouping=True) for val in ydata]
+	return jsonify({"values":[{"rank":rank+1,"value":countstr,"percent":"{:0.2f}".format(count/ysum*100),"label":emoji} for rank,(countstr,count,emoji) in enumerate(zip(ystr,ydata,xdata))],"key": "Serie 1"})
+
 @application.route("/dbskin")
 def skin_data():
 	word = request.args.get('word')

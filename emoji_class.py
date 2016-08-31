@@ -531,6 +531,25 @@ class emoji_lib:
 		self.conn.commit() #submit change to db
 	
 	######### query SQL code: ################################################
+	
+	##### search in indexed result ###########################################
+	def emoji_indexed(self,word='dog',freq_filter='off',face_filter='off',pattern_type='single',user_lang='all',date_range='all'):
+		word=self.sql_word(word)
+		if user_lang=='all':
+			lang=''
+		else:
+			lang="AND lang='{:s}'".format(user_lang)
+		#print(word)
+		self.cur.execute("SELECT emojilabel,emojicount FROM emoji_search WHERE (searchterm='{:s}' AND freqfilter='{:s}' AND facefilter='{:s}' AND patterntype='{:s}' AND lang='{:s}') ORDER BY coalesce(emojicount[1],0) DESC LIMIT 1;".format(word,freq_filter,face_filter,pattern_type,user_lang))
+		result=self.cur.fetchall()
+		if len(result)==0:
+			xdata=[]
+			ydata=[]
+		else:
+			xdata=result[0][0]
+			ydata=result[0][1]
+		return xdata, ydata
+		
 	######### query skin code: ################################################
 	def emoji_skin(self, word='dog',user_lang='all',date_range='all'):
 		word=self.sql_word(word)
