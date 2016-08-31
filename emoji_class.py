@@ -847,7 +847,7 @@ class emoji_lib:
 		if word in self.emjDict:
 			return self.emjDict[word]
 		elif lyric==False:
-			xdata,ydata=self.emoji_indexed(word=word,freq_filter='off',face_filter='on',pattern_type='single',user_lang='%%')#no lang option yet, do all
+			xdata,ydata=self.emoji_indexed(word=word,freq_filter='off',face_filter='on',pattern_type='single',user_lang='en')#no lang option yet, do all
 			if xdata==[]: #If not found use word2vec
 				xdata,ydata=self.emoji2vec_lookup(word=word,face_filter='on')
 				if xdata==[]: #If not found in word2vec lookup frequency in tweet (this may be slow)
