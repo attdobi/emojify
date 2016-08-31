@@ -853,7 +853,7 @@ class emoji_lib:
 				if xdata==[]: #If not found in word2vec lookup frequency in tweet (this may be slow)
 					xdata,ydata=self.filter_emoji(word=word,face_filter='on')
 					if xdata==[]:#if still empty return nothing
-						sreturn ""
+						return ""
 			else:
 				#RETURN string must be in utf-8 format
 				return _u(xdata[0]) #most frequent
