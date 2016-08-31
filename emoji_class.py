@@ -777,11 +777,12 @@ class emoji_lib:
 	########## emoji visual data ##########################################
 	def visual(self,word):
 		word=self.sql_word(word)
-		self.cur.execute("SELECT emojilabel from emoji_search where searchterm='{:s}' order by id DESC limit 1;".format(word))
+		self.cur.execute("SELECT emojilabel from emoji_search where searchterm='{:s}' ORDER BY coalesce(emojicount[1],0) DESC LIMIT 1;".format(word))
+		#searches for largest hit, can order by id and ignore empty ones to get the latest search
 		result=self.cur.fetchall()
 		source_target=[]
 		for source in result[0][0]:
-			self.cur.execute("SELECT emojilabel from emoji_search where searchterm=%s order by id DESC limit 1;",(source,))
+			self.cur.execute("SELECT emojilabel from emoji_search where searchterm=%s ORDER BY coalesce(emojicount[1],0) DESC LIMIT 1;",(source,))
 			results=self.cur.fetchall()
 			for val in results[0][0]:
 				#print (source,val)
