@@ -238,7 +238,7 @@ def indexed_skin_data():
 	user_lang = request.args.get('user_lang')
 	date_range=request.args.get('date_range')
 	date_range=date_range.split(' - ') #split start,end
-	xdata, ydata = Emoji.emoji_skin_indexed(self,word,user_lang,date_range)
+	xdata, ydata = Emoji.emoji_skin_indexed(word,user_lang,date_range)
 	ysum=sum(ydata)
 	#save y data as comma separated 1000s string and return JSON
 	ystr=[locale.format("%d", val, grouping=True) for val in ydata]
