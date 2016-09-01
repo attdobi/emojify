@@ -232,6 +232,18 @@ def skin_data():
 	ystr=[locale.format("%d", val, grouping=True) for val in ydata]
 	return jsonify({"values":[{"rank":rank+1,"value":countstr,"percent":"{:0.2f}".format(count/ysum*100),"label":emoji} for rank,(countstr,count,emoji) in enumerate(zip(ystr,ydata,xdata))],"key": "Serie 1"})
 
+@application.route("/dbskin_indexed")
+def indexed_skin_data():
+	word = request.args.get('word')
+	user_lang = request.args.get('user_lang')
+	date_range=request.args.get('date_range')
+	date_range=date_range.split(' - ') #split start,end
+	xdata, ydata = Emoji.emoji_skin_indexed(self,word,user_lang,date_range)
+	ysum=sum(ydata)
+	#save y data as comma separated 1000s string and return JSON
+	ystr=[locale.format("%d", val, grouping=True) for val in ydata]
+	return jsonify({"values":[{"rank":rank+1,"value":countstr,"percent":"{:0.2f}".format(count/ysum*100),"label":emoji} for rank,(countstr,count,emoji) in enumerate(zip(ystr,ydata,xdata))],"key": "Serie 1"})
+
 @application.route("/dbstats")
 def getstats():
 	word = request.args.get('word')

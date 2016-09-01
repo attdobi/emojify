@@ -155,6 +155,7 @@ li.dropdown {
        value = "Summer"
       onkeypress="if (event.keyCode==13){make_graph()};"
       />
+    <label><input type="checkbox" id="cbox1" value="none" checked>Indexed Search</label>
     <label for="lang"
           style="display: inline-block; width: 140px; text-align: right">
         Select Language
@@ -229,9 +230,17 @@ window['range']=moment().subtract(60, 'days').format('MMMM D, YYYY, HH, mm') + '
 
         
 //Update and make pie chart 
-
+function get_url_base() {
+    if(document.getElementById("cbox1").checked){
+    	var URL_BASE = "/dbskin_indexed";
+    	}
+    else{
+    	var URL_BASE = "/dbskin";
+    	}
+    return URL_BASE;
+}
     //var URL_BASE = "http://localhost:5000/dbskin";
-    var URL_BASE = "/dbskin";
+    //var URL_BASE = "/dbskin";
 // Update graph in response to inputs 
 //this updates continuously as text is entered
  //d3.select("#word").on("input", make_graph);
@@ -239,7 +248,7 @@ window['range']=moment().subtract(60, 'days').format('MMMM D, YYYY, HH, mm') + '
 
 // Return url to recieve csv data with query filled in from input fields
 function update_url() {
-  return URL_BASE +"?word=" + document.getElementById("word").value +
+  return get_url_base() +"?word=" + document.getElementById("word").value +
   			"&user_lang=" + document.getElementById("user_lang").value+
   			"&date_range=" + window['range'] ;;
 }
