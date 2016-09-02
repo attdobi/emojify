@@ -447,6 +447,7 @@ class emoji_lib:
 		self.cur = self.conn.cursor()
 		#load emoji keys for cuts, only need to do once
 		self.emjDict=self.buildDict()
+		self.emjCodes()#setup emoji code variables:: self.emj_codes, self.emj_codes_skin, self.emj_codes_face,self.can_have_skin
 		self.S=self.langDict()
 		self.Emoji2vec=models.Word2Vec.load(base_dir+'/emojify/data/Emoji2vec') #load Emoji2vec model
 	def sql_word(self,word):
@@ -894,7 +895,20 @@ class emoji_lib:
 			for stem_word in self.words(word):
 				emjDict[_u(stem_word)]=val
 		return emjDict
-	
+		
+	#read emoji codes:
+	def emjCodes(self):
+		emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
+		self.emj_codes_skin=[code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']) if ('FITZPATRICK' in name)]
+		self.emj_codes=[code for code in emoji_key['Unicode'] if code!="Browser" \
+				   if (code not in self.emj_codes_skin) if sum([c=="*" for c in code])==0]
+		#codes that are yellow with the potential for a skin tone
+		self.can_have_skin=[key[0:2] for key in self.emj_codes if re.findall(self.emj_codes_skin[0],key) != []]
+		self.can_have_skin += [key[0:1] for key in self.emj_codes if len(key[0:2].encode("utf-8"))==6 and re.findall(self.emj_codes_skin[0],key) != []]
+		#remove common face emojis
+		face_index=range(69)
+		self.emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
+		
 	def emoji_fy(self,text,lyric=False):
 		#text=text #ensure unicode encoding
 		#print(emoji.emojize(''.join([lookup(word) for word in words(text)])))

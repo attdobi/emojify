@@ -26,8 +26,8 @@ emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode'])
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
 
 #remove common face emojis
-face_index=range(69)
-emj_codes_noise=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
+#face_index=range(69)
+#emj_codes_noise=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
 
 
 def count_words(text):
