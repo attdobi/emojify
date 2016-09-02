@@ -931,7 +931,7 @@ class emoji_lib:
 	def most_sim_emj(self,most_sim):
 		#sim_emj=[val for val in most_sim if re.findall('[a-z,0-9]',val[0])==[]]
 		#loop through each emoji code and check the values are emoji unicodes
-		sim_emj=[val for val in most_sim if sum([re.findall(code,val) for code in self.emj_codes],[])!=[]]
+		sim_emj=[val for val in most_sim if sum([re.findall(code,val[0]) for code in self.emj_codes],[])!=[]]
 		xdata=[val[0] for val in sim_emj]
 		ydata=[val[1] for val in sim_emj]
 		return xdata,ydata
