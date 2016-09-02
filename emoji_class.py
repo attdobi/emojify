@@ -935,7 +935,7 @@ class emoji_lib:
 		#sim_emj=[val for val in sim_emj if sum([re.findall(code,val[0]) for code in self.emj_codes],[])!=[]]
 		#faster:
 		sim_emj=[val for val in most_sim if val[0][0:2] in self.emj_codes or val[0][0:4] in self.emj_codes]
-		xdata=[val[0][0:10] for val in sim_emj]#[0:10] limits the output of emoji strings
+		xdata=[val[0][0:12] for val in sim_emj]#[0:12] limits the output of emoji strings
 		ydata=[val[1] for val in sim_emj]
 		return xdata,ydata
 		
