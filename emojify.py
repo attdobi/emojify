@@ -85,7 +85,7 @@ def train():
 def slides():
 	return render_template("slides.html")
 @application.route("/demo")
-#@requires_auth
+@requires_auth
 def demo():
 	return render_template("search.html")
 	
