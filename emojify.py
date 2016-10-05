@@ -82,6 +82,7 @@ def tree_doc():
 def train():
 	return render_template("train.html")
 @application.route("/slides")
+@requires_auth
 def slides():
 	return render_template("slides.html")
 @application.route("/demo")
