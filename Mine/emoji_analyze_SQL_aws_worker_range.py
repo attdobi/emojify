@@ -31,9 +31,10 @@ else:
 run=True
 if __name__ == "__main__":
 	while run:
-		cur.execute("SELECT tweet_id from has_emoji WHERE MOD(tweet_id,2)=%s order by tweet_id DESC limit 1;",(core_number,))#find last processed id
-		last_id=cur.fetchone()
-		cur.execute("SELECT * from tweet_dump WHERE (id>%s AND MOD(id,2)=%s) ORDER BY id LIMIT 100000;",(last_id,core_number)) 
+		#cur.execute("SELECT tweet_id from has_emoji WHERE MOD(tweet_id,2)=%s order by tweet_id DESC limit 1;",(core_number,))#find last processed id
+		#last_id=cur.fetchone()
+		last_id=66863327
+		cur.execute("SELECT * from tweet_dump WHERE (id BETWEEN %s AND %s AND MOD(id,2)=%s) ORDER BY id LIMIT 100000;",(last_id,180274324,core_number)) 
 		#where id>tweet_id, only odd or even
 		SQL_result=cur.fetchall()
 		print(len(SQL_result))
@@ -42,3 +43,4 @@ if __name__ == "__main__":
 				analyze_tweet_emojis(conn,cur,result)
 		else:#else quit ... or sleep
 			run=False
+		run=False ### REMOVE THIS LINE AFTER START!!!!###
