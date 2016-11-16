@@ -5,7 +5,10 @@ from flask import Flask, render_template, request, request, jsonify
 import numpy as np
 from emoji_class import *
 import locale
-locale.setlocale(locale.LC_ALL, 'en_US.utf8')
+try:
+	 locale.setlocale(locale.LC_ALL, 'en_US.utf8')
+except locale.Error:
+	locale.setlocale(locale.LC_ALL, 'en_US')
 
 #initialize emoji class
 Emoji=emoji_lib()

@@ -470,7 +470,9 @@ class emoji_lib:
 			
 	def get_last_id(self):
 		self.cur.execute("SELECT id from emoji_tweet order by id desc limit 1;")
-		return self.cur.fetchall()[0]
+		last_id= self.cur.fetchall()[0]
+		print last_id
+		return last_id
 		
 	######### Index search result, write to SQL DB ###########################
 	def index_result(self, word,freq_filter,face_filter,pattern_type,user_lang,date_range,xdata,ydata):
