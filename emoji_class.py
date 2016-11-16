@@ -470,7 +470,7 @@ class emoji_lib:
 			
 	def get_last_id(self):
 		self.cur.execute("SELECT id from emoji_tweet order by id desc limit 1;")
-		last_id= self.cur.fetchall()[0]
+		last_id= self.cur.fetchall()
 		print last_id
 		return last_id
 		
