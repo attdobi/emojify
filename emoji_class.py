@@ -830,8 +830,8 @@ class emoji_lib:
 		rand_start=randint(0,last_id)
 		rand_end=rand_start+1000000
 		#self.cur.execute("SELECT b.text from emoji_tweet a join tweet_dump b on a.tweet_id=b.id WHERE (a.emojiCountSum > 30) order by random() limit 100;")
-		print "SELECT b.text from (SELECT * from emoji_tweet WHERE id BETWEEN {:d} AND {:d} ) as a join tweet_dump b on a.tweet_id=b.id WHERE (a.emojiCountSum > 30) limit 100;".format(last_id,rand_start,rand_end)
-		self.cur.execute("SELECT b.text from (SELECT * from emoji_tweet WHERE id BETWEEN {:d} AND {:d} ) as a join tweet_dump b on a.tweet_id=b.id WHERE (a.emojiCountSum > 30) limit 100;".format(last_id,rand_start,rand_end))
+		#print "SELECT b.text from (SELECT * from emoji_tweet WHERE id BETWEEN {:d} AND {:d} ) as a join tweet_dump b on a.tweet_id=b.id WHERE (a.emojiCountSum > 30) limit 100;".format(rand_start,rand_end)
+		self.cur.execute("SELECT b.text from (SELECT * from emoji_tweet WHERE id BETWEEN {:d} AND {:d} ) as a join tweet_dump b on a.tweet_id=b.id WHERE (a.emojiCountSum > 30) limit 100;".format(rand_start,rand_end))
 		art=[_u(text[0]) for text in self.cur.fetchall()]
 		return '\n\n'.join(art)
 		
@@ -853,7 +853,7 @@ class emoji_lib:
 		rand_start=randint(0,last_id)
 		rand_end=rand_start+1000000
 		#self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} ) order by random() DESC limit 1000;".format(_u(word),lang))
-		print "SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} AND id BETWEEN {:d} AND {:d} ) limit 1000;".format(_u(word),lang,rand_start,rand_end)
+		#print "SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} AND id BETWEEN {:d} AND {:d} ) limit 1000;".format(_u(word),lang,rand_start,rand_end)
 		self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} AND id BETWEEN {:d} AND {:d} ) limit 1000;".format(_u(word),lang,rand_start,rand_end))
 		result=[_u(text[0]) for text in self.cur.fetchall()]
 		return '\n'.join(result)
