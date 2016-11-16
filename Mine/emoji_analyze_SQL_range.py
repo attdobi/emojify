@@ -16,11 +16,11 @@ OAUTH_TOKEN_SECRET = 'Jq9oTRMUjHRgA7NkJLLHIEyjtCRhYiFHdWkpBw28IBtHG'
 conn = psycopg2.connect("host=localhost port=5432 dbname=emoji_db user=postgres password=darkmatter")
 cur = conn.cursor()
 
-#set up parallel cores:, we will use 3
+#set up parallel cores:, we will use 4 ###Setup number of cores to be used here! ########
 if len(sys.argv) == 2:
 	core_number=int(sys.argv[1])-1
-	cores=2
-	print('running on core {:d} of 2'.format(core_number+1))
+	cores=4
+	print('running on core {:d} of {:d}'.format(core_number+1,cores))
 else:
 	#run on 1 core
 	print('running on one core')
@@ -32,10 +32,10 @@ else:
 run=True
 if __name__ == "__main__":
 	while run:
-		#cur.execute("SELECT tweet_id from has_emoji WHERE MOD(tweet_id,2)=%s order by id DESC limit 1;",(core_number,))#find last processed id
-		#last_id=cur.fetchone()
-		last_id=66863327
-		cur.execute("SELECT * from tweet_dump WHERE (id BETWEEN %s AND %s AND MOD(id,2)=%s) ORDER BY id LIMIT 100000;",(last_id,180274324,core_number)) 
+		cur.execute("SELECT tweet_id from has_emoji WHERE MOD(tweet_id,%s)=%s order by id DESC limit 1;",(cores,core_number))#find last processed id
+		last_id=cur.fetchone()
+		#last_id=66863327 #only use at first run
+		cur.execute("SELECT * from tweet_dump WHERE (id BETWEEN %s AND %s AND MOD(id,%s)=%s) ORDER BY id LIMIT 100000;",(last_id,180274324,cores,core_number)) 
 		#where id>tweet_id, only odd or even
 		SQL_result=cur.fetchall()
 		print(len(SQL_result))
@@ -44,4 +44,4 @@ if __name__ == "__main__":
 				analyze_tweet_emojis(conn,cur,result)
 		else:#else quit ... or sleep
 			run=False
-		run=False ### REMOVE THIS LINE AFTER START!!!!###
+		#run=False ### REMOVE THIS LINE AFTER START!!!!###
