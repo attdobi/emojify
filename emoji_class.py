@@ -471,7 +471,6 @@ class emoji_lib:
 	def get_last_id(self):
 		self.cur.execute("SELECT id from emoji_tweet order by id desc limit 1;")
 		last_id= self.cur.fetchall()[0][0]
-		print last_id
 		return last_id
 		
 	######### Index search result, write to SQL DB ###########################
@@ -827,9 +826,9 @@ class emoji_lib:
 	########## Sample Art ##############################################################
 	def sample_art(self):
 		#Removed TABLESAMPLE SYSTEM (0.5) ... was getting too slow, replaced with last_id-1000000
-		last_id=self.get_last_id()
+		last_id=self.get_last_id()-1000000
 		#self.cur.execute("SELECT b.text from emoji_tweet a join tweet_dump b on a.tweet_id=b.id WHERE (a.emojiCountSum > 30) order by random() limit 100;")
-		self.cur.execute("SELECT b.text from (SELECT * from emoji_tweet and id > {:d}) as a join tweet_dump b on a.tweet_id=b.id WHERE (a.emojiCountSum > 30) limit 100;".format(last_id-1000000))
+		self.cur.execute("SELECT b.text from (SELECT * from emoji_tweet WHERE id > {:d}) as a join tweet_dump b on a.tweet_id=b.id WHERE (a.emojiCountSum > 30) limit 100;".format(last_id))
 		art=[_u(text[0]) for text in self.cur.fetchall()]
 		return '\n\n'.join(art)
 		
@@ -847,9 +846,9 @@ class emoji_lib:
 			lang="AND lang='{:s}'".format(user_lang)
 			
 		#Removed TABLESAMPLE SYSTEM (0.5) ... was getting too slow. replaced with last_id-1000000
-		last_id=self.get_last_id()
+		last_id=self.get_last_id()-1000000
 		#self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} ) order by random() DESC limit 1000;".format(_u(word),lang))
-		self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} and id > {:d}) limit 1000;".format(_u(word),lang,last_id-1000000))
+		self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} and id > {:d}) limit 1000;".format(_u(word),lang,last_id))
 		result=[_u(text[0]) for text in self.cur.fetchall()]
 		return '\n'.join(result)
 	######### emojify code: ################################################
