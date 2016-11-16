@@ -461,10 +461,16 @@ class emoji_lib:
 		if date_range=='all':
 			start_date='2016-03-20 12:00:00'
 			end_date=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+			last_id=self.get_last_id()
+			return "AND id > {:d}".format(last_id-1000000) #remove the date range cut from the search and look at last 1M entries
 		else:
 			start_date=datetime.datetime.strptime(date_range[0], "%B %d, %Y, %H, %M").strftime('%Y-%m-%d %H:%M:%S')
 			end_date=datetime.datetime.strptime(date_range[1], "%B %d, %Y, %H, %M").strftime('%Y-%m-%d %H:%M:%S')
-		return "AND created_at BETWEEN '{:s}' AND '{:s}'".format(start_date,end_date)
+			return "AND created_at BETWEEN '{:s}' AND '{:s}'".format(start_date,end_date)
+			
+	def get_last_id(self):
+		self.cur.execute("SELECT id from emoji_tweet order by id desc limit 1;")
+		return self.cur.fetchall()[0]
 		
 	######### Index search result, write to SQL DB ###########################
 	def index_result(self, word,freq_filter,face_filter,pattern_type,user_lang,date_range,xdata,ydata):
