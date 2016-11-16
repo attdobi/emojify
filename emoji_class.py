@@ -852,6 +852,7 @@ class emoji_lib:
 		rand_start=randint(0,last_id)
 		rand_end=rand_start+1000000
 		#self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} ) order by random() DESC limit 1000;".format(_u(word),lang))
+		print("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} AND id BETWEEN {:d} AND {:d} ) limit 1000;".format(_u(word),lang,rand_start,rand_end))
 		self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} AND id BETWEEN {:d} AND {:d} ) limit 1000;".format(_u(word),lang,rand_start,rand_end))
 		result=[_u(text[0]) for text in self.cur.fetchall()]
 		return '\n'.join(result)
