@@ -192,6 +192,8 @@ def print_data():
 	user_lang = request.args.get('user_lang')
 	date_range=request.args.get('date_range')
 	date_range=date_range.split(' - ') #split start,end
+	date_range='all' #Edit to search last 1M
+	
 	if freq_filter=='freq':
 		xdata, ydata = Emoji.filter_emoji_freq(word,face_filter,pattern_type,user_lang,date_range)
 	elif freq_filter=='all':
@@ -214,6 +216,7 @@ def print_indexed_data():
 	user_lang = request.args.get('user_lang')
 	date_range=request.args.get('date_range')
 	date_range=date_range.split(' - ') #split start,end
+	date_range='all' #Edit to search last 1M
 	xdata, ydata = Emoji.emoji_indexed(word,freq_filter,face_filter,pattern_type,user_lang,date_range)
 	ysum=sum(ydata)
 	#save y data as comma separated 1000s string and return JSON
@@ -226,6 +229,7 @@ def skin_data():
 	user_lang = request.args.get('user_lang')
 	date_range=request.args.get('date_range')
 	date_range=date_range.split(' - ') #split start,end
+	date_range='all' #Edit to search last 1M
 	xdata, ydata = Emoji.emoji_skin(word,user_lang,date_range)
 	Emoji.index_skin_result(word,user_lang,date_range,xdata,ydata)
 	ysum=sum(ydata)
@@ -239,6 +243,7 @@ def indexed_skin_data():
 	user_lang = request.args.get('user_lang')
 	date_range=request.args.get('date_range')
 	date_range=date_range.split(' - ') #split start,end
+	date_range='all' #Edit to search last 1M
 	xdata, ydata = Emoji.emoji_skin_indexed(word,user_lang,date_range)
 	ysum=sum(ydata)
 	#save y data as comma separated 1000s string and return JSON
@@ -255,6 +260,7 @@ def getstats():
 	freq_filter = request.args.get('freq_filter')
 	face_filter = request.args.get('face_filter')
 	date_range=request.args.get('date_range').split(' - ') #split start,end
+	date_range='all' #Edit to search last 1M
 	result=Emoji.emoji_stats_indexed(word,search_type,sort_by,user_lang,timezone,freq_filter,face_filter,date_range)
 	if result==0: #if not indexed then search (takes ~10-20 seconds each)
 		result=Emoji.emoji_stats(word,search_type,sort_by,user_lang,timezone,freq_filter,face_filter,date_range)
