@@ -12,21 +12,36 @@ OAUTH_TOKEN = '3229899732-piSMFy32Vi0VSyXJX8R9y2qrkr0piesoHXBdI3v'
 OAUTH_TOKEN_SECRET = 'Jq9oTRMUjHRgA7NkJLLHIEyjtCRhYiFHdWkpBw28IBtHG'
 
 #connect to postgrSQL
+#conn = psycopg2.connect("host=172.31.22.77 port=5432 dbname=emoji_db user=postgres password=darkmatter")
 conn = psycopg2.connect("host=localhost port=5432 dbname=emoji_db user=postgres password=darkmatter")
 cur = conn.cursor()
 
+#set up parallel cores:, we will use 4 ###Setup number of cores to be used here! ########
+if len(sys.argv) == 2:
+	core_number=int(sys.argv[1])-1
+	cores=4
+	print('running on core {:d} of {:d}'.format(core_number+1,cores))
+else:
+	#run on 1 core
+	print('running on one core')
+	cores=1
+	core_number=0
+	
 #get the last timestamp from emoji_tweet table. Eventually change to select last tweet_id
 #query the tweet_dump table for times greater than last emoji_tweet time
 run=True
 if __name__ == "__main__":
 	while run:
-		cur.execute("SELECT tweet_id from has_emoji order by tweet_id DESC limit 1;")#find last processed id
-		last_date=cur.fetchone()
-		cur.execute("SELECT * from tweet_dump WHERE (id>%s) LIMIT 100000;",last_date) #where id>tweet_id
+		#cur.execute("SELECT tweet_id from has_emoji WHERE MOD(tweet_id,%s)=%s order by id DESC limit 1;",(cores,core_number))#find last processed id
+		#last_id=cur.fetchone()
+		last_id = 228235327
+		cur.execute("SELECT * from tweet_dump WHERE id > %s AND MOD(id,%s)=%s) ORDER BY id LIMIT 1000000;",(last_id,cores,core_number)) 
+		#where id>tweet_id, only odd or even
 		SQL_result=cur.fetchall()
 		print(len(SQL_result))
-		if len(SQL_result)>0:#begin analysis
+		if len(SQL_result)>1:#begin analysis
 			for result in SQL_result:
 				analyze_tweet_emojis(conn,cur,result)
 		else:#else quit ... or sleep
 			run=False
+		run=False ### REMOVE THIS LINE AFTER START!!!!###
