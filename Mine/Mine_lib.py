@@ -18,11 +18,11 @@ emj_codes=[code for code in emoji_key['Unicode'] if code!="Browser" \
 #codes that are yellow with the potential for a skin tone
 can_have_skin=[key[0:2] for key in emj_codes if re.findall(emj_codes_skin[0],key) != []]
 can_have_skin += [key[0:1] for key in emj_codes if len(key[0:2].encode("utf-8"))==6 and re.findall(emj_codes_skin[0],key) != []]
-#remove common face emojis
-face_index=range(69)
+# Remove common face emojis, # Original was 69
+face_index=range(75)
 emj_codes_face=[code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
 
-#Not needed in Python 3
+# Not needed in Python 3
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
 
 #remove common face emojis
