@@ -907,8 +907,8 @@ class emoji_lib:
 		emoji_TS = pd.read_excel(base_dir+'/emojify/data/emoji_TS.xlsx', encoding='utf-8', skiprows=1)
 		emoji_TS=emoji_TS.replace(np.nan,"") # need to remove nan
 		emjDict=dict()
-		for key, name, annotation,action in zip(emoji_key['Unicode'], emoji_key['Name'], emoji_key['Annotations'], emoji_key['Action']):
-			for stem_word in self.str_stemmer(self.words(annotation)+self.words(action)):
+		for key, name, annotation in zip(emoji_key['Unicode'], emoji_key['Name'], emoji_key['Annotations'] ):
+			for stem_word in self.str_stemmer(self.words(annotation) ):
 			#for stem_word in words(annotation)+words(action):
 				emjDict[_u(stem_word)]=key
 		for word, val in zip(emoji_TS['word'], emoji_TS['emoji']):

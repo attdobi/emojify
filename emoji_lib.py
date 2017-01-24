@@ -56,8 +56,8 @@ def buildDict():
 	emoji_TS = pd.read_excel('data/emoji_TS.xlsx', encoding='utf-8', skiprows=1)
 	emoji_TS=emoji_TS.replace(np.nan,"") # need to remove nan
 	emoji_dict=dict()
-	for key, name, annotation,action in zip(emoji_key['Unicode'], emoji_key['Name'], emoji_key['Annotations'], emoji_key['Action']):
-		for stem_word in str_stemmer(words(annotation)+words(action)):
+	for key, name, annotation in zip(emoji_key['Unicode'], emoji_key['Name'], emoji_key['Annotations']):
+		for stem_word in str_stemmer(words(annotation)):
 		#for stem_word in words(annotation)+words(action):
 			emoji_dict[_u(stem_word)]=key
 	for word, val in zip(emoji_TS['word'], emoji_TS['emoji']):
