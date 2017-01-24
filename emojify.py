@@ -1,7 +1,7 @@
 #import os
 #base_dir=os.path.expanduser('~')
 from __future__ import division
-from flask import Flask, render_template, request, request, jsonify
+from flask import Flask, render_template, request, jsonify
 import numpy as np
 from emoji_class import *
 import locale
