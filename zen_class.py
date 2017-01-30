@@ -15,10 +15,10 @@ from gensim import corpora,  models,  similarities
 _u  =  lambda t: t.decode('UTF-8',  'replace') if isinstance(t,  str) else t
 
 class Zen:
-	"""Tall Labs Class"""
+	"""Zen Class"""
 	def __init__(self):
 		#setup
-		self.conn = psycopg2.connect("host=localhost port=5432 dbname=zen user=attiladobi password=darkmatter")
+		self.conn = psycopg2.connect("host=localhost port=5432 dbname=zen user=postgres password=darkmatter")
 		self.cur = self.conn.cursor()
 		self.stoplist  =  set('a an for of the and to in rt'.split())
 		self.comment_modelB = models.Word2Vec.load(base_dir+'/emojify/models/comment_modelB')

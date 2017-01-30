@@ -99,9 +99,9 @@ li.dropdown {
     </style> 
   <script type=text/javascript>
     $(function() {
-      $('#YesNo').bind('click', function() {
-        $.getJSON('/_train', {
-           a: 'yes/no',
+      $('#Pos').bind('click', function() {
+        $.getJSON('/zen/_train', {
+           a: 'positive',
            name: $('input[name="name_in"]').val()
         }, function(data) {
           $("#result").text(data.result);
@@ -110,9 +110,31 @@ li.dropdown {
         });
         return false;
       });
-    $('#OE').bind('click', function() {
-        $.getJSON('/_train', {
-           a: 'open-ended',
+    $('#Neg').bind('click', function() {
+        $.getJSON('/zen/_train', {
+           a: 'negative',
+           name: $('input[name="name_in"]').val()
+        }, function(data) {
+          $("#result").text(data.result);
+          make_graph();
+          make_table();
+        });
+        return false;
+      });
+    $('#General').bind('click', function() {
+        $.getJSON('/zen/_train', {
+           a: 'general',
+           name: $('input[name="name_in"]').val()
+        }, function(data) {
+          $("#result").text(data.result);
+          make_graph();
+          make_table();
+        });
+        return false;
+      });
+    $('#Need').bind('click', function() {
+        $.getJSON('/zen/_train', {
+           a: 'lacking',
            name: $('input[name="name_in"]').val()
         }, function(data) {
           $("#result").text(data.result);
@@ -122,7 +144,7 @@ li.dropdown {
         return false;
       });
     $('#unknown').bind('click', function() {
-        $.getJSON('/_train', {
+        $.getJSON('/zen/_train', {
            a: 'unknown',
            name: $('input[name="name_in"]').val()
         }, function(data) {
@@ -139,28 +161,32 @@ li.dropdown {
     <div class="container">
       <div class="header">
 <ul>
-  <li><a class="active" href="/force">Force Diagram</a></li>
-  <li><a href="/tree">Tree Diagram</a></li>
-  <li><a href="/train">Training</a></li>
+  <li><a class="active" href="/zen/force">Force Diagram</a></li>
+  <li><a href="/zen/tree">Tree Diagram</a></li>
+  <li><a href="/zen/train">Training</a></li>
 </ul>
         <h3 class="text-muted">Q/A Training
       </h3> 
-        
-      <hr/>
-      <center><pre class="box" id="result" style="font-size:12pt"></center> </pre>
-      <!<textarea id="result" rows="30" cols="70"><!</textarea>
-      </div>
-      <h6> <center> What type of question is this? </center></h6>
-      <h6> <center>
-     <a class="btn btn-lg btn-success" id="YesNo" role="button">Yes/No</a>
-     <a class="btn btn-lg btn-success" id="OE" role="button">open-ended</a>
-     <a class="btn btn-lg btn-success" id="unknown" role="button">¯\_(ツ)_/¯🦄 </a>
-       </center>
-      <input type = "text" name= "name_in" value = "" style="float:right;" />
-             <font size="3"><label for="name"
-          style="display: inline-block; width: 50px; float:right;">
+      <font size="3"><label for="name"
+          style="display: inline-block; width: 50px; float:left;">
         Name:
       </label></fontsize>
+          <input type = "text" name= "name_in" value = "" style="float:left;" />
+         </br>
+      <hr/>
+    <h3> <center> What is the sentiment of this comment?</center></h3>
+      <h6> <center> ... regarding the service, site or peer motivator. Complaints about police or "we talked about" are general </center></h6>
+      <center><pre class="box" id="result" style="font-size:14pt"></center> </pre>
+      <!<textarea id="result" rows="30" cols="70"><!</textarea>
+      </div>
+      
+      <h6> <center>
+     <a class="btn btn-lg btn-success" id="Pos" role="button">Positive</a>
+     <a class="btn btn-lg btn-warning" id="General" role="button">General</a>
+     <a class="btn btn-lg btn-danger" id="Neg" role="button">Negative</a> </br></br>
+     <a class="btn btn-lg btn-danger" id="Need" role="button">Need Resources</a>
+     <a class="btn btn-lg btn-primary" id="unknown" role="button">¯\_(ツ)_/¯🦄 </a>
+       </center>
      
 </h6>
 <hr/>
@@ -181,14 +207,14 @@ li.dropdown {
 
 
 function initiallize() {
-        $.getJSON('/_train', {
+        $.getJSON('/zen/_train', {
            a: 'start'
         }, function(data) {
           $("#result").text(data.result);
         });}
         
 function make_graph() {
- var URL_BASE = "/_train_plot";
+ var URL_BASE = "/zen/_train_plot";
 
 d3.json(URL_BASE, function(error, data) {
 
@@ -207,7 +233,6 @@ d3.json(URL_BASE, function(error, data) {
                 .tickFormat(d3.format(',.2f'));
                 
 
-
       chart.showLegend(true);
 
         d3.select('#multibarchart svg')
@@ -224,7 +249,7 @@ d3.json(URL_BASE, function(error, data) {
 }//end make graph
 
 function make_table() {
-   var URL_BASE = "/_train_table";
+   var URL_BASE = "/zen/_train_table";
   
   d3.json(URL_BASE, function(error, data) {
     var fmt = d3.format("d");
