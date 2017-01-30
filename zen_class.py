@@ -68,7 +68,7 @@ class Zen:
 		self.cur.execute("SELECT q_id from training order by id DESC limit 1;")
 		last_id=self.cur.fetchall()[0][0]
 		self.cur.execute("SELECT id, comment from comments WHERE (id>{:d} and comment NOT LIKE '%talk%' \
-		and comment NOT LIKE '%spoke%' and comment NOT LIKE '%disscus%' and comment NOT LIKE '%ask%' \
+		and comment NOT LIKE '%spoke%' and comment NOT LIKE '%discuss%' and comment NOT LIKE '%ask%' \
 		and comment NOT LIKE '%teach%' and comment NOT LIKE '%info on%')limit 2;".format(last_id,))
 		result = self.cur.fetchall()
 		q_id = result[0][0]
