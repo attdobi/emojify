@@ -77,22 +77,22 @@ def web():
 ####### Zentiment #########################################
 
 @application.route("/zen/force")
-def force():
-	return render_template("force.html")
+def zenforce():
+	return render_template("zen/force.html")
 @application.route("/zen/tree")
-def tree():
-	return render_template("tree.html")
+def zentree():
+	return render_template("zen/tree.html")
 	
 #Functions for D3JS visualization
 @application.route('/zen/_get_vis')
-def _get_vis():
+def _zen_get_vis():
 	word = request.args.get('word')
 	#model = request.args.get('model')
 	result=Zen.visual(word)
 	return jsonify(result=result)
 	
 @application.route('/zen/_get_tree')
-def _get_tree():
+def _zen_get_tree():
 	word = request.args.get('word')
 	#model = request.args.get('model')
 	result=Zen.tree(word)
