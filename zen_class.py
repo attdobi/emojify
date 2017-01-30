@@ -3,16 +3,13 @@
 from __future__ import division, unicode_literals
 import os
 base_dir = os.path.expanduser('~') #get home dir
-import pandas as pd
 import datetime
 import numpy as np
-from nltk.stem.snowball import SnowballStemmer
 from string import punctuation
 import re,  collections,  random,  datetime
 import psycopg2
 import json
 from gensim import corpora,  models,  similarities
-from sklearn.externals import joblib
 
 # guarantee unicode string... #no need in python3 (will cause an error)
 _u  =  lambda t: t.decode('UTF-8',  'replace') if isinstance(t,  str) else t
@@ -22,7 +19,7 @@ class Zen:
 	def __init__(self):
 		#setup
 		self.stoplist  =  set('a an for of the and to in rt'.split())
-		self.comment_modelB = models.Word2Vec.load(base_dir+'/zentiment/models/comment_modelB')
+		self.comment_modelB = models.Word2Vec.load(base_dir+'/emojify/models/comment_modelB')
 		#self.dictionary = corpora.Dictionary.load(base_dir+'/TallLabs/models/lda_cell_dict_15')
 		#LDA categories
 		self.LDAcategories = {0:'Clips,  Mounts,  Holsters ', 1:'Cables,  Chargers,  Adapters', 2:'Batteries,  Battery Life', 3:'Product Description', \
