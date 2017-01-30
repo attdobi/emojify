@@ -4,6 +4,7 @@ from __future__ import division
 from flask import Flask, render_template, request, jsonify
 import numpy as np
 from emoji_class import *
+from zen_class import Zen
 import locale
 try:
 	 locale.setlocale(locale.LC_ALL, 'en_US.utf8')
@@ -13,6 +14,7 @@ except locale.Error:
 #initialize emoji class
 Emoji=emoji_lib()
 Tall=TallLabs_lib()
+Zen=Zen()
 
 #Setup Authentication #########################################
 from functools import wraps
@@ -71,6 +73,34 @@ def map():
 @application.route('/web')
 def web():
 	return render_template("web.html")
+
+####### Zentiment #########################################
+
+@application.route("/zen/force")
+def force():
+	return render_template("zen/force.html")
+@application.route("/zen/tree")
+def tree():
+	return render_template("zen/tree.html")
+	
+#Functions for D3JS visualization
+@application.route('/zen/_get_vis')
+def _get_vis():
+	word = request.args.get('word')
+	#model = request.args.get('model')
+	result=Zen.visual(word)
+	return jsonify(result=result)
+	
+@application.route('/zen/_get_tree')
+def _get_tree():
+	word = request.args.get('word')
+	#model = request.args.get('model')
+	result=Zen.tree(word)
+	return jsonify(result=result)
+	
+###### End Zentiment  ####################################
+
+
 ####### Tall Labs Part ######################
 @application.route("/force")
 def force():
