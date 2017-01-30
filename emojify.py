@@ -78,10 +78,10 @@ def web():
 
 @application.route("/zen/force")
 def force():
-	return render_template("zen/force.html")
+	return render_template("force.html")
 @application.route("/zen/tree")
 def tree():
-	return render_template("zen/tree.html")
+	return render_template("tree.html")
 	
 #Functions for D3JS visualization
 @application.route('/zen/_get_vis')
