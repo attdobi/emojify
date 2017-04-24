@@ -8,7 +8,6 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js"></script>
-    <script src="https://gist.githubusercontent.com/1wheel/e0c26b0974e3674de312/raw/9dd7c97f01b9878c1e08ccc21c21edf2c9080bcf/d3-jetpack.js"></script>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
           rel="stylesheet">
     <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
@@ -251,10 +250,10 @@ window['range']=moment().subtract(60, 'days').format('MMMM D, YYYY, HH, mm') + '
 // the table rows
     // column definitions
     var columns = [
-        { head: 'Rank', cl: 'center', html: ƒ('rank') },
-        { head: 'Emoji', cl: 'title', html: ƒ('label') },
-        { head: 'Count', cl: 'center', html: ƒ('value') },
-        { head: '%', cl: 'center', html: ƒ('percent') },
+        { head: 'Rank', cl: 'center', html: function(row) { return r.rank; } },
+        { head: 'Emoji', cl: 'title', html: function(row) { return r.label; } },
+        { head: 'Cosine Sim', cl: 'center', html: function(row) { return r.str_value; } },
+        { head: '%', cl: 'center', html: function(row) { return r.percent; } },
     ];
 
         
