@@ -281,8 +281,8 @@ function make_graph() {
         header
         .data(columns).enter()
         .append('th')
-        .attr('class', ƒ('cl'))
-        .text(ƒ('head'));
+        .attr('class', function(row) { return r.cl; })
+        .text(function(row) { return r.head; });
 
     // create table body
     var body = table.append("tbody")
@@ -305,8 +305,8 @@ function make_graph() {
             });
         }).enter()
         .append('td')
-        .html(ƒ('html'))
-        .attr('class', ƒ('cl'));
+        .html(function(row) { return r.html; })
+        .attr('class', function(row) { return r.cl; });
 
 		table.selectAll("th").style("background-color", "#D8D8D8");
 		table.selectAll("tr").style("background-color", function(d, i){
