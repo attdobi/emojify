@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js"></script>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
           rel="stylesheet">
+    <script type="https://raw.githubusercontent.com/gka/d3-jetpack/master/src/f.js"></script>
     <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
 	<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 	<! link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.css" />
@@ -162,9 +163,9 @@ window['range']=moment().subtract(60, 'days').format('MMMM D, YYYY, HH, mm') + '
 // the table rows
     // column definitions
     var columns = [
-        { head: 'Rank', cl: 'center', html: function(row) { return r.rank; } },
-        { head: 'Emoji', cl: 'title', html: function(row) { return r.label; } },
-        { head: 'Cosine Sim', cl: 'center', html: function(row) { return r.str_value; } },
+        { head: 'Rank', cl: 'center', html: f('rank') },
+        { head: 'Emoji', cl: 'title', html: f('label') },
+        { head: 'Cosine Sim', cl: 'center', html: f('str_value') },
     ];
 
         
@@ -281,7 +282,7 @@ function make_graph() {
         header
         .data(columns).enter()
         .append('th')
-        .attr(function(row) { return r.cl; })
+        .attr('class', function(row) { return r.cl; })
         .text(function(row) { return r.head; });
 
     // create table body
