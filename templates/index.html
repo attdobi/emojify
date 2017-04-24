@@ -379,7 +379,7 @@ function make_graph() {
         header
         .data(columns).enter()
         .append('th')
-        .attr('class', function(row) { return r.cl; })
+        .attr(function(row) { return r.cl; })
         .text(function(row) { return r.head; });
 
     // create table body
