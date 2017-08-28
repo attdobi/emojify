@@ -29,6 +29,8 @@ emj_codes_face = [code for index,code in zip(emoji_key.index,emoji_key['Unicode'
 
 # Not needed in Python 3
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
+# Constant for emoji_aplit_all function.
+ARG = 'arg**_'
 
 #remove common face emojis
 #face_index=range(69)
@@ -46,7 +48,6 @@ def sort_set_by_length(char_set):
     char_array_lens = np.array([len(c) for c in char_array])
     idx_sorted_by_len = np.argsort(char_array_lens)[::-1]
     return char_array[idx_sorted_by_len]
-
 
 def emoji_split_all(text, sorted_overlaps):
     '''add a space before and after the emoji, then remove double spaces. Keep \n'''
