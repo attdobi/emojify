@@ -18,18 +18,18 @@ cur = conn.cursor()
 
 #set up parallel cores:, we will use 4 ###Setup number of cores to be used here! ########
 if len(sys.argv) == 2:
-	core_number=int(sys.argv[1])-1
-	cores=4
-	print('running on core {:d} of {:d}'.format(core_number+1,cores))
+	core_number = int(sys.argv[1]) - 1
+	cores = 4
+	print('running on core {:d} of {:d}'.format(core_number + 1, cores))
 else:
 	#run on 1 core
 	print('running on one core')
-	cores=1
-	core_number=0
-	
-#get the last timestamp from emoji_tweet table. Eventually change to select last tweet_id
-#query the tweet_dump table for times greater than last emoji_tweet time
-run=True
+	cores = 1
+	core_number = 0
+
+# Get the last timestamp from emoji_tweet table. Eventually change to select last tweet_id.
+# Query the tweet_dump table for times greater than last emoji_tweet time.
+run = True
 if __name__ == "__main__":
 	while run:
 		# Find last processed id
@@ -39,9 +39,10 @@ if __name__ == "__main__":
 		cur.execute("SELECT * from tweet_dump WHERE id > %s AND MOD(id,%s)=%s ORDER BY id LIMIT 200000;",(last_id,cores,core_number)) 
 		SQL_result=cur.fetchall()
 		print(len(SQL_result))
-		if len(SQL_result)>1:#begin analysis
+		if len(SQL_result) > 1:
+			#begin analysis
 			for result in SQL_result:
 				analyze_tweet_emojis(conn,cur,result)
 		else:#else quit ... or sleep
-			run=False
+			run = False
 		#run=False ### REMOVE THIS LINE AFTER START!!!!###
