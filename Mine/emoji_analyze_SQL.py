@@ -16,7 +16,7 @@ OAUTH_TOKEN_SECRET = 'Jq9oTRMUjHRgA7NkJLLHIEyjtCRhYiFHdWkpBw28IBtHG'
 conn = psycopg2.connect("host=localhost port=5432 dbname=emoji_db user=postgres password=darkmatter")
 cur = conn.cursor()
 
-#set up parallel cores:, we will use 4 ###Setup number of cores to be used here! ########
+#set up parallel cores:, we will use 4 ### Setup number of cores to be used here ########
 if len(sys.argv) == 2:
 	core_number = int(sys.argv[1]) - 1
 	cores = 4
@@ -33,10 +33,10 @@ run = True
 if __name__ == "__main__":
 	while run:
 		# Find last processed id
-		cur.execute("SELECT tweet_id from has_emoji WHERE MOD(tweet_id,%s)=%s order by id DESC limit 1;",(cores,core_number))
+		cur.execute("SELECT tweet_id from has_emoji WHERE MOD(tweet_id,%s)=%s order by id DESC limit 1;",(cores, core_number))
 		last_id=cur.fetchone()
 		#last_id = 228235327
-		cur.execute("SELECT * from tweet_dump WHERE id > %s AND MOD(id,%s)=%s ORDER BY id LIMIT 200000;",(last_id,cores,core_number)) 
+		cur.execute("SELECT * from tweet_dump WHERE id > %s AND MOD(id,%s)=%s ORDER BY id LIMIT 200000;",(last_id, cores, core_number)) 
 		SQL_result=cur.fetchall()
 		print(len(SQL_result))
 		if len(SQL_result) > 1:
