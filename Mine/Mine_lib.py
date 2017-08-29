@@ -92,7 +92,7 @@ def emoji_split_line(line, sorted_overlaps):
 	line = line.replace(' ', '^')
 	for emcode in sorted_overlaps:
 		if re.findall(emcode,line):
-			line = line.replace(emcode, ' %s ' % emocode)
+			line = line.replace(emcode, ' %s ' % emcode)
 	for skin in emj_codes_skin:
 		line = _u(line)
 		line = line.replace(' %s' % skin, '%s ' % skin) # Put the skin codes back into place but add a space afterwards
