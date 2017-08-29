@@ -1,15 +1,14 @@
 from __future__ import division
-import json
-import pandas as pd
-import re, collections
-import numpy as np
 import os, sys
-base_dir=os.path.expanduser('~')
+import re, collections
 import datetime
-import time
 import json
+
+import numpy as np
+import pandas as pd
 import psycopg2
 
+base_dir = os.path.expanduser('~')
 YELLOW_TONE = u'\U0001f590'
 
 #read emoji codes:
@@ -52,6 +51,9 @@ def sort_set_by_length(char_set):
 def emoji_split_all(text, sorted_overlaps):
     '''add a space before and after the emoji, then remove double spaces. Keep \n'''
     lines = []
+    # Change '%' to '%%' for string formatting.
+    text = text.replace('%', '%%')
+
     for line in text.split('\n'):
         line_trimmed = line
         for i, emcode in enumerate(sorted_overlaps):
