@@ -152,8 +152,6 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 
 		sorted_overlaps = sort_set_by_length(emojis_found)
 	 	# Split text using "all" function, then find labels. This counts skin tones properly.
-	 	print original_text
-	 	print sorted_overlaps
 		text = emoji_split_all(original_text, sorted_overlaps)
 		emojiLabel = np.intersect1d(text.split(), list(emojis_found), assume_unique=False)
 		emjText = np.array([(emcode, text.split().count(emcode)) for emcode in emojiLabel \
