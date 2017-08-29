@@ -70,32 +70,32 @@ def emoji_split_all(text, sorted_overlaps):
         lines.append(processed_line)
     return '\n'.join(lines)
 
-def emoji_split(text):
-	'''add a space before and after the emoji. Do not add space between consecutive emojis unless seperated by a space.
+def emoji_split(text, sorted_overlaps):
+	''' Add a space before and after the emoji. Do not add space between consecutive emojis unless seperated by a space.
 	Remove double spaces. Keep \n'''
-	lines=[]
+	lines = []
 	for line in text.split('\n'):
-		line=_u(line)
-		for emcode in emj_codes:
-			if (len(re.findall(emcode,line))) > 0:
-				line=line.replace(emcode,'^'+emcode+'^')
+		line = _u(line)
+		for emcode in sorted_overlaps:
+			if re.findall(emcode, line):
+				line = line.replace(emcode, '^%s^' % emcode)
 		for skin in emj_codes_skin:
-			line=_u(line)
-			line=line.replace('^'+skin,skin+'^') #put the skin codes back into place but add a space afterwards
-		line=line.replace('^^','')
-		line=line.replace('^',' ')
+			line = _u(line)
+			line = line.replace('^%s' % skin, '%s^' % skin) # Put the skin codes back into place but add a space afterwards
+		line = line.replace('^^', '')
+		line = line.replace('^', ' ')
 		lines.append(' '.join(line.split()))
 	return '\n'.join(lines)
 
-def emoji_split_line(line):
-	'''Add a space before and after the emoji then remove double spaces, while keeping original spaces between emojis'''
-	line=line.replace(' ','^')
-	for emcode in emj_codes:
-		if (len(re.findall(emcode,line))) > 0:
-			line=line.replace(emcode,' '+emcode+' ')
+def emoji_split_line(line, sorted_overlaps):
+	''' Add a space before and after the emoji then remove double spaces, while keeping original spaces between emojis'''
+	line = line.replace(' ', '^')
+	for emcode in sorted_overlaps:
+		if re.findall(emcode,line):
+			line = line.replace(emcode, ' %s ' % emocode)
 	for skin in emj_codes_skin:
-		line=_u(line)
-		line=line.replace(' '+skin,skin+' ') #put the skin codes back into place but add a space afterwards
+		line = _u(line)
+		line = line.replace(' %s' % skin, '%s ' % skin) # Put the skin codes back into place but add a space afterwards
 	return ' '.join(line.split())
 
 def NextWord(text,emj):
@@ -200,10 +200,12 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 			emojiSkinTypes = len(emojiSkinCount)
 	
 		#split with  this function to analyze the strings, no spaces between emojis
-		text = emoji_split(original_text)
-		#build array of emoji strings
-		emj_str = np.array([(emj_str, int(len(emj_str) / 2)) for emj_str in sum([''.join([word if word in emojiLabel.tolist()+[' '] \
-		else 'T' for word in emoji_split_line(line).split()]).rsplit('T') for line in text.split('\n')],[]) if emj_str != ''])
+		text = emoji_split(original_text, sorted_overlaps)
+		# Build array of emoji strings
+		emj_str = \
+			np.array([(emj_str, int(len(emj_str) / 2)) for emj_str in sum([''.join([word if word in emojiLabel.tolist()+[' '] \
+			else 'T' for word in emoji_split_line(line, sorted_overlaps).split()]).rsplit('T') for line in text.split('\n')],[]) \
+			if emj_str != ''])
 		
 		#analyze emoji strings, cut away length 1 emojis and call new array a:
 		if len(emj_str) == 0:
@@ -211,11 +213,11 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 			emojistr_prev_sentence,emojistr_next_sentence,emojiPatternLabel,emojiPatternCount,emojiPatternLen,emojiPatternTypes=\
 			[],[],[],0,[],[],[],[],[],[],[],0
 		else: #try to find strings, but first filter length 1 and those with length 2(with skin codes)
-			d=collections.defaultdict(lambda:0)
+			d = collections.defaultdict(lambda:0)
 			for key in emj_str[:,0]:
 				if key not in emj_codes:#do not include length 2 emoji codes, flags, skins, etc.
 					d[key] += 1
-			a=np.array([d.values(),d.keys(),[int(len(key)/2) for key in d.keys()]])
+			a = np.array([d.values(),d.keys(), [int(len(key)/2) for key in d.keys()]])
 			#Old, remove single emojis and double if skin code is included:
 			#skin_cut=~np.bool8(((np.int32(a[2,:]))==2) & (np.array([sum([len(re.findall(emcode,val)) for emcode in emj_codes_skin]) for val in a[1,:]])))
 			#multi_cut=(np.int32(a[2,:])>1) & skin_cut
