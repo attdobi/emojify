@@ -143,9 +143,8 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 	text = original_text
 	emoji_set = set()
     # Create and n-gram of possible combinations.
-    # TODO(attila): Check that the ngram is in the set of emojis.
 	for i in range(len(text)):
-	    emoji_set.update({text[i: i + n] for n in range(max_char_len + 1)})
+		emoji_set.update({text[i: i + n] for n in range(1, max_char_len + 1) if text[i: i + n] in emj_codes_set})
 	emojis_found = emj_codes_set.intersection(emoji_set)
 
 	if emojis_found:
