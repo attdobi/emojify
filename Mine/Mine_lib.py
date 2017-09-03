@@ -139,16 +139,15 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 	#		has_emoji = True
 	#		break
 
-	#function to quickly scan for has emoji
-	text = original_text.replace(' ','')
+	# Function to quickly scan for has emoji.
+	text = original_text
 	emoji_set = set()
+    # Create and n-gram of possible combinations.
+    # TODO(attila): Check that the ngram is in the set of emojis.
 	for i in range(len(text)):
-	    ''' Create and n-gram of possible combinations'''
 	    emoji_set.update({text[i: i + n] for n in range(max_char_len + 1)})
 	emojis_found = emj_codes_set.intersection(emoji_set)
-	print text
-	print emoji_set
-	print emojis_found
+
 	if emojis_found:
 		has_emoji = True
 
@@ -158,7 +157,7 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 		emojiLabel = np.intersect1d(text.split(), list(emojis_found), assume_unique=False)
 		emjText = np.array([(emcode, text.split().count(emcode)) for emcode in emojiLabel \
 			if re.findall(emcode, text)])
-			
+
 		if len(emojiLabel) == 0:
 			# Will work in the case that a lone skin tone is used.
 			emjText = np.array([(emcode, len(re.findall(emcode, text))) for emcode in emj_codes \
@@ -166,10 +165,7 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 		
 		mostFreqWord, mostFreqWordCount = count_words(text)
 		newlineCount = text.count('\n')
-		# Create arrays to save in SQL. Sorted by frequency
-		print emjText
-		print text
-		print emojiLabel
+		# Create arrays to save in SQL. Sorted by frequency.
 		emojiLabel = emjText[np.argsort(emjText[:, 1].astype(int))[::-1]][:, 0] #sort by frequency
 		emojiLabelFaceFilter = np.in1d(emojiLabel, emj_codes_face, invert=True)
 		emojiCount = np.array(emjText[np.argsort(emjText[:, 1].astype(int))[::-1]][:, 1], dtype=int)
