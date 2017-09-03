@@ -146,7 +146,7 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 	    ''' Create and n-gram of possible combinations'''
 	    emoji_set.update({text[i: i + n] for n in range(max_char_len + 1)})
 	emojis_found = emj_codes_set.intersection(emoji_set)
-
+	print emojis_found
 	if emojis_found:
 		has_emoji = True
 
