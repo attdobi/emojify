@@ -33,10 +33,11 @@ run = True
 if __name__ == "__main__":
 	while run:
 		# Find last processed id
-		cur.execute("SELECT tweet_id from has_emoji WHERE MOD(tweet_id, %s)=%s order by id DESC limit 1;", (cores, core_number))
+		cur.execute("SELECT tweet_id from has_emoji WHERE MOD(tweet_id, %s) = %s order by id DESC limit 1;", (cores, core_number))
 		last_id=cur.fetchone()
 		#last_id = 228235327
-		cur.execute("SELECT * from tweet_dump WHERE id > %s AND MOD(id, %s)=%s ORDER BY id LIMIT 200000;", (last_id, cores, core_number)) 
+		# TODO(attila): Raspberry Pi's memory is limited to 1 GB. I manually set the query to 50,000 entries (about 2h to compute).
+		cur.execute("SELECT * from tweet_dump WHERE id > %s AND MOD(id, %s) = %s ORDER BY id LIMIT 50000;", (last_id, cores, core_number)) 
 		SQL_result=cur.fetchall()
 		print(len(SQL_result))
 		if len(SQL_result) > 1:
