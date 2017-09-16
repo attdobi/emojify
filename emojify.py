@@ -4,7 +4,7 @@ from __future__ import division
 from flask import Flask, render_template, request, jsonify
 import numpy as np
 from emoji_class import *
-from zen_class import Zen
+#from zen_class import Zen
 import locale
 try:
 	 locale.setlocale(locale.LC_ALL, 'en_US.utf8')
@@ -13,8 +13,8 @@ except locale.Error:
 
 #initialize emoji class
 Emoji=emoji_lib()
-Tall=TallLabs_lib()
-Zen=Zen()
+#Tall=TallLabs_lib()
+#Zen=Zen()
 
 #Setup Authentication #########################################
 from functools import wraps
@@ -74,6 +74,7 @@ def map():
 def web():
 	return render_template("web.html")
 
+'''
 ####### Zentiment #########################################
 
 @application.route("/zen/force")
@@ -195,7 +196,7 @@ def _process_question():
 	answers,about_text,similar_answer,title2,image_url2=Tall.processQuestion(asin,question)
 	return jsonify(result=answers,about=about_text,similar=similar_answer,title2=title2,image2=image_url2)
 	
-	
+'''
 ###### End Tall Labs Part ########################
 	
 @application.route('/_get_web')

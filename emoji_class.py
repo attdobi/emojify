@@ -21,7 +21,7 @@ class TallLabs_lib:
 	"""Tall Labs Class"""
 	def __init__(self):
 		#setup
-		self.conn = psycopg2.connect("host=localhost port=5432 dbname=amazon user=postgres password=darkmatter")
+		self.conn = psycopg2.connect("host=localhost port=9000 dbname=amazon user=postgres password=darkmatter")
 		self.cur = self.conn.cursor()
 		self.stoplist = set('a an for of the and to in rt'.split())
 		self.clf = joblib.load(base_dir+'/TallLabs/models/three_word_logreg_py2.pkl') 
@@ -443,7 +443,7 @@ class emoji_lib:
 		#setup stemmer
 		self.stemmer = SnowballStemmer('english')
 		#connect to local postgreSQL server
-		self.conn = psycopg2.connect("host=localhost port=5432 dbname=emoji_db user=postgres password=darkmatter")
+		self.conn = psycopg2.connect("host=localhost port=9000 dbname=emoji_db user=postgres password=darkmatter")
 		self.cur = self.conn.cursor()
 		#load emoji keys for cuts, only need to do once
 		self.emjDict=self.buildDict()
