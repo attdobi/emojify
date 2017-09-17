@@ -1,4 +1,4 @@
-#!/home/ubuntu/emojify/env/bin/python
+#!/home/attila/emojify/env/bin/python
 
 import sys
 import getopt
