@@ -856,12 +856,15 @@ class emoji_lib:
 			
 		#Removed TABLESAMPLE SYSTEM (0.5) ... was getting too slow. replaced with last_id-1000000
 		ID_RANGE = 500000
-		last_id = self.get_last_id() - ID_RANGE
-		rand_start = randint(0, last_id)
-		rand_end = rand_start + ID_RANGE
+		last_id = self.get_last_id()
+		# Find a random range to scan:
+		#rand_start = randint(0, last_id)
+		#rand_end = rand_start + ID_RANGE
+		# TODO(attila): Get user input for range to search.
+		id_start = last_id - ID_RANGE
 		#self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} ) order by random() DESC limit 1000;".format(_u(word), lang))
 		#print "SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} AND id BETWEEN {:d} AND {:d} ) limit 1000;".format(_u(word), lang, rand_start, rand_end)
-		self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} AND id BETWEEN {:d} AND {:d} ) limit 200;".format(_u(word), lang, rand_start, rand_end))
+		self.cur.execute("SELECT text from emoji_tweet WHERE (LOWER(text) LIKE '%{:s}%' {:s} AND id BETWEEN {:d} AND {:d} ) limit 200;".format(_u(word), lang, id_start, last_id))
 		result=[_u(text[0]) for text in self.cur.fetchall()]
 		return '\n'.join(result)
 	######### emojify code: ################################################
