@@ -1,4 +1,7 @@
 *.pyc
+
+# Skip the virtual environment directoryl
 env/
+env/*
 evn/**
 **/env
