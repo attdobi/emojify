@@ -913,7 +913,7 @@ class emoji_lib:
 			return ""
 		
 	def buildDict(self):
-		emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
+		emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=0)
 		emoji_TS = pd.read_excel(base_dir+'/emojify/data/emoji_TS.xlsx', encoding='utf-8', skiprows=1)
 		emoji_TS=emoji_TS.replace(np.nan, "") # need to remove nan
 		emjDict=dict()
@@ -928,7 +928,7 @@ class emoji_lib:
 		
 	#read emoji codes:
 	def emjCodes(self):
-		emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
+		emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=0)
 		self.emj_codes_skin=[code for code, name in zip(emoji_key['Unicode'], emoji_key['Name']) if ('FITZPATRICK' in name)]
 		self.emj_codes=[code for code in emoji_key['Unicode'] if code!="Browser" \
 				   if (code not in self.emj_codes_skin) if sum([c=="*" for c in code])==0]
@@ -936,7 +936,7 @@ class emoji_lib:
 		self.can_have_skin=[key[0:2] for key in self.emj_codes if re.findall(self.emj_codes_skin[0], key) != []]
 		self.can_have_skin += [key[0:1] for key in self.emj_codes if len(key[0:2].encode("utf-8"))==6 and re.findall(self.emj_codes_skin[0], key) != []]
 		#remove common face emojis
-		face_index=range(69)
+		face_index=range(84)
 		self.emj_codes_face=[code for index, code in zip(emoji_key.index, emoji_key['Unicode']) if index in face_index]
 		
 	def emoji_fy(self, text, lyric=False):
