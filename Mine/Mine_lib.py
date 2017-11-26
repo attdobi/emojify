@@ -288,11 +288,14 @@ def mine_tweets(conn, cur, tweet):
 	coordinates = checkNoneJSON(tweet.geo)
 	name = checkNone(tweet.user.name)
 	user_name = checkNone(tweet.user.screen_name)
+	source = checkNone(tweet.source)
+	location = checkNone(tweet.user.location)
+	twitter_id = checkNone(tweet.id)
 	# Note: There is also tweet.user.location which contains non standardized location information.
 	#print(date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
-	dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
+	dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name, source, location, twitter_id)
 	
-def dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name):
+def dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name, source, location, twitter_id):
 	cur.execute("INSERT INTO tweet_dump (\
 	date,\
 	created_at,\
@@ -304,7 +307,10 @@ def dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,
 	coordinates,\
 	time_zone,\
 	name,\
-	user_name\
+	user_name,
+	source,
+	location,
+	twitter_id\
 	)\
 	VALUES (\
 	%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\
@@ -319,7 +325,10 @@ def dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,
 	coordinates,\
 	time_zone,\
 	name,\
-	user_name\
+	user_name,\
+	source,\
+	location,\
+	twitter_id,\
 	))
 	conn.commit() #submit change to db
 
