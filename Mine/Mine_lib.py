@@ -307,13 +307,13 @@ def dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,
 	coordinates,\
 	time_zone,\
 	name,\
-	user_name,
-	source,
-	location,
+	user_name,\
+	source,\
+	location,\
 	twitter_id\
 	)\
 	VALUES (\
-	%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\
+	%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\
 	)",(\
 	date,\
 	created_at,\
