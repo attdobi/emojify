@@ -274,9 +274,9 @@ def mine_tweets(conn, cur, tweet):
 	text = tweet.text
 	# Note: There is an issue with favorite_count and retweet_count always being 0.
 	#retweet_count = tweet.retweet_count
-	retweet_count = status._json.get('retweeted_status', {}).get('retweet_count', 0)
+	retweet_count = tweet._json.get('retweeted_status', {}).get('retweet_count', 0)
 	#favorite_count = tweet.favorite_count
-	favorite_count = status._json.get('retweeted_status', {}).get('favorite_count', 0)
+	favorite_count = tweet._json.get('retweeted_status', {}).get('favorite_count', 0)
 	try:
 		lang = checkNone(tweet.lang)
 	except AttributeError:
