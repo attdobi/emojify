@@ -272,8 +272,11 @@ def mine_tweets(conn, cur, tweet):
 	date = datetime.datetime.utcnow()
 	created_at = tweet.created_at
 	text = tweet.text
-	retweet_count = tweet.retweet_count
-	favorite_count = tweet.favorite_count
+	# Note: There is an issue with favorite_count and retweet_count always being 0.
+	#retweet_count = tweet.retweet_count
+	retweet_count = status._json.get('retweeted_status', {}).get('retweet_count', 0)
+	#favorite_count = tweet.favorite_count
+	favorite_count = status._json.get('retweeted_status', {}).get('favorite_count', 0)
 	try:
 		lang = checkNone(tweet.lang)
 	except AttributeError:
@@ -281,10 +284,11 @@ def mine_tweets(conn, cur, tweet):
 	#geo = checkNoneJSON(tweet.geo) always null, using place instead
 	geo = checkNoneJSON(tweet.place)
 	time_zone = checkNone(tweet.user.time_zone)
-	#coordinates = checkNoneJSON(tweet.coordinates)
-	coordinates = checkNoneJSON(tweet.geo) #null anyway, storing the place info in geo
+	# Corrdinates are depricated.
+	coordinates = checkNoneJSON(tweet.geo)
 	name = checkNone(tweet.user.name)
 	user_name = checkNone(tweet.user.screen_name)
+	# Note: There is also tweet.user.location which contains non standardized location information.
 	#print(date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
 	dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name)
 	
