@@ -22,7 +22,7 @@ max_char_len = max([len(code) for code in emj_codes])
 # Find all yellow tones. Those that do not have a skin tacked on.
 tone = emj_codes_skin[0]
 can_have_skin = [key.replace(tone, '') for key in emj_codes if tone in key]
-# Remove common face emojis, # Original was 69
+# Remove common face emojis, # Original was 69, v4=75.
 face_index = range(84)
 emj_codes_face = [code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
 
