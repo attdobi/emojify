@@ -132,6 +132,8 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 	time_zone = SQL_return[9]
 	name = SQL_return[10]
 	user_name = SQL_return[11]
+	source = SQL_return[12]
+	location = SQL_return[13]
 
 	#function to quickly scan for has emoji
 	#for emcode in emj_codes:
@@ -248,11 +250,12 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 				emojiPatternLen = np.array([np.int32(len(val)/2) for val in emojiPatternLabel],dtype=int)
 				emojiPatternTypes = len(emojiPatternCount)
 	
-		insertIntoSQL(conn,cur,tweet_id, date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name,\
-	emojiLabel,emojiLabelFaceFilter,emojiCount,emojiCountSum,emojiTypes,prev_word,next_word,prev_sentence,next_sentence,mostFreqWord,\
-	mostFreqWordCount,newlineCount,emojiSkinLabel,emojiSkinCount,emojiSkinCountSum,emojiSkinTypes,emojistrLabel,\
-	emojistrCount,emojistrLen,emojistrTypes,emojistr_prev_word,emojistr_next_word,emojistr_prev_sentence,\
-	emojistr_next_sentence,emojiPatternLabel,emojiPatternCount,emojiPatternLen,emojiPatternTypes)
+		insertIntoSQL(conn, cur, tweet_id, date, created_at, text, retweet_count, favorite_count, lang, geo, coordinates,\
+			time_zone, name, user_name, source, location,\
+			emojiLabel,emojiLabelFaceFilter,emojiCount,emojiCountSum,emojiTypes,prev_word,next_word,prev_sentence,\
+			next_sentence,mostFreqWord,mostFreqWordCount,newlineCount,emojiSkinLabel,emojiSkinCount,emojiSkinCountSum,\
+			emojiSkinTypes,emojistrLabel,emojistrCount,emojistrLen,emojistrTypes,emojistr_prev_word,emojistr_next_word,\
+			emojistr_prev_sentence,emojistr_next_sentence,emojiPatternLabel,emojiPatternCount,emojiPatternLen,emojiPatternTypes)
 	
 	#write to has_emoji DB
 	has_emoji_SQL(conn,cur,tweet_id, has_emoji, created_at)
@@ -348,6 +351,7 @@ def has_emoji_SQL(conn,cur,tweet_id, has_emoji, created_at):
 	conn.commit() #submit change to db
 
 def insertIntoSQL(conn,cur,tweet_id, date,created_at,text,retweet_count,favorite_count,lang,geo,coordinates,time_zone,name,user_name,\
+	source, location,\
 	emojiLabel,emojiLabelFaceFilter,emojiCount,emojiCountSum,emojiTypes,prev_word,next_word,prev_sentence,next_sentence,mostFreqWord,\
 	mostFreqWordCount,newlineCount,emojiSkinLabel,emojiSkinCount,emojiSkinCountSum,emojiSkinTypes,emojistrLabel,\
 	emojistrCount,emojistrLen,emojistrTypes,emojistr_prev_word,emojistr_next_word,emojistr_prev_sentence,\
@@ -365,6 +369,8 @@ def insertIntoSQL(conn,cur,tweet_id, date,created_at,text,retweet_count,favorite
 	time_zone,\
 	name,\
 	user_name,\
+	source,\
+	location,\
 	emojiLabel,\
 	emojiLabelFaceFilter,\
 	emojiCount,\
@@ -395,7 +401,7 @@ def insertIntoSQL(conn,cur,tweet_id, date,created_at,text,retweet_count,favorite
 	emojiPatternTypes\
 	)\
 	VALUES (\
-	%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\
+	%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\
 	)",(\
 	tweet_id,\
 	date,\
@@ -409,6 +415,8 @@ def insertIntoSQL(conn,cur,tweet_id, date,created_at,text,retweet_count,favorite
 	time_zone,\
 	name,\
 	user_name,\
+	source,\
+	location,\
 	list(emojiLabel),\
 	emojiLabelFaceFilter.tolist(),\
 	list(emojiCount),\
