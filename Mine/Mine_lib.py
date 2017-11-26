@@ -255,7 +255,7 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 	emojistr_next_sentence,emojiPatternLabel,emojiPatternCount,emojiPatternLen,emojiPatternTypes)
 	
 	#write to has_emoji DB
-	has_emoji_SQL(conn,cur,tweet_id, has_emoji)
+	has_emoji_SQL(conn,cur,tweet_id, has_emoji, created_at)
 
 def mine_tweets(conn, cur, tweet):
 	#print(tweet.text)
@@ -332,16 +332,18 @@ def dumpIntoSQL(conn,cur,date,created_at,text,retweet_count,favorite_count,lang,
 	))
 	conn.commit() #submit change to db
 
-def has_emoji_SQL(conn,cur,tweet_id, has_emoji):
+def has_emoji_SQL(conn,cur,tweet_id, has_emoji, created_at):
 	cur.execute("INSERT INTO has_emoji (\
 	tweet_id,\
-	has_emoji\
+	has_emoji,\
+	created_at\
 	)\
 	VALUES (\
-	%s,%s\
+	%s,%s,%s\
 	)",(\
 	tweet_id,\
-	has_emoji\
+	has_emoji,\
+	created_at,\
 	))
 	conn.commit() #submit change to db
 
