@@ -12,7 +12,7 @@ base_dir = os.path.expanduser('~')
 YELLOW_TONE = u'\U0001f590'
 
 #read emoji codes:
-emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=1)
+emoji_key = pd.read_excel(base_dir + '/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=0)
 emj_codes_skin = [code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']) if ('FITZPATRICK' in name)]
 emj_codes = [code for code in emoji_key['Unicode'] if code != "Browser" \
            if (code not in emj_codes_skin) if sum([c=="*" for c in code]) == 0]
@@ -23,7 +23,7 @@ max_char_len = max([len(code) for code in emj_codes])
 tone = emj_codes_skin[0]
 can_have_skin = [key.replace(tone, '') for key in emj_codes if tone in key]
 # Remove common face emojis, # Original was 69
-face_index = range(75)
+face_index = range(84)
 emj_codes_face = [code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
 
 # Not needed in Python 3
