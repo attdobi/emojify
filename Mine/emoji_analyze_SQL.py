@@ -40,10 +40,15 @@ if __name__ == "__main__":
 		cur.execute("SELECT * from tweet_dump WHERE id > %s AND MOD(id, %s) = %s ORDER BY id LIMIT 50000;", (last_id, cores, core_number)) 
 		SQL_result=cur.fetchall()
 		print(len(SQL_result))
-		if len(SQL_result) > 1:
+		if len(SQL_result) >= 1:
 			#begin analysis
 			for result in SQL_result:
 				analyze_tweet_emojis(conn,cur,result)
-		else:#else quit ... or sleep
-			run = False
+		#else quit ... or sleep
+		else:
+			# Exit:
+			#run = False
+			# Sleep:
+			print 'Waiting 1 minute.'
+			sleep(60)
 		#run=False ### REMOVE THIS LINE AFTER START!!!!###
