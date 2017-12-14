@@ -17,9 +17,9 @@ conn = psycopg2.connect("host=192.168.1.187 port=5432 dbname=emoji_db user=postg
 cur = conn.cursor()
 
 #set up parallel cores:, we will use 4 ### Setup number of cores to be used here ########
-if len(sys.argv) == 2:
+if len(sys.argv) == 3:
 	core_number = int(sys.argv[1]) - 1
-	cores = 4
+	cores = int(sys.argv[2])
 	print('running on core {:d} of {:d}'.format(core_number + 1, cores))
 else:
 	#run on 1 core
