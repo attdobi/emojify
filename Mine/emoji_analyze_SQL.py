@@ -50,5 +50,5 @@ if __name__ == "__main__":
 			#run = False
 			# Sleep:
 			print 'Waiting 1 minute.'
-			sleep(60)
+			time.sleep(60)
 		#run=False ### REMOVE THIS LINE AFTER START!!!!###
