@@ -913,6 +913,9 @@ class emoji_lib:
 			return ""
 		
 	def buildDict(self):
+		''' Annotation to emoji map, for emojifying.
+		For now using old annotations from xlsx file.'''
+		# TODO(Attila): update to emoji_list.csv file.
 		emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=0)
 		emoji_TS = pd.read_excel(base_dir+'/emojify/data/emoji_TS.xlsx', encoding='utf-8', skiprows=1)
 		emoji_TS=emoji_TS.replace(np.nan, "") # need to remove nan
@@ -928,17 +931,26 @@ class emoji_lib:
 		
 	#read emoji codes:
 	def emjCodes(self):
-		emoji_key = pd.read_excel(base_dir+'/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=0)
-		self.emj_codes_skin=[code for code, name in zip(emoji_key['Unicode'], emoji_key['Name']) if ('FITZPATRICK' in name)]
-		self.emj_codes=[code for code in emoji_key['Unicode'] if code!="Browser" \
-				   if (code not in self.emj_codes_skin) if sum([c=="*" for c in code])==0]
-		#codes that are yellow with the potential for a skin tone
-		self.can_have_skin=[key[0:2] for key in self.emj_codes if re.findall(self.emj_codes_skin[0], key) != []]
-		self.can_have_skin += [key[0:1] for key in self.emj_codes if len(key[0:2].encode("utf-8"))==6 and re.findall(self.emj_codes_skin[0], key) != []]
-		#remove common face emojis
-		face_index=range(84)
-		self.emj_codes_face=[code for index, code in zip(emoji_key.index, emoji_key['Unicode']) if index in face_index]
-		
+		# TODO (Attila): Make this import generic, with mine/Mine_lib.py
+		# TODO (Attila): THis is only used in the word2vec lookup.
+		N_SKIN_TONES = 5
+		emoji_key = pd.read_csv(base_dir + '/emojify/data/emoji_list.csv', encoding='utf8',
+					    index_col=0, na_filter='')
+		# Skin tones are the last N elements.
+		self.emj_codes_skin = list(emoji_key['Unicode'][-N_SKIN_TONES:])
+		# Remove the single * emoji. Causes issues with SQL db.
+		self.emj_codes = [code for code in emoji_key['Unicode'][:-N_SKIN_TONES] if '*' not in code]
+		self.emj_codes_set = set(self.emj_codes)
+		# TODO(Attila): Remove code below. Are these ever used?
+
+		# Find all yellow tones. Those that do not have a skin tacked on.
+		tone = self.emj_codes_skin[0]
+		# Store as a set
+		self.can_have_skin = set([key.replace(tone, '') for key in self.emj_codes if tone in key])
+		# Remove common face emojis.
+		face_index = 89
+		self.emj_codes_face = list(emoji_key['Unicode'][:face_index])
+
 	def emoji_fy(self, text, lyric=False):
 		#text=text #ensure unicode encoding
 		#print(emoji.emojize(''.join([lookup(word) for word in words(text)])))
@@ -964,7 +976,7 @@ class emoji_lib:
 		#loop through each emoji code and check the values are emoji unicodes (can be slow)
 		#sim_emj=[val for val in sim_emj if sum([re.findall(code, val[0]) for code in self.emj_codes], [])!=[]]
 		#faster:
-		sim_emj=[val for val in most_sim if val[0][0:2] in self.emj_codes or val[0][0:4] in self.emj_codes]
+		sim_emj=[val for val in most_sim if val[0][0:2] in self.emj_codes_set or val[0][0:4] in self.emj_codes_set]
 		xdata=[val[0][0:12] for val in sim_emj]#[0:12] limits the output of emoji strings
 		ydata=[val[1] for val in sim_emj]
 		return xdata, ydata

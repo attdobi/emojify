@@ -1,8 +1,9 @@
 *.pyc
-**.pyc
 
-# Skip the virtual environment directoryl
+# Skip the virtual environment directory
 env/
 env/*
 evn/**
 **/env
+
+.ipynb_checkpoints/

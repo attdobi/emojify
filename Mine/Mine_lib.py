@@ -10,21 +10,25 @@ import psycopg2
 
 base_dir = os.path.expanduser('~')
 YELLOW_TONE = u'\U0001f590'
+N_SKIN_TONES = 5
 
-#read emoji codes:
-emoji_key = pd.read_excel(base_dir + '/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=0)
-emj_codes_skin = [code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']) if ('FITZPATRICK' in name)]
-emj_codes = [code for code in emoji_key['Unicode'] if code != "Browser" \
-           if (code not in emj_codes_skin) if sum([c=="*" for c in code]) == 0]
+# Read emoji codes:
+emoji_key = pd.read_csv(base_dir + '/emojify/data/emoji_list.csv', encoding='utf8',
+					    index_col=0, na_filter='')
+# Skin tones are the last N elements.
+emj_codes_skin = list(emoji_key['Unicode'][-N_SKIN_TONES:])
+# Remove the single * emoji. Causes issues with SQL db.
+emj_codes = [code for code in emoji_key['Unicode'][:-N_SKIN_TONES] if '*' not in code]
 emj_codes_set = set(emj_codes)
 # Maximum char size of the emoji codes.
 max_char_len = max([len(code) for code in emj_codes])
 # Find all yellow tones. Those that do not have a skin tacked on.
 tone = emj_codes_skin[0]
-can_have_skin = [key.replace(tone, '') for key in emj_codes if tone in key]
-# Remove common face emojis, # Original was 69, v4=75.
-face_index = range(84)
-emj_codes_face = [code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
+# Store as a set.
+can_have_skin = set([key.replace(tone, '') for key in emj_codes if tone in key])
+# Remove common face emojis, # Original was 69, v4=75, v5=84.
+face_index = 89
+emj_codes_face = list(emoji_key['Unicode'][:face_index])
 
 # Not needed in Python 3
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
@@ -184,7 +188,7 @@ def analyze_tweet_emojis(conn, cur, SQL_return):
 			[(emcode, len(re.findall(emcode, text))) for emcode in emj_codes_skin if re.findall(emcode,text)]
 		# Look for yellow skin tones.
 		emojis_in_text = {emj_code[0] for emj_code in emjText}
-		yellow_skins_found = emojis_in_text.intersection(set(can_have_skin))
+		yellow_skins_found = emojis_in_text.intersection(can_have_skin)
 		emjText_skinYellow = np.array([(emcode, text.split().count(emcode)) for emcode in yellow_skins_found])
 		# note: findall will look for the skin codes in the double unicode singlets. text.split().count will explicitly look for emojois that could have had a skin tone but didn't
 		if len(emjText_skinYellow) > 0:#if yellow skin count is non zero then add it
