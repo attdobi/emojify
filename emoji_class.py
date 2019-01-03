@@ -937,7 +937,7 @@ class emoji_lib:
 		emoji_key = pd.read_csv(base_dir + '/emojify/data/emoji_list.csv', encoding='utf8',
 					    index_col=0, na_filter='')
 		# Skin tones are the last N elements.
-		self.emj_codes_skin = list(emoji_key[-N_SKIN_TONES:])
+		self.emj_codes_skin = list(emoji_key['Unicode'][-N_SKIN_TONES:])
 		# Remove the single * emoji. Causes issues with SQL db.
 		self.emj_codes = [code for code in emoji_key['Unicode'][:-N_SKIN_TONES] if '*' not in code]
 		self.emj_codes_set = set(self.emj_codes)
@@ -945,7 +945,8 @@ class emoji_lib:
 
 		# Find all yellow tones. Those that do not have a skin tacked on.
 		tone = self.emj_codes_skin[0]
-		self.can_have_skin = [key.replace(tone, '') for key in self.emj_codes if tone in key]
+		# Store as a set
+		self.can_have_skin = set([key.replace(tone, '') for key in self.emj_codes if tone in key])
 		# Remove common face emojis.
 		face_index = 89
 		self.emj_codes_face = list(emoji_key['Unicode'][:face_index])
