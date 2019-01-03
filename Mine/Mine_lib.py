@@ -16,7 +16,7 @@ N_SKIN_TONES = 5
 emoji_key = pd.read_csv(base_dir + '/emojify/data/emoji_list.csv', encoding='utf8',
 					    index_col=0, na_filter='')
 # Skin tones are the last N elements.
-emj_codes_skin = emoji_key[-N_SKIN_TONES:].tolist()
+emj_codes_skin = list(emoji_key[-N_SKIN_TONES:])
 # Remove the single * emoji. Causes issues with SQL db.
 emj_codes = [code for code in emoji_key['Unicode'][:-N_SKIN_TONES] if '*' not in code]
 emj_codes_set = set(emj_codes)
@@ -27,7 +27,7 @@ tone = emj_codes_skin[0]
 can_have_skin = [key.replace(tone, '') for key in emj_codes if tone in key]
 # Remove common face emojis, # Original was 69, v4=75, v5=84.
 face_index = 89
-emj_codes_face = emoji_key['Unicode'][:face_index].tolist()
+emj_codes_face = list(emoji_key['Unicode'][:face_index])
 
 # Not needed in Python 3
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
