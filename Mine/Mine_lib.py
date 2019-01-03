@@ -10,21 +10,24 @@ import psycopg2
 
 base_dir = os.path.expanduser('~')
 YELLOW_TONE = u'\U0001f590'
+N_SKIN_TONES = 5
 
-#read emoji codes:
-emoji_key = pd.read_excel(base_dir + '/emojify/data/emoji_list.xlsx', encoding='utf-8', index_col=0, skiprows=0)
-emj_codes_skin = [code for code,name in zip(emoji_key['Unicode'],emoji_key['Name']) if ('FITZPATRICK' in name)]
-emj_codes = [code for code in emoji_key['Unicode'] if code != "Browser" \
-           if (code not in emj_codes_skin) if sum([c=="*" for c in code]) == 0]
+# Read emoji codes:
+emoji_key = pd.read_csv(base_dir + '/emojify/data/emoji_list.csv', encoding='utf8',
+					    index_col=0, na_filter='')
+# Skin tones are the last N elements.
+emj_codes_skin = emoji_key[-N_SKIN_TONES:].tolist()
+# Remove the single * emoji. Causes issues with SQL db.
+emj_codes = [code for code in emoji_key['Unicode'][:-N_SKIN_TONES] if '*' not in code]
 emj_codes_set = set(emj_codes)
 # Maximum char size of the emoji codes.
 max_char_len = max([len(code) for code in emj_codes])
 # Find all yellow tones. Those that do not have a skin tacked on.
 tone = emj_codes_skin[0]
 can_have_skin = [key.replace(tone, '') for key in emj_codes if tone in key]
-# Remove common face emojis, # Original was 69, v4=75.
-face_index = range(84)
-emj_codes_face = [code for index,code in zip(emoji_key.index,emoji_key['Unicode']) if index in face_index]
+# Remove common face emojis, # Original was 69, v4=75, v5=84.
+face_index = 89
+emj_codes_face = emoji_key['Unicode'][:face_index].tolist()
 
 # Not needed in Python 3
 _u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
