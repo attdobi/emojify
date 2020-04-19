@@ -27,7 +27,7 @@ tone = emj_codes_skin[0]
 # Store as a set.
 can_have_skin = set([key.replace(tone, '') for key in emj_codes if tone in key])
 # Remove common face emojis, # Original was 69, v4=75, v5=84.
-face_index = 89
+face_index = 91
 emj_codes_face = list(emoji_key['Unicode'][:face_index])
 
 # Not needed in Python 3
